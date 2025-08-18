@@ -1,0 +1,2665 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[    102458,       2657]
+NotebookOptionsPosition[    100927,       2624]
+NotebookOutlinePosition[    101438,       2643]
+CellTagsIndexPosition[    101395,       2640]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "ConformalStructures`"}]], "Input",
+ CellChangeTimes->{{3.9584944127367897`*^9, 3.9584944154328938`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"f1c307d0-f868-3042-be7f-9b79d1ccd148"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"pt", "=", 
+   RowBox[{"Thread", "[", 
+    RowBox[{
+     RowBox[{"Flatten", "[", 
+      RowBox[{"Array", "[", 
+       RowBox[{"x", ",", 
+        RowBox[{"{", 
+         RowBox[{"4", ",", "4"}], "}"}]}], "]"}], "]"}], "->", 
+     RowBox[{"RandomInteger", "[", 
+      RowBox[{"10", ",", "16"}], "]"}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.9605462717005672`*^9, 3.960546282115885*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"3a080a31-ef16-a846-98da-1711074429f7"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ConformalTest", "[", 
+    RowBox[{"4", ",", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "3", ",", "3"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"0", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"1", "/", "2"}], ",", "0"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", 
+         RowBox[{"1", "/", "2"}]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2"}], "}"}]}], "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "//", "TraditionalForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Normal", "[", 
+    RowBox[{"CanonicallyOrderedComponents", "[", "%", "]"}], "]"}], "/.", 
+   "pt"}], "//", "Simplify"}]}], "Input",
+ CellChangeTimes->{{3.9605460972072334`*^9, 3.9605461881615753`*^9}, {
+  3.9605462356205807`*^9, 3.9605462364615173`*^9}, {3.960546284374855*^9, 
+  3.960546291220663*^9}, {3.960546368455141*^9, 3.9605463756566105`*^9}, {
+  3.9605541260602875`*^9, 3.9605541414317017`*^9}, {3.960554242519455*^9, 
+  3.9605542464257126`*^9}, {3.960810299840437*^9, 3.9608103049464245`*^9}, {
+  3.960810445109663*^9, 3.960810490130211*^9}, {3.9608106114076138`*^9, 
+  3.960810653483837*^9}, {3.960810888819893*^9, 3.9608109069546776`*^9}, {
+  3.9608114106418934`*^9, 3.960811415958769*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"e712b0b6-4b93-d242-b504-7b2f9fc85163"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              TagBox["\[Alpha]", HoldForm]}, "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          TagBox["\[Beta]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"4D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{
+                  FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", 
+                  FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+          "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+         TraditionalForm], 
+        TemplateBox[{
+          StyleBox[
+           TagBox["\[Beta]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False], 
+          OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]}, 
+           "RowDefault"]], 
+         StyleBox[
+          OverscriptBox["\"\[Beta]\"", "."], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"4D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{
+                  FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", 
+                  FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+          "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+         TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Alpha]", HoldForm], 
+          StyleBox[
+           OverscriptBox["\"\[Beta]\"", "."], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"4", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"4D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{
+                  FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", 
+                  FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+          "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+         TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Alpha]", HoldForm], 
+          OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"4", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"4D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{
+                  FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", 
+                  FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+          "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+         TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Alpha]", HoldForm], 
+          OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"6", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"4D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{
+                  FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", 
+                  FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+          "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+         TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Alpha]", HoldForm], 
+          OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"6", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"4D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{
+                  FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+             SubscriptBox[
+              RowBox[{"{", 
+                RowBox[{"0", ",", 
+                  FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+          "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+         TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Alpha]", HoldForm], 
+          OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "1", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "2", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "3", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "4", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "1"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "1", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "2"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "2", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "3"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "3", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "4"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "4", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"4D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2"}], "}"}], "\";\"", "1"}, 
+                "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", "0"}], "}"}], "2"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{
+                    FractionBox["1", "2"], ",", "0"}], "}"}], "3"], "\";\"", 
+                 SubscriptBox[
+                  RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    FractionBox["1", "2"]}], "}"}], "3"]}, "RowDefault"]}, 
+              "Subsuperscript", SyntaxForm -> SubsuperscriptBox], 
+             TraditionalForm], 
+            TemplateBox[{
+              TagBox["\[Alpha]", HoldForm], 
+              OverscriptBox["\"\[Alpha]\"", "."]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}]}], TraditionalForm]], "Output",
+ CellChangeTimes->{{3.9605461405491676`*^9, 3.960546188477476*^9}, {
+   3.960546230139118*^9, 3.960546253679432*^9}, 3.960546291626383*^9, {
+   3.960546369523121*^9, 3.9605464176216526`*^9}, 3.9605464532286587`*^9, {
+   3.960554142194685*^9, 3.9605542468676643`*^9}, 3.960554340678467*^9, 
+   3.960554380658182*^9, {3.9608102929181995`*^9, 3.9608103172431927`*^9}, {
+   3.9608104335457306`*^9, 3.9608104601751423`*^9}, 3.9608104971956024`*^9, {
+   3.9608105592367496`*^9, 3.9608105876439285`*^9}, {3.960810628466013*^9, 
+   3.9608106543865414`*^9}, 3.960810907489752*^9, 3.9608111328629436`*^9, 
+   3.9608112391967545`*^9, 3.9608113254031334`*^9, {3.9608114054091415`*^9, 
+   3.960811419196476*^9}, 3.960811529880026*^9},
+ CellLabel->
+  "Out[2]//TraditionalForm=",ExpressionUUID->"b9693352-fe11-b04d-88a7-\
+1a6595786282"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.9605461405491676`*^9, 3.960546188477476*^9}, {
+   3.960546230139118*^9, 3.960546253679432*^9}, 3.960546291626383*^9, {
+   3.960546369523121*^9, 3.9605464176216526`*^9}, 3.9605464532286587`*^9, {
+   3.960554142194685*^9, 3.9605542468676643`*^9}, 3.960554340678467*^9, 
+   3.960554380658182*^9, {3.9608102929181995`*^9, 3.9608103172431927`*^9}, {
+   3.9608104335457306`*^9, 3.9608104601751423`*^9}, 3.9608104971956024`*^9, {
+   3.9608105592367496`*^9, 3.9608105876439285`*^9}, {3.960810628466013*^9, 
+   3.9608106543865414`*^9}, 3.960810907489752*^9, 3.9608111328629436`*^9, 
+   3.9608112391967545`*^9, 3.9608113254031334`*^9, {3.9608114054091415`*^9, 
+   3.960811419196476*^9}, 3.9608115300641537`*^9},
+ CellLabel->"Out[3]=",ExpressionUUID->"5a2de540-03a1-6144-bf74-10600ab15579"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ConformalTest", "[", 
+    RowBox[{"3", ",", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", 
+       RowBox[{"5", "/", "2"}], ",", 
+       RowBox[{"5", "/", "2"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", 
+       RowBox[{"1", "/", "2"}], ",", 
+       RowBox[{"1", "/", "2"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}]}], "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "//", "TraditionalForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Normal", "[", 
+    RowBox[{"CanonicallyOrderedComponents", "[", "%", "]"}], "]"}], "/.", 
+   "pt"}], "//", "Simplify"}]}], "Input",
+ CellChangeTimes->{{3.960818682008314*^9, 3.9608186867175045`*^9}},
+ CellLabel->"In[6]:=",ExpressionUUID->"a6300bb6-a9c0-5249-a2d7-cf1d25d1740c"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox[
+           StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False], 
+          StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+         "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"4", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+         "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"4", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+         "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"5", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+         "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"5", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+         "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]], "\";\"", 
+             SubscriptBox[
+              FractionBox["1", "2"], 
+              FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          StyleBox[
+           StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "1", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "2", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "3", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "4", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "1"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "1", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "2"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "2", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "3"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "3", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "4"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "4", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]], "\";\"", 
+                 SubscriptBox[
+                  FractionBox["1", "2"], 
+                  FractionBox["5", "2"]]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]]}, "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.9608186918500175`*^9},
+ CellLabel->
+  "Out[6]//TraditionalForm=",ExpressionUUID->"81ee16d9-ac01-f142-8ca4-\
+a92ca2bc7bb2"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.9608186919662457`*^9},
+ CellLabel->"Out[7]=",ExpressionUUID->"9d13363b-67a2-a843-9dd4-c8ec1ffeb995"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ConformalTest", "[", 
+    RowBox[{"3", ",", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "3", ",", "3"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "1", ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}]}], "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "//", "TraditionalForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Normal", "[", 
+    RowBox[{"CanonicallyOrderedComponents", "[", "%", "]"}], "]"}], "/.", 
+   "pt"}], "//", "Simplify"}]}], "Input",
+ CellChangeTimes->{{3.9608114279992065`*^9, 3.960811433202654*^9}},
+ CellLabel->"In[4]:=",ExpressionUUID->"7b1bb53a-80af-1745-a727-bc84319f7f66"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox[
+           StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"4", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"4", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"6", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"6", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox[
+             StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+             RGBColor[
+             0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+             StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox[
+               StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]}, "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         SubscriptBox[
+          TagBox["M", HoldForm], 
+          TemplateBox[{
+            TagBox["\[Mu]", HoldForm], 
+            TemplateBox[{
+              StyleBox[
+               TagBox["\[Nu]", HoldForm], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False], 
+              StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+             "RowDefault"]}, "RowDefault"]], 
+         StyleBox[
+          StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       SubscriptBox[
+        FormBox[
+         TemplateBox[{
+           TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+           TemplateBox[{"\"3D\"", "\";\"", 
+             RowBox[{"{", 
+               RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], "\";\"", 
+             "1"}, "RowDefault"], 
+           TemplateBox[{
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["0", "2"], "\";\"", 
+             SubscriptBox["1", "3"], "\";\"", 
+             SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+          SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+        TemplateBox[{
+          StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+          TemplateBox[{
+            StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+            TemplateBox[{
+              StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+              StyleBox[
+               StyleBox["\"\[CurlyEpsilon]\"", Bold, StripOnInput -> False], 
+               RGBColor[
+               0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+               StripOnInput -> False]}, "RowDefault"]}, "RowDefault"]}, 
+         "RowDefault"]]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "1"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "1", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "2"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "2", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "3"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "3", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "+", 
+   RowBox[{"2", " ", 
+    FormBox[
+     TemplateBox[{
+       SubscriptBox[
+        FormBox["\"\[Eta]\"", TraditionalForm], 
+        TemplateBox[{
+          TagBox["\[Mu]", HoldForm], 
+          StyleBox[
+           TagBox["\[Nu]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]}, "RowDefault"]], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Nu]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       TemplateBox[{
+         FormBox[
+          SubscriptBox["\"x\"", "4"], TraditionalForm], 
+         StyleBox[
+          TagBox["\[Xi]", HoldForm], 
+          RGBColor[
+          0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+          StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+        SuperscriptBox], 
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "4", "\")\""}, "RowDefault"]], 
+          StyleBox[
+           TagBox["\[Xi]", HoldForm], 
+           RGBColor[
+           0.6666666666666666, 0.6666666666666666, 0.6666666666666666], 
+           StripOnInput -> False]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "1"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "1", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "2"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "2", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "3"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "3", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}], "-", 
+   RowBox[{
+    FormBox[
+     TemplateBox[{
+       TemplateBox[{
+         SubscriptBox["\"x\"", "4"]}, "Abs"], "2"},
+      "Superscript"],
+     TraditionalForm], " ", 
+    FormBox[
+     TemplateBox[{
+       RowBox[{
+         SubscriptBox[
+          SuperscriptBox["\"\[PartialD]\"", 
+           TemplateBox[{"\"(\"", "4", "\")\""}, "RowDefault"]], 
+          TagBox["\[Mu]", HoldForm]], "(", 
+         TemplateBox[{
+           SubscriptBox[
+            FormBox[
+             TemplateBox[{
+               TemplateBox[{"\"\[ScriptCapitalS]\""}, "RowDefault"], 
+               TemplateBox[{"\"3D\"", "\";\"", 
+                 RowBox[{"{", 
+                   RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], 
+                 "\";\"", "1"}, "RowDefault"], 
+               TemplateBox[{
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["0", "2"], "\";\"", 
+                 SubscriptBox["1", "3"], "\";\"", 
+                 SubscriptBox["1", "3"]}, "RowDefault"]}, "Subsuperscript", 
+              SyntaxForm -> SubsuperscriptBox], TraditionalForm], 
+            TemplateBox[{
+              StyleBox["\"\[Alpha]\"", Bold, StripOnInput -> False], 
+              TemplateBox[{
+                StyleBox["\"\[Beta]\"", Bold, StripOnInput -> False], 
+                TemplateBox[{
+                  StyleBox["\"\[Gamma]\"", Bold, StripOnInput -> False], 
+                  StyleBox["\"\[Delta]\"", Bold, StripOnInput -> False]}, 
+                 "RowDefault"]}, "RowDefault"]}, "RowDefault"]]}, 
+          "RowDefault"], ")"}]},
+      "RowDefault"],
+     TraditionalForm]}]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.9608114687875595`*^9, 3.960811565386009*^9},
+ CellLabel->
+  "Out[4]//TraditionalForm=",ExpressionUUID->"5075c440-ae1b-ee4f-a6da-\
+917d7f5b1cf3"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}]}], "}"}]}], "}"}],
+    ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], "}"}]}], "}"}]}], 
+    "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.9608114687875595`*^9, 3.960811565511017*^9},
+ CellLabel->"Out[5]=",ExpressionUUID->"48e35e8a-8c92-0c45-87e8-e4cd979ce7b2"]
+}, Open  ]]
+},
+Evaluator->"Local 2",
+WindowSize->{1429.5, 732},
+WindowMargins->{{0.375, Automatic}, {Automatic, 0.375}},
+CommonDefaultFormatTypes->{"Output"->StandardForm},
+Magnification:>1. Inherited,
+FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (March 14, 2025)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"c2e61bee-512d-6a41-933d-f725e7b93885"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[554, 20, 212, 3, 28, "Input",ExpressionUUID->"f1c307d0-f868-3042-be7f-9b79d1ccd148"],
+Cell[769, 25, 506, 13, 28, "Input",ExpressionUUID->"3a080a31-ef16-a846-98da-1711074429f7"],
+Cell[CellGroupData[{
+Cell[1300, 42, 1518, 35, 47, "Input",ExpressionUUID->"e712b0b6-4b93-d242-b504-7b2f9fc85163"],
+Cell[2821, 79, 30709, 810, 148, "Output",ExpressionUUID->"b9693352-fe11-b04d-88a7-1a6595786282"],
+Cell[33533, 891, 1437, 33, 32, "Output",ExpressionUUID->"5a2de540-03a1-6144-bf74-10600ab15579"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[35007, 929, 859, 22, 47, "Input",ExpressionUUID->"a6300bb6-a9c0-5249-a2d7-cf1d25d1740c"],
+Cell[35869, 953, 27635, 715, 146, "Output",ExpressionUUID->"81ee16d9-ac01-f142-8ca4-a92ca2bc7bb2"],
+Cell[63507, 1670, 545, 16, 32, "Output",ExpressionUUID->"9d13363b-67a2-a843-9dd4-c8ec1ffeb995"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[64089, 1691, 747, 18, 47, "Input",ExpressionUUID->"7b1bb53a-80af-1745-a727-bc84319f7f66"],
+Cell[64839, 1711, 33941, 842, 77, "Output",ExpressionUUID->"5075c440-ae1b-ee4f-a6da-917d7f5b1cf3"],
+Cell[98783, 2555, 2128, 66, 51, "Output",ExpressionUUID->"48e35e8a-8c92-0c45-87e8-e4cd979ce7b2"]
+}, Open  ]]
+}
+]
+*)
+
