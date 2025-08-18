@@ -10,9 +10,11 @@ InstallConformalStructures[]:= Module[{
         questionOverwrite, tmpFile, unzipDir, zipDir},
 
 	
+	If[!TrueQ[$checkedTensorTools],
 	Print[Style["Checking TensorTools dependency...",Bold]];
 	Get["https://raw.githubusercontent.com/srossd/TensorTools/main/Install.m"];
 	Print[Style["TensorTools dependency resolved", Bold]];
+	];
 
 	(* Messages *)
 	questionOverwrite= pkgName<> " is already installed. Do you want to replace the content of "<> pkgDir<> " with a newly downloaded version?";
@@ -54,7 +56,7 @@ InstallConformalStructures[]:= Module[{
 		(* Move files to the Mathematica packages folder *)
 		Print["Copying "<> pkgName<> " to "<> pkgDir<> "."];
 	
-		zipDir= FileNames["Utilities.m", unzipDir, Infinity];
+		zipDir= FileNames["Correlators.m", unzipDir, Infinity];
 		CopyDirectory[DirectoryName[zipDir[[1]], 1], pkgDir];
 	
 		(* Delete the extracted archive *)
