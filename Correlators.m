@@ -17,8 +17,8 @@ Indices[TensorDerivative[t_, dim_, i_]] :=
   Prepend[Indices[t], Lowered[Spacetime[dim]]];
 TensorPermutation[TensorDerivative[t_, dim_, i_]] := 
   Join[{1}, 1 + TensorPermutation[t]];
-TensorTools`Private`DisplayTemplate[td_TensorDerivative] := 
-  TensorTools`Private`DisplayTemplate[Symbolic[td]];
+NCON[TensorDerivative[a_, dim_, i_]] := NCON[TensorProduct[Tensor[{{("\[PartialD]")^Row[{"(", i, ")"}], Lowered[Spacetime[dim]]}, {"("}}], a, Tensor[{{")"}}]]];
+Format[td_TensorDerivative, TraditionalForm] := tensorFormat[td];
 
 
 InactiveComponents[TensorDerivative[t_, dim_, i_]] := 
