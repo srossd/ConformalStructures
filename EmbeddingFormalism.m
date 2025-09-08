@@ -88,10 +88,10 @@ weylGammas[args__] := gammas[args][[;; , perm[args], perm[args]]];
 weylGammaStar[args__] := gammaStar[args][[perm[args], perm[args]]];
 
 Cmat[p_, q_] := Cmat[p + q];
-Cmat[n_] := (KroneckerProduct @@ 
+Cmat[n_] := -(KroneckerProduct @@ 
      Take[Riffle[Table[PauliMatrix[If[Mod[n, 4] == 3, 2, 1]], n], 
        Table[PauliMatrix[If[Mod[n, 4] == 3, 1, 2]], n]], 
-      UpTo[Floor[n/2]]])[[perm[n], perm[n]]];
+      UpTo[Floor[n/2]]] . gammaStar[n])[[perm[n], perm[n]]];
 
 BuildTensor[{chargeconj[], Lowered[DiracSpinor[dim_]], Lowered[DiracSpinor[dim_]]}] := SparseArray@Inverse[Cmat[dim]];
 BuildTensor[{chargeconj[], Raised[DiracSpinor[dim_]], Raised[DiracSpinor[dim_]]}] := SparseArray@Transpose[Cmat[dim]];
