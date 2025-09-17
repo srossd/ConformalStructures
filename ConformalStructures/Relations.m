@@ -23,12 +23,7 @@ indQ[basis_, vec_] :=
       ]
     ]);
 
-Options[IndependentSet] = {"Rules" -> {}, "MaxIndependent" -> 0, 
-   "Indices" -> False};
-IndependentSet[{}] := {};
-Options[IndependentSet] = {"TensorFunction" -> 
-    CanonicallyOrderedComponents, "Rules" -> {}, 
-   "MaxIndependent" -> Infinity, "Indices" -> False};
+Options[IndependentSet] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False};
 IndependentSet[{}] := {};
 IndependentSet[tensors_, OptionsPattern[]] := 
   If[! ArrayQ[OptionValue["TensorFunction"][tensors[[1]]]], 
@@ -46,22 +41,6 @@ IndependentSet[tensors_, OptionsPattern[]] :=
             runningComps[[Length[#1] + 1]] = comp; 
             Append[#1, #2], #1]], #1] &, {}, Range@Length[tensors]]]},
      If[TrueQ[OptionValue["Indices"]], indices, tensors[[indices]]]]];
-     
-fastEval[expr_?NumericQ, ___] := expr;
-fastEval[expr_, perm_, groupLengths_, pt_] := 
- Module[{pieces, evalPieces, unsym, syms},
-  pieces = Components[Tensor[{#}]] & /@ expr[[1]];
-  evalPieces = Map[# /. pt &, pieces, {3}];
-  unsym = 
-   TensorTranspose[TensorProduct @@ evalPieces, 
-    InversePermutation@perm];
-  syms = 
-   Select[Permutations[Range@Total[groupLengths]], 
-    Sort /@ TakeList[(Range@Total[groupLengths])[[#]], groupLengths] ==
-       TakeList[Range@Total[groupLengths], groupLengths] &];
-  If[syms == {}, unsym, 
-   1/Length[syms] Sum[TensorTranspose[unsym, p], {p, syms}]]
-  ]
 
 uvpt[dim_, None] := {
    x[1, i_] :> Which[i == dim - 1, (Sqrt[-u^2 - (-1 + v)^2 + 2 u (1 + v)]/(u - 2(v + 1))), i == dim, (v - 1)/(u - 2(v + 1)), True, 0],
@@ -244,134 +223,113 @@ unrollRows[mat_, subset_, numRows_] :=
    ArrayRules[
      mat] /. {a_Integer, b_Integer} :> {subset[[a]], b}, {numRows, 
     Length[mat[[1]]]}];
-StructureRelations[structs_] := 
-  StructureRelations[structs] = 
-   Block[{zmax = 5, dim, q, structComps, idxs, other, ans, step, sols,
-      safes, rule, todo, mat1, mat2},
+    
+StructureRelations[structs_] := StructureRelations[structs] = If[
+     First@Cases[structs, c_correlator :> c[[-2]], All] =!= None || (Length[structs] >= 4 || First@Cases[structs, c_correlator :> Length[c[[2]]], All] >= 4), 
+   	 fittedRelations[structs],
+   	 symbolicRelations[structs]
+  ];
+  
+crossRatioAssumptions[q_] := If[q === None, And @@ (1/2 < # < 2 & /@ crossRatios[q]), And @@ (0 < # & /@ crossRatios[q])];
+symbolicRelations[structs_] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
+   If[# === {}, {}, FullSimplify[RowReduce[#, ZeroTest -> (Function[expr, Simplify[expr, crossRatioAssumptions[q]] === 0])], crossRatioAssumptions[q]]] &@
+   FullSimplify[NullSpace[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, z], {z, 2, 5}], 1]], crossRatioAssumptions[q]]
+];
+    
+fittedRelations[structs_] := 
+   Block[{zmax = 5, dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
     dim = First@Cases[structs, correlator[dim_, ___] :> dim, All];
     q = First@Cases[structs, correlator[___, q_, _] :> q, All];
     safes = safeCrossRatios[q];
-    structComps = 
-     Flatten[Table[
-       Transpose[
-        ArrayFlatten[
-         Flatten[{Normal[CanonicallyOrderedComponents[#]] /. 
-             genericPoint[dim, q, z, 
-              1]}] & /@ structs]], {z, 2, zmax}], 1];
-    idxs = 
-     Sort[Length[structs] + 1 - 
-       IndependentSet[Reverse@Transpose@structComps, 
-        "Indices" -> True]];
+    structComps = Flatten[Table[Transpose[ArrayFlatten[Flatten[{Normal[
+       If[
+         First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
+           fastEvalCOC[#,z,safes[[1]]],
+           Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 1]
+       ]
+    ]}] & /@ structs]], {z, 2, zmax}], 1];
+    idxs = Length[structs] + 1 - IndependentSet[Reverse@Transpose@structComps, "Indices" -> True];
     other = Complement[Range@Length[structs], idxs];
-    ans = 
-     Association@
-      Table[{j, idxs[[i]]} -> -None, {j, Length[other]}, {i, 
-        Length[idxs]}];
+    ans = Association@Table[{j, idxs[[i]]} -> -None, {j, Length[other]}, {i, Length[idxs]}];
     step = 0;
     sols = {};
     If[! TrueQ[$consoleMode], 
-     Monitor[While[! FreeQ[ans, None], 
-       todo = Select[Range@Length[other], 
-         Function[j, 
-          AnyTrue[ans /@ Table[{j, idx}, {idx, idxs}], # === -None &]]];
-       sols = 
-        Join[sols, 
-         Table[structComps = 
-           Flatten[Table[
-             Transpose[
-              Table[Flatten[{Which[! MemberQ[Join[idxs, other[[todo]]], structIdx], 
-                  Table[0, Length[structComps]/(zmax - 1)],(*First@
-                  Cases[structs[[structIdx]],correlator[_,_,spins_,__]:>
-                  2 Total[Flatten[spins]],All]>=6,fastEval[
-                  structs[[structIdx]],q,z,safes[[ii]]],*)True, 
-                  Normal[CanonicallyOrderedComponents[
-                    structs[[structIdx]]]] /. 
-                   genericPoint[dim, q, z,
-                     ii]]}], {structIdx, Length[structs]}]], {z, 2, 
-              zmax}], 1];
-          mat1 = structComps[[;; , idxs]];
-          mat2 = structComps[[;; , other[[todo]]]];
-          
-          Quiet@Check[{safes[[ii]], 
-             unrollRows[Transpose@LinearSolve[mat1, mat2], todo, 
-              Length[other]]}, Nothing], {ii, 
-           Length[sols] + 1, (step + 1) (step + 4)}]];
-       Do[
-        If[ans[{j, idxs[[i]]}] === -None, 
-         ans[{j, idxs[[i]]}] = -((fitRational[
-                sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, 
-                "Prefactors" -> 
-                 Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, 
-                   Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, 
-                  True, {1 &}]] @@ 
-               crossRatios[q]) /. _None ->
-               None)], {j, Length[other]}, {i, Length[idxs]}];
-       step = step + 1], 
-      Panel[Row[{Column[{Style["Spacetime Structure Relations", 14, 
-            Bold], Spacer[10], 
-           Style[ToString@StringForm["Degree ``", step], Bold], 
-           Spacer[10], 
-           ToString@
-            StringForm["Fit points: ``/``", 
-             If[IntegerQ[ii], 
-              ii, (step + 1) (step + 4)], (step + 1) (step + 4)]}], 
+     Monitor[
+       While[! FreeQ[ans, None], 
+         todo = Select[Range@Length[other], Function[j, AnyTrue[ans /@ Table[{j, idx}, {idx, idxs}], # === -None &]]];
+         sols = Join[sols, 
+           Table[structComps = Flatten[Table[Transpose[Table[Flatten[{
+              Which[
+                 ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
+                   Table[0, Length[structComps]/(zmax - 1)],
+                 First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                   fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
+                 True, 
+                   Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
+               ]
+            }], {structIdx, Length[structs]}]], {z, 2, zmax}], 1];
+            mat1 = structComps[[;; , idxs]];
+            mat2 = structComps[[;; , other[[todo]]]];
+            Quiet@Check[{safes[[ii]], unrollRows[Transpose@LinearSolve[mat1, mat2], todo, Length[other]]}, Nothing], {ii, Length[sols] + 1, (step + 1) (step + 4)}]
+         ];
+       Do[If[
+          ans[{j, idxs[[i]]}] === -None, 
+          ans[{j, idxs[[i]]}] = -((fitRational[sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, "Prefactors" -> Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, True, {1 &}]] @@ crossRatios[q]) /. _None -> None)], 
+          {j, Length[other]}, {i, Length[idxs]}
+       ];
+       step = step + 1
+       ], 
+      Panel[Row[{
+         Column[{
+            Style["Spacetime Structure Relations", 14, Bold], 
+            Spacer[10], 
+            Style[ToString@StringForm["Degree ``", step], Bold], 
+            Spacer[10], 
+            ToString@StringForm["Fit points: ``/``", If[IntegerQ[ii], ii, (step + 1) (step + 4)], (step + 1) (step + 4)]
+         }], 
          Spacer[50], 
          MatrixPlot[
-          Table[If[ans[{j, idxs[[i]]}] === -None, Orange, White], {j, 
-            Length[other]}, {i, Length[idxs]}], FrameTicks -> None, 
-          Mesh -> True, ImageSize -> 100]}]]], 
+          Table[If[ans[{j, idxs[[i]]}] === -None, Orange, White], {j, Length[other]}, {i, Length[idxs]}], 
+          FrameTicks -> None, 
+          Mesh -> True, 
+          ImageSize -> 100
+         ]
+      }]]
+     ], 
      While[! FreeQ[ans, None], 
-      todo = Select[Range@Length[other], 
-        Function[j, 
-         AnyTrue[ans /@ Table[{j, idx}, {idx, idxs}], # === -None &]]];
-      sols = 
-       Join[sols, 
-        Table[Run[If[$OperatingSystem == "Windows", "cls", "clear"]];
-         Print["Spacetime Structure Relations"];
-         Print["Degree ", step];
+         todo = Select[Range@Length[other], Function[j, AnyTrue[ans /@ Table[{j, idx}, {idx, idxs}], # === -None &]]];
+         sols = Join[sols, 
+            Table[
+               Run[If[$OperatingSystem == "Windows", "cls", "clear"]];
+	           Print["Spacetime Structure Relations"];
+	           Print["Degree ", step];
+	         
+	           Print[ToString@StringForm["Fit points: ``/``", If[IntegerQ[ii], ii, (step + 1) (step + 4)], (step + 1) (step + 4)]];
+	         
+	           Print[ToString@StringForm["Found functions: ``/``", Sum[Boole[ans[{j, idxs[[i]]}] =!= -None], {j, Length[other]}, {i, Length[idxs]}], Length[other] Length[idxs]]];
          
-         Print[ToString@
-           StringForm["Fit points: ``/``", 
-            If[IntegerQ[ii], 
-             ii, (step + 1) (step + 4)], (step + 1) (step + 4)]];
-         
-         Print[ToString@
-           StringForm["Found functions: ``/``", 
-            Sum[Boole[ans[{j, idxs[[i]]}] =!= -None], {j, 
-              Length[other]}, {i, Length[idxs]}], 
-            Length[other] Length[idxs]]];
-         
-         structComps = 
-          Flatten[Table[
-            Transpose[
-             Table[Flatten[{Which[! 
-                  MemberQ[Join[idxs, other[[todo]]], structIdx], 
-                 Table[0, Length[structComps]/(zmax - 1)],(*First@
-                 Cases[structs[[structIdx]],correlator[_,_,spins_,__]:>
-                 2 Total[Flatten[spins]],All]>=6,fastEval[
-                 structs[[structIdx]],q,z,safes[[ii]]],*)True, 
-                 Normal[CanonicallyOrderedComponents[
-                    structs[[structIdx]]]] /. 
-                  genericPoint[dim, q, z, ii]]}], {structIdx, 
-               Length[structs]}]], {z, 2, zmax}], 1];
-         mat1 = structComps[[;; , idxs]];
-         mat2 = structComps[[;; , other[[todo]]]];
-         
-         Quiet@Check[{safes[[ii]], 
-            unrollRows[Transpose@LinearSolve[mat1, mat2], todo, 
-             Length[other]]}, Nothing], {ii, 
-          Length[sols] + 1, (step + 1) (step + 4)}]];
-      Do[
-       If[ans[{j, idxs[[i]]}] === -None, 
-        ans[{j, idxs[[i]]}] = -((fitRational[
-               sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, 
-               "Prefactors" -> 
-                Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, 
-                  Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, 
-                 True, {1 &}]] @@ crossRatios[q]) /. _None -> 
-             None)], {j, Length[other]}, {i, Length[idxs]}];
-      step = step + 1];
-     Run[If[$OperatingSystem == "Windows", "cls", "clear"]];];
-    If[Length[other] == 0, {}, 
-     SparseArray[
-      Join[Normal[ans], Table[{j, other[[j]]} -> 1, {j, Length[other]}]]]]];
+         structComps = Flatten[Table[Transpose[Table[Flatten[{
+              Which[
+                 ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
+                   Table[0, Length[structComps]/(zmax - 1)],
+                 First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                   fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
+                 True, 
+                   Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
+               ]
+            }], {structIdx, Length[structs]}]], {z, 2, zmax}], 1];
+            mat1 = structComps[[;; , idxs]];
+            mat2 = structComps[[;; , other[[todo]]]];
+            Quiet@Check[{safes[[ii]], unrollRows[Transpose@LinearSolve[mat1, mat2], todo, Length[other]]}, Nothing], {ii, Length[sols] + 1, (step + 1) (step + 4)}];
+         ];
+         Do[If[
+          ans[{j, idxs[[i]]}] === -None, 
+          ans[{j, idxs[[i]]}] = -((fitRational[sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, "Prefactors" -> Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, True, {1 &}]] @@ crossRatios[q]) /. _None -> None)], 
+          {j, Length[other]}, {i, Length[idxs]}
+         ];
+       
+         step = step + 1;
+         Run[If[$OperatingSystem == "Windows", "cls", "clear"]];
+    ]];
+    If[Length[other] == 0, {}, SparseArray[Join[Normal[ans], Table[{j, other[[j]]} -> 1, {j, Length[other]}]]]]
+ ];

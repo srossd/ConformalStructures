@@ -114,7 +114,7 @@ ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] :=
     Flatten[Table[
       {TensorProduct @@ tup, 
        Ordering[
-        Join @@ Cases[tup, stringstruct[_, is_] :> is[[{1, -1}]], All]]}
+        Join @@ Cases[tup, stringstruct[_, is_, _] :> is[[{1, -1}]], All]]}
       , {sol, 
        Solve[Join[
          Thread[Sum[\[Alpha][i, 
@@ -135,7 +135,7 @@ ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] :=
       ConformalCorrelatorExpressions[3, spins, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True];
      inds = 
       IndependentSet[full, "Indices" -> True, 
-       "TensorFunction" -> Function[{x}, Flatten[Table[fastEval[Sequence @@ x, 2 spins, genericPoint[3, OptionValue["DefectCodimension"], z, 1]], {z, 2, 5}]]], 
+       "TensorFunction" -> Function[{x}, Flatten[Table[fastEval[Sequence @@ x, Range@Length[spins], 2 spins, z, safeCrossRatios[OptionValue["DefectCodimension"]][[1]]], {z, 2, 5}]]], 
        "MaxIndependent" -> ConformalCorrelatorCount[3, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]]];
      full[[inds]]
      ]
@@ -148,7 +148,7 @@ ConformalCorrelatorExpressions[4, spins_, opt : OptionsPattern[]] :=
       {TensorProduct @@ tup, 
        Ordering[
         Join @@ Cases[
-          tup, {stringstruct[_, is_], Lowered[h_[4]], 
+          tup, {stringstruct[_, is_, _], Lowered[h_[4]], 
             Lowered[h2_[4]]} :> 
            Thread[{is[[{1, -1}]], {h, h2} /. {WeylSpinor -> 1, 
                DottedWeylSpinor -> 2}}], All]]}
@@ -176,7 +176,7 @@ ConformalCorrelatorExpressions[4, spins_, opt : OptionsPattern[]] :=
       ConformalCorrelatorExpressions[4, spins, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True];
      inds = 
       IndependentSet[full, "Indices" -> True, 
-       "TensorFunction" -> Function[{x}, Flatten[Table[fastEval[Sequence @@ x, 2 Flatten[spins], genericPoint[4, OptionValue["DefectCodimension"], z, 1]], {z, 2, 5}]]], 
+       "TensorFunction" -> Function[{x}, Flatten[Table[fastEval[Sequence @@ x, Range@Length[spins], 2 Flatten[spins], z, safeCrossRatios[OptionValue["DefectCodimension"]][[1]]], {z, 2, 5}]]], 
        "MaxIndependent" -> ConformalCorrelatorCount[4, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]]];
      full[[inds]]
      ]

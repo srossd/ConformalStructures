@@ -1,9 +1,4 @@
 (* Wolfram Language package *)
-
-Format[td_TensorDerivative, TraditionalForm] := 
-  TensorTools`Private`DisplayTemplate[td] /. 
-   TensorTools`Private`dn[_, a_, b_] | 
-     TensorTools`Private`adn[_, a_, b_] :> DisplayName[a, b];
      
 Format[x[i_, j_], TraditionalForm] := Subsuperscript[x, i, j];
 MakeBoxes[Power[x[i_,j_], n_], TraditionalForm] := SuperscriptBox[RowBox[{"(", SubsuperscriptBox["x",i,j], ")"}], ToBoxes[n, TraditionalForm]]
@@ -26,8 +21,8 @@ Protect[Power];
 
 Format[spinor[i_], TraditionalForm] := Subscript["S", i];
 
-Format[stringstruct[dim_, is_], TraditionalForm] := 
-  Subsuperscript[Subscript["\[ScriptCapitalS]", ToString[dim] <> "D"],
+Format[stringstruct[dim_, is_, q_], TraditionalForm] := 
+  Subsuperscript[Subscript["\[ScriptCapitalS]", ToString[dim] <> "D" <> If[q === None,"",",q = "<>ToString[q]]],
     is[[2 ;; -2]] /. {{i_, "Defect"} -> Superscript[i, "\[DoubleVerticalBar]"], {i_, "Transverse"} -> Superscript[i, "\[UpTee]"], 0 -> "Y"}, is[[{1, -1}]]];
     
 Format[correlator[dim_, \[CapitalDelta]s_, spins_, derivs_, perm_, q_, i_], TraditionalForm] := Module[{perm2},

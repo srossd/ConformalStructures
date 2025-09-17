@@ -436,7 +436,7 @@ StringStructure[dim_, is_, signs_ : {1, 1}, opt : OptionsPattern[]] :=
       TensorInterpret[p1[1, -1] s[-1, -2] p2[-2, 2]]
       ]
      ];
-   tensor = {stringstruct[dim, is], 
+   tensor = {stringstruct[dim, is, OptionValue["DefectCodimension"]], 
      Lowered[Which[OddQ[dim], DiracSpinor[dim], signs[[1]] == 1, 
        WeylSpinor[dim], signs[[1]] == -1, DottedWeylSpinor[dim]]], 
      Lowered[Which[OddQ[dim], DiracSpinor[dim], signs[[2]] == 1, 
@@ -444,3 +444,8 @@ StringStructure[dim_, is_, signs_ : {1, 1}, opt : OptionsPattern[]] :=
    BuildTensor[tensor] = Components[struct];
    Tensor[{tensor}]
    ]
+   
+BuildTensor[{stringstruct[dim_, is_, q_], inds___}] := (
+	StringStructure[dim, is, If[OddQ[dim], {1, 1}, {inds}[[;;,1]] /. {_WeylSpinor -> 1, _DottedWeylSpinor -> -1}], "DefectCodimension" -> q];
+	BuildTensor[{stringstruct[dim, is, q], inds}]
+);
