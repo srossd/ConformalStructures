@@ -9,6 +9,7 @@ Begin["`Private`"]
 Get[ "ConformalStructures`Usage`"]
 Get[ "ConformalStructures`Correlators`"]
 Get[ "ConformalStructures`EmbeddingFormalism`"]
+Get[ "ConformalStructures`fastEval`"]
 Get[ "ConformalStructures`Formatting`"]
 Get[ "ConformalStructures`Relations`"]
 
