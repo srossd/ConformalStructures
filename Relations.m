@@ -320,7 +320,7 @@ fittedRelations[structs_] :=
             }], {structIdx, Length[structs]}]], {z, 2, zmax}], 1];
             mat1 = structComps[[;; , idxs]];
             mat2 = structComps[[;; , other[[todo]]]];
-            Quiet@Check[{safes[[ii]], unrollRows[Transpose@LinearSolve[mat1, mat2], todo, Length[other]]}, Nothing], {ii, Length[sols] + 1, (step + 1) (step + 4)}];
+            Quiet@Check[{safes[[ii]], unrollRows[Transpose@LinearSolve[mat1, mat2], todo, Length[other]]}, Nothing], {ii, Length[sols] + 1, (step + 1) (step + 4)}]
          ];
          Do[If[
           ans[{j, idxs[[i]]}] === -None, 
