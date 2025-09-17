@@ -6,6 +6,8 @@ BeginPackage["ConformalStructures`", {"TensorTools`"}]
 Begin["`Private`"]
 (* Implementation of the package *)
 
+$consoleMode = ($FrontEnd === Null);
+
 Get[ "ConformalStructures`Usage`"]
 Get[ "ConformalStructures`Correlators`"]
 Get[ "ConformalStructures`EmbeddingFormalism`"]
