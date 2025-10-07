@@ -50,16 +50,16 @@ uvpt[dim_, None] := {
 };
 
 uvpt[dim_, q_Integer] /; q > 1 := 
-   {x[1, i_] :> Boole[i == 1],
- x[2, 1] -> v (2 u + v + Sqrt[-1 + 4 u^2 + 4 u v + v^2]), 
- x[2, 2] -> -Sqrt[-((-1 + v^2) (-1 + 8 u^2 + 2 v^2 + 2 v Sqrt[-1 + 4 u^2 + 4 u v + v^2] + 4 u (2 v + Sqrt[-1 + 4 u^2 + 4 u v + v^2])))], 
+   {x[1, i_] :> Boole[i == 4],
+ x[2, 3] -> Sqrt[-((-1 + v^2) (8 u v^2 + 2 v^3 + 4 u Sqrt[v^2 (-1 + 2 u + v) (1 + 2 u + v)] + v (-1 + 8 u^2 + 2 Sqrt[v^2 (-1 + 2 u + v) (1 + 2 u + v)])))]/Sqrt[v], 
+ x[2, 4] -> 2 u v + v^2 + Sqrt[v^2 (-1 + 2 u + v) (1 + 2 u + v)], 
  x[2, _] -> 0};
  
-uvpt[dim_, 1] = {x[1, 1] -> 1, x[1, _] -> 0, x[2, 1] -> 1, x[2, 2] -> 2 Sqrt[u], x[2, _] -> 0};
+uvpt[dim_, 1] = {x[1, 4] -> 1, x[1, _] -> 0, x[2, 4] -> 1, x[2, 3] -> 2 Sqrt[u], x[2, _] -> 0};
 
 sct[dim_, x_, b_] := (x - b x . Components[MetricTensor[dim]] . x)/(1 - 2 (b . Components[MetricTensor[dim]] . x) + (b . Components[MetricTensor[dim]] . b) (x . Components[MetricTensor[dim]] . x));
 
-genericPoint[dim_, q_, z_] := Simplify@Flatten@Table[x[i, j] -> sct[dim, Table[x[i, kk] /. uvpt[dim, q], {kk, dim}], PadLeft[{z}, dim]][[j]], {i, 4}, {j, dim}];
+genericPoint[dim_, q_, z_] := Simplify@Flatten@Table[x[i, j] -> sct[dim, Table[x[i, kk] /. uvpt[dim, q], {kk, dim}], If[q===None,PadLeft,PadRight][{z}, dim]][[j]], {i, 4}, {j, dim}];
 genericPoint[dim_, q_, z_, i_] := genericPoint[dim, q, z] /. Thread[crossRatios[q] -> safeCrossRatios[q][[i]]];
 
 crossRatios[None] = {u, v};
@@ -244,8 +244,8 @@ fittedRelations[structs_] :=
     structComps = Flatten[Table[Transpose[ArrayFlatten[Flatten[{Normal[
        If[
          First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
-           fastEvalCOC[#,z,safes[[1]]],
-           Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 1]
+           fastEvalCOC[#,z,safes[[11]]],
+           Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 11]
        ]
     ]}] & /@ structs]], {z, 2, zmax}], 1];
     idxs = Length[structs] + 1 - IndependentSet[Reverse@Transpose@structComps, "Indices" -> True];

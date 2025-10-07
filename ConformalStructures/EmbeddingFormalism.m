@@ -150,9 +150,9 @@ EmbeddingGammaTensor[dim_] :=
     Lowered[EmbeddingDiracSpinor[dim]], 
     Raised[EmbeddingDiracSpinor[dim]]}}]
     
-Options[SigmaTensor] = {"Bar" -> False};
-SigmaTensor[dim_, OptionsPattern[]] /; EvenQ[dim] := 
-  Tensor[{{"\[Sigma]", Lowered[Spacetime[dim]], 
+Options[SigmaTensor] = Options[sigma] = {"Bar" -> False};
+SigmaTensor[dim_, opt : OptionsPattern[]] /; EvenQ[dim] := 
+  Tensor[{{sigma[opt], Lowered[Spacetime[dim]], 
      Sequence @@ Switch[{Mod[dim, 4], OptionValue["Bar"]},
        {0, False},
        {Lowered[WeylSpinor[dim]], Lowered[DottedWeylSpinor[dim]]},
@@ -163,7 +163,7 @@ SigmaTensor[dim_, OptionsPattern[]] /; EvenQ[dim] :=
        {2, True},
        {Lowered[DottedWeylSpinor[dim]], Lowered[DottedWeylSpinor[dim]]}
        ]}}];
-BuildTensor[{"\[Sigma]", Lowered[Spacetime[dim_]], 
+BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]], 
      Lowered[WeylSpinor[dim_]], Lowered[DottedWeylSpinor[dim_]]}] /; 
   Mod[dim, 4] == 0 := 
  SparseArray@TensorTranspose[
@@ -172,7 +172,7 @@ BuildTensor[{"\[Sigma]", Lowered[Spacetime[dim_]],
     TensorProduct[WeylProjection[dim], GammaTensor[dim], 
      WeylProjection[dim, "Transpose" -> True, "Dotted" -> True]], {{2,
        4}, {5, 6}}], {2, 1, 3}]
-BuildTensor[{"\[Sigma]", Lowered[Spacetime[dim_]], 
+BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]], 
      Raised[DottedWeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] /; 
   Mod[dim, 4] == 2 := 
  SparseArray@TensorTranspose[
@@ -197,12 +197,28 @@ BuildTensor[{point[i__Integer, opt : OptionsPattern[]], Raised[Spacetime[dim_]]}
 Options[Coordinate] = {"Defect" -> False, "Transverse" -> False};
 Coordinate[dim_, i__Integer, opt : OptionsPattern[]] := Tensor[{{point[i, opt], Raised[Spacetime[dim]]}}];
 
+Options[BasisVector] = {"DefectCodimension" -> None, "Defect" -> False, "Transverse" -> False};
+BasisVector::notrans = "No preferred transverse vector for q = `2` in `1`D";
+BasisVector::nodef   = "No preferred defect vector for q = `2` in `1`D";
+BasisVector[dim_, OptionsPattern[]] := Which[
+   OptionValue["DefectCodimension"] == 1 && OptionValue["Transverse"],
+   Tensor[{{basis["DefectCodimension" -> 1, "Transverse" -> True], Raised[Spacetime[dim]]}}],
+   OptionValue["DefectCodimension"] == dim - 1 && OptionValue["Defect"],
+   Tensor[{{basis["DefectCodimension" -> dim - 1, "Defect" -> True], Raised[Spacetime[dim]]}}],
+   True,
+   Message[Evaluate@If[OptionValue["Transverse"], BasisVector::notrans, BasisVector::nodef], dim, OptionValue["DefectCodimension"]]
+];
+
+BuildTensor[{basis["DefectCodimension" -> 1, "Transverse" -> True], Raised[Spacetime[dim_]]}] := SparseArray@UnitVector[dim, dim];
+BuildTensor[{basis["DefectCodimension" -> _, "Defect" -> True], Raised[Spacetime[dim_]]}] := SparseArray@UnitVector[dim, 1];
+
+Options[CoordinateSquared] = {"DefectCodimension" -> None, "Defect" -> False, "Transverse" -> False};
 CoordinateSquared[dim_, i_, j_] /; i > j := CoordinateSquared[dim, j, i];
 AddExplicitRule[CoordinateSquared[dim_, i__Integer, opt : OptionsPattern[]] :> Components@Contract[TensorProduct[MetricTensor[dim, opt], Coordinate[dim, i], Coordinate[dim, i]], {{1, 3}, {2, 4}}]];
 AddExplicitRule[InnerProduct[dim_, i_, j_, opt : OptionsPattern[]] :> Components@Contract[TensorProduct[MetricTensor[dim, opt], Coordinate[dim, i], Coordinate[dim, j]], {{1, 3}, {2, 4}}]];
       
-AddExplicitRule[u[dim_, {ii_, jj_, kk_, ll_}] :> (CoordinateSquared[dim, ii, jj] CoordinateSquared[dim, kk, ll])/(CoordinateSquared[dim, ii, kk] CoordinateSquared[dim, jj, ll])];
-AddExplicitRule[v[dim_, {ii_, jj_, kk_, ll_}] :> (CoordinateSquared[dim, ii, ll] CoordinateSquared[dim, jj, kk])/(CoordinateSquared[dim, ii, kk] CoordinateSquared[dim, jj, ll])];
+AddExplicitRule[u[dim_, {ii_, jj_, kk_, ll_}, OptionsPattern[]] :> (CoordinateSquared[dim, ii, jj] CoordinateSquared[dim, kk, ll])/(CoordinateSquared[dim, ii, kk] CoordinateSquared[dim, jj, ll])];
+AddExplicitRule[v[dim_, {ii_, jj_, kk_, ll_}, OptionsPattern[]] :> (CoordinateSquared[dim, ii, ll] CoordinateSquared[dim, jj, kk])/(CoordinateSquared[dim, ii, kk] CoordinateSquared[dim, jj, ll])];
 
 AddExplicitRule[u[dim_, {ii_, jj_}, opt : OptionsPattern[]] :> CoordinateSquared[dim, ii, jj]/(4 Sqrt[CoordinateSquared[dim, ii, "Transverse" -> True, opt] CoordinateSquared[dim, jj, "Transverse" -> True, opt]])]; 
 AddExplicitRule[v[dim_, {ii_, jj_}, opt : OptionsPattern[]] :> InnerProduct[dim, ii, jj, "Transverse" -> True, opt]/(Sqrt[CoordinateSquared[dim, ii, "Transverse" -> True, opt] CoordinateSquared[dim, jj, "Transverse" -> True, opt]])];
@@ -310,11 +326,11 @@ BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]],
        TensorProduct[GammaTensor[dim], GammaTensor[dim]], {{3, 5}}]);
        
 BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]], Lowered[WeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] := TensorTranspose[Components[
-   Contract[TensorProduct[WeylProjection[dim], RotationGenerators[dim], WeylProjection[dim, "Transpose" -> True], WeylChargeConjugationMatrix[4, "Raised" -> True]], {{2, 5}, {6, 7}, {8, 10}}]
+   Contract[TensorProduct[WeylProjection[dim], RotationGenerators[dim], WeylProjection[dim, "Transpose" -> True], WeylChargeConjugationMatrix[dim, "Raised" -> True]], {{2, 5}, {6, 7}, {8, 10}}]
 ], {3, 1, 2, 4}];
 
 BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]], Lowered[DottedWeylSpinor[dim_]], Raised[DottedWeylSpinor[dim_]]}] := TensorTranspose[Components[
-   Contract[TensorProduct[WeylProjection[dim, "Dotted" -> True], RotationGenerators[dim], WeylProjection[dim, "Dotted" -> True, "Transpose" -> True], WeylChargeConjugationMatrix[4, "Raised" -> True, "Dotted" -> True]], {{2, 5}, {6, 7}, {8, 10}}]
+   Contract[TensorProduct[WeylProjection[dim, "Dotted" -> True], RotationGenerators[dim], WeylProjection[dim, "Dotted" -> True, "Transpose" -> True], WeylChargeConjugationMatrix[dim, "Raised" -> True, "Dotted" -> True]], {{2, 5}, {6, 7}, {8, 10}}]
 ], {3, 1, 2, 4}];
 
 Options[RotationGenerators] = {"Weyl" -> False, "Dotted" -> False};
@@ -394,7 +410,7 @@ DiracStringStructure[dim_, is_, OptionsPattern[]] := Block[{S, Sbar, X, js, XX, 
         CoordinateSquared[dim, i, j]
   ];
   
-  prefactor = If[Length[is] == 3, Sqrt[XX[js[[1]], js[[-1]]]/(XX[js[[1]], js[[2]]] XX[js[[2]], js[[3]]])], 1/Sqrt[Product[XX[js[[i]], js[[Mod[i - 1, Length[js] - 2] + 2]]], {i, 2, Length[js] - 1}]]];
+  prefactor = If[Length[js] == 3, Sqrt[XX[js[[1]], js[[-1]]]/(XX[js[[1]], js[[2]]] XX[js[[2]], js[[3]]])], 1/Sqrt[Product[XX[js[[i]], js[[Mod[i - 1, Length[js] - 2] + 2]]], {i, 2, Length[js] - 1}]]];
   
   prefactor Contract[
    TensorProduct @@ 
