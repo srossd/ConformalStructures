@@ -31,7 +31,7 @@ fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_]
 
 fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {{s : ("u" | "v"), didx_}}, perm_, q_, i_], inds___}}],z_, ratios_] := Module[{deriv, rest, nbefore},
    rest = fastEval[Tensor[{{correlator[dim, \[CapitalDelta]s, spins, {}, perm, q, i], inds}}], z, ratios];
-   deriv = Normal[Components[TensorSpinorDerivative[ToExpression[s][dim, perm], dim, perm[[didx]]]]] /. evalRule[dim, Range[Length[\[CapitalDelta]s]], q, z, ratios];
+   deriv = Normal[Components[TensorSpinorDerivative[ToExpression[s][dim, perm, "DefectCodimension" -> q], dim, perm[[didx]]]]] /. evalRule[dim, Range[Length[\[CapitalDelta]s]], q, z, ratios];
    nbefore = 2 Total[Flatten[spins[[;; didx - 1]]]];
    TensorTranspose[
       TensorProduct[deriv, rest], 

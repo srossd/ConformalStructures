@@ -3,14 +3,16 @@
 Format[x[i_, j_], TraditionalForm] := Subsuperscript[x, i, j];
 MakeBoxes[Power[x[i_,j_], n_], TraditionalForm] := SuperscriptBox[RowBox[{"(", SubsuperscriptBox["x",i,j], ")"}], ToBoxes[n, TraditionalForm]]
 
-Options[symb] = {"DefectCodimension" -> None, "Defect" -> False, "Transverse" -> False};
-symb[base_, OptionsPattern[]] := Which[OptionValue["Defect"], Superscript[base, "\[DoubleVerticalBar]"], OptionValue["Transverse"], Superscript[base, "\[UpTee]"], True, base];
+Options[symb] = {"DefectCodimension" -> None, "Defect" -> False, "Transverse" -> False, "Bar" -> False};
+symb[base_, OptionsPattern[]] := Which[OptionValue["Bar"], OverBar[base], OptionValue["Defect"], Superscript[base, "\[DoubleVerticalBar]"], OptionValue["Transverse"], Superscript[base, "\[UpTee]"], True, base];
 
 Format[chargeconj[], TraditionalForm] := "\[GothicCapitalC]";
 Format[metric[opt : OptionsPattern[]], TraditionalForm] := symb["\[Eta]", opt];
 Format[eps[opt : OptionsPattern[]], TraditionalForm] := symb["\[Epsilon]", opt];
+Format[sigma[opt : OptionsPattern[]], TraditionalForm] := symb["\[Sigma]", opt];
 Format[y[opt : OptionsPattern[]], TraditionalForm] := symb["Y", opt];
 Format[point[i__, opt : OptionsPattern[]], TraditionalForm] := Subscript[symb["x", opt], i];
+Format[basis[opt : OptionsPattern[]], TraditionalForm] := symb["e", opt];
 
 Format[CoordinateSquared[dim_, i__Integer, opt : OptionsPattern[]], TraditionalForm] := Superscript[Abs[Subscript[symb["x", opt], i]], 2];
 Format[InnerProduct[dim_, i_, j_, opt : OptionsPattern[]], TraditionalForm] := Row[{"(",Subscript[symb["x", opt], i], "\[CenterDot]", Subscript[symb["x", opt], j], ")"}];
@@ -22,7 +24,7 @@ Protect[Power];
 Format[spinor[i_], TraditionalForm] := Subscript["S", i];
 
 Format[stringstruct[dim_, is_, q_], TraditionalForm] := 
-  Subsuperscript[Subscript["\[ScriptCapitalS]", ToString[dim] <> "D" <> If[q === None,"",",q = "<>ToString[q]]],
+  Subsuperscript[Subscript["\[ScriptCapitalS]", ToString[dim] <> "D" <> If[q === None,"",",q = "<>ToString[q]<>";"]],
     is[[2 ;; -2]] /. {{i_, "Defect"} -> Superscript[i, "\[DoubleVerticalBar]"], {i_, "Transverse"} -> Superscript[i, "\[UpTee]"], 0 -> "Y"}, is[[{1, -1}]]];
     
 Format[correlator[dim_, \[CapitalDelta]s_, spins_, derivs_, perm_, q_, i_], TraditionalForm] := Module[{perm2},
@@ -35,7 +37,7 @@ Format[correlator[dim_, \[CapitalDelta]s_, spins_, derivs_, perm_, q_, i_], Trad
             "(" <> ToString[perm2[[d[[2]]]]] <> ")"], "(", 
           ToExpression[d[[1]]][dim, perm2], ")"}]], {d, derivs}], 
       "\[ScriptCapitalS]"]],
-    Row[{ToString[dim] <> "D", ";", perm2, ";", Sequence @@ If[q =!= None, {"q = ", q}, {}],  i}], 
+    Row[{ToString[dim] <> "D", ";", perm2, ";", Sequence @@ If[q =!= None, {"q = ", q, ";"}, {}],  i}], 
     Row[Subscript @@@ Riffle[Thread[{spins, \[CapitalDelta]s}], ";"]]
 	]
  ];

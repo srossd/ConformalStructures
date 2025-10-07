@@ -23,6 +23,8 @@ StyleBox[\"i\",\nFontSlant->\"Italic\"]\)th coordinate";
 metric::usage = "metric[] denotes the metric tensor";
 chargeconj::usage = "chargeconj[] denotes the charge conjugation matrix";
 eps::usage = "eps[] denotes the Levi-Civita tensor";
+sigma::usage = "sigma[] denotes a \[Sigma] tensor";
+basis::usage = "basis[] denotes a preferred basis vector";
 y::usage = "y[] denotes the Y tensor";
 spinor::usage = "spinor[\!\(\*
 StyleBox[\"i\",\nFontSlant->\"Italic\"]\)] denotes the \!\(\*
@@ -145,6 +147,10 @@ ChiralGamma::usage = "ChiralGamma[\!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\)] gives \!\(\*SubscriptBox[\(\[Gamma]\), \(*\)]\) in \!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\) dimensions";
 
+SigmaTensor::usage = "SigmaTensor[\!\(\*
+StyleBox[\"dim\",\nFontSlant->\"Italic\"]\)] gives the tensor of \[Sigma]-matrices in \!\(\*
+StyleBox[\"dim\",\nFontSlant->\"Italic\"]\) dimensions";
+
 Coordinate::usage = "Coordinate[\!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\), \!\(\*
 StyleBox[\"i\",\nFontSlant->\"Italic\"]\)] gives the \*
@@ -173,6 +179,8 @@ StyleBox[\"j\",\nFontSlant->\"Italic\"]\)] gives the inner product between coord
 StyleBox[\"i\",\nFontSlant->\"Italic\"]\) and \!\(\*
 StyleBox[\"j\",\nFontSlant->\"Italic\"]\) in \!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\) dimensions.";
+BasisVector::usage = "BasisVector[\!\(\*
+StyleBox[\"dim\",\nFontSlant->\"Italic\"]\)] gives a preferred basis vector when the defect (co)dimension is 1";
 
 LeviCivita::usage = "LeviCivita[\!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\)] gives the Levi-Civita tensor in \!\(\*

@@ -89,7 +89,7 @@ ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, opt] = If[OptionValu
      If[i != j || Length[sub] > 0, StringStructure[dim, {i, Sequence @@ sub, j}, signs, "DefectCodimension" -> OptionValue["DefectCodimension"]], Nothing], 
         {sub, Select[
            Subsets[If[OptionValue["DefectCodimension"] === None,Complement[Range[npts], {i, j}],Complement[Prepend[Flatten[Table[{{k, "Defect"}, {k, "Transverse"}}, {k, npts}], 1], 0], {{i, "Transverse"}, {j, "Transverse"}}]]], 
-    	 OddQ[dim] || (-1)^(Length[#] + dim/2) (Times @@ signs) == -1 &]
+    	 OddQ[dim] || (-1)^(Length[If[EvenQ[OptionValue["DefectCodimension"]], DeleteCases[#, 0], #]] + dim/2) (Times @@ signs) == -1 &]
     	}
   ],
   IndependentSet[ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True]]
@@ -111,6 +111,8 @@ Options[ConformalCorrelatorExpressions] = {"DefectCodimension" -> None, "Overcom
 ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] := 
   ConformalCorrelatorExpressions[3, spins, opt] = If[ConformalCorrelatorCount[3, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]] == 0, {},
    If[OptionValue["Overcomplete"],
+    Module[{vars},
+       vars = Flatten@Table[\[Alpha][i, j], {i, Length[spins]}, {j, i, Length[spins]}];
     Flatten[Table[
       {TensorProduct @@ tup, 
        Ordering[
@@ -120,16 +122,13 @@ ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] :=
          Thread[Sum[\[Alpha][i, 
               j] (SparseArray[{{i} -> 1/2}, {Length[spins]}] + SparseArray[{{j} -> 1/2}, {Length[
                 spins]}]), {i, Length[spins]}, {j, i, 
-             Length[spins]}] == spins], 
-         Flatten@Table[\[Alpha][i, j] >= 0, {i, Length[spins]}, {j, 
-            i, Length[spins]}]], 
-        Flatten@Table[\[Alpha][i, j], {i, Length[spins]}, {j, i, 
-           Length[spins]}], Integers]},
+             Length[spins]}] == spins], (# >= 0 &) /@ vars], vars, Integers]},
       {tup, 
        Tuples[Flatten[
          Table[ConformalCorrelatorBuildingBlocks[3, Length[spins], 
            List @@ var, "DefectCodimension" -> OptionValue["DefectCodimension"]], {var, Keys[sol]}, {ii, var /. sol}], 1]]}
-      ], 1],
+      ], 1]
+    ],
     Module[{full, inds},
      full = 
       ConformalCorrelatorExpressions[3, spins, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True];
@@ -144,7 +143,9 @@ ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] :=
 ConformalCorrelatorExpressions[4, spins_, opt : OptionsPattern[]] := 
   ConformalCorrelatorExpressions[4, spins, opt] = If[ConformalCorrelatorCount[4, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]] == 0, {},
    If[OptionValue["Overcomplete"],
-    Flatten[Table[
+    Module[{vars},
+       vars = Flatten@Table[\[Alpha][i,j,k,l], {i, Length[spins]}, {j, Length[spins]}, {k, 2}, {l, k, 2}];
+       Flatten[Table[
       {TensorProduct @@ tup, 
        Ordering[
         Join @@ Cases[
@@ -156,21 +157,15 @@ ConformalCorrelatorExpressions[4, spins_, opt : OptionsPattern[]] :=
        Solve[Join[
          Thread[Sum[\[Alpha][i, j, k, 
               l] (SparseArray[{{i, k} -> 1/2}, {Length[spins], 2}] + 
-  SparseArray[{{j, l} -> 1/2}, {Length[spins], 2}]), {i, Length[spins]}, {j, i, 
-             Length[spins]}, {k, 2}, {l, 2}] == spins], 
-         Flatten@Table[\[Alpha][i, j, k, l] >= 0, {i, 
-            Length[spins]}, {j, i, Length[spins]}, {k, 2}, {l, 2}]],
-         Flatten@
-         Table[\[Alpha][i, j, k, l], {i, Length[spins]}, {j, i, 
-           Length[spins]}, {k, 2}, {l, 2}], Integers]},
+  SparseArray[{{j, l} -> 1/2}, {Length[spins], 2}]), {i, Length[spins]}, {j, Length[spins]}, {k, 2}, {l, k, 2}] == spins], (# >= 0) & /@ vars],
+         vars, Integers]},
       {tup, 
        Tuples[Flatten[
          
          Table[ConformalCorrelatorBuildingBlocks[4, Length[spins], 
-           List @@ var[[;; 2]], (List @@ 
-              var[[3 ;;]]) /. {2 -> -1}, "DefectCodimension" -> OptionValue["DefectCodimension"]], {var, Keys[sol]}, {ii, 
+           List @@ var[[;; 2]], (List @@ var[[3 ;;]]) /. {2 -> -1}, "DefectCodimension" -> OptionValue["DefectCodimension"]], {var, Keys[sol]}, {ii, 
            var /. sol}], 1]]}
-      ], 1],
+      ], 1]],
     Module[{full, inds},
      full = 
       ConformalCorrelatorExpressions[4, spins, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True];
@@ -192,9 +187,9 @@ spinIndices[4, spins_, derivs_, perm_] := Flatten[Table[{
   }, {i, Length[spins]}]];
 
 Options[KinematicPrefactor] = {"DefectCodimension" -> None};
-KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (Total /@ spins)}, 1/Which[
+KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, opt : OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (Total /@ spins)}, 1/Which[
 	   OptionValue["DefectCodimension"] =!= None && Length[\[CapitalDelta]s] == 2,
-	   CoordinateSquared[dim, 1, "Transverse" -> True]^(kappas[[1]]/2) CoordinateSquared[dim, 2, "Transverse" -> True]^(kappas[[2]]/2),
+	   CoordinateSquared[dim, 1, "Transverse" -> True, opt]^(kappas[[1]]/2) CoordinateSquared[dim, 2, "Transverse" -> True, opt]^(kappas[[2]]/2),
 	   Length[\[CapitalDelta]s] == 2,
 	   CoordinateSquared[dim, 1, 2]^kappas[[1]],
 	   Length[\[CapitalDelta]s] == 3,
@@ -214,14 +209,12 @@ ConformalCorrelators[dim_, \[CapitalDelta]s_, spins_, derivs_,
   perm_, opt : OptionsPattern[]] := 
  ConformalCorrelators[dim, \[CapitalDelta]s, spins, derivs, perm, opt] = 
   Module[{exprs, structs, rules},
+   exprs = ConformalCorrelatorExpressions[dim, spins, opt];
    If[derivs === {},
-    exprs = ConformalCorrelatorExpressions[dim, spins, opt];
-    structs = 
-     buildCorrelator[Sequence @@ #, 2 Flatten[spins]] & /@ exprs;
+    structs = buildCorrelator[Sequence @@ #, 2 Flatten[spins]] & /@ exprs;
     rules = If[perm === Automatic, {}, x[i_, j_] :> x[perm[[i]], j]];
     Do[
-     BuildTensor[{correlator[dim, \[CapitalDelta]s, spins, derivs, 
-         perm, OptionValue["DefectCodimension"], i], Sequence @@ spinIndices[dim, spins, derivs, perm]}] = 
+     BuildTensor[{correlator[dim, \[CapitalDelta]s, spins, derivs, perm, OptionValue["DefectCodimension"], i], Sequence @@ spinIndices[dim, spins, derivs, perm]}] = 
       If[ArrayQ[structs[[i]]], SparseArray, Identity][Explicit@KinematicPrefactor[dim, \[CapitalDelta]s, spins, opt] Normal[structs[[i]]] /. rules],
      {i, Length[structs]}
      ]
@@ -229,7 +222,7 @@ ConformalCorrelators[dim_, \[CapitalDelta]s_, spins_, derivs_,
    Table[
     Tensor[{{correlator[dim, \[CapitalDelta]s, spins, derivs, perm, OptionValue["DefectCodimension"], i],
         Sequence @@ spinIndices[dim, spins, derivs, perm]}}], {i, 
-     ConformalCorrelatorCount[dim, spins]}]
+     Min[ConformalCorrelatorCount[dim, spins, opt], Length[exprs]]}]
    ]
    
 BuildTensor[{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], inds___}] /; {inds} == spinIndices[dim, spins, {}, perm] := (
@@ -319,10 +312,10 @@ BuildTensor[
         "\[PartialD]", TensorSpinorDerivative[#1, dim, #2[[2]]],
         "u", 
         TensorProduct[
-         TensorSpinorDerivative[u[dim, perm], dim, #2[[2]]], #1],
+         TensorSpinorDerivative[u[dim, perm, "DefectCodimension" -> q], dim, #2[[2]]], #1],
         "v", 
         TensorProduct[
-         TensorSpinorDerivative[v[dim, perm], dim, #2[[2]]], #1]
+         TensorSpinorDerivative[v[dim, perm, "DefectCodimension" -> q], dim, #2[[2]]], #1]
         ] &, bd, Reverse[pd]];
     siPos = 
      Position[Indices[baseexpr], 
