@@ -83,7 +83,7 @@ ConformalCorrelatorCount[4, spins_, OptionsPattern[]] := Switch[{Length[spins], 
 ]
 
 Options[ConformalCorrelatorBuildingBlocks] = {"DefectCodimension" -> None, "Overcomplete" -> False};
-ConformalCorrelatorBuildingBlocks[dim_, npts_, {i_, j_}, signs_List : {1,1}, opt : OptionsPattern[]] := 
+ConformalCorrelatorBuildingBlocks[dim_, npts_, {i_, j_}, signs_, opt : OptionsPattern[]] := 
 ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, opt] = If[OptionValue["Overcomplete"],
   Table[
      If[i != j || Length[sub] > 0, StringStructure[dim, {i, Sequence @@ sub, j}, signs, "DefectCodimension" -> OptionValue["DefectCodimension"]], Nothing], 
@@ -126,7 +126,7 @@ ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] :=
       {tup, 
        Tuples[Flatten[
          Table[ConformalCorrelatorBuildingBlocks[3, Length[spins], 
-           List @@ var, "DefectCodimension" -> OptionValue["DefectCodimension"]], {var, Keys[sol]}, {ii, var /. sol}], 1]]}
+           List @@ var, {1,1}, "DefectCodimension" -> OptionValue["DefectCodimension"]], {var, Keys[sol]}, {ii, var /. sol}], 1]]}
       ], 1]
     ],
     Module[{full, inds},
