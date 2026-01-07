@@ -29,7 +29,7 @@ IndependentSet[tensors_, opt : OptionsPattern[]] := Module[{comp1},
 	comp1 = Flatten[OptionValue["TensorFunction"][First[tensors]]];
 	Switch[OptionValue["Method"],
 		Automatic,
-		If[Length[comp1] <= 100000 && AllTrue[comp1, NumericQ],
+		If[Length[comp1] <= 100000 && AllTrue[comp1, NumericQ] && OptionValue["MaxIndependent"] > Length[tensors]/2,
 			ISReduce[tensors, Sequence @@ FilterRules[{opt}, Keys[Options[ISReduce]]]],
 			ISFold[tensors, Sequence @@ FilterRules[{opt}, Keys[Options[ISFold]]]]
 		],
