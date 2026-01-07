@@ -92,7 +92,7 @@ ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, opt] = If[OptionValu
     	 OddQ[dim] || (-1)^(Length[If[EvenQ[OptionValue["DefectCodimension"]], DeleteCases[#, 0], #]] + dim/2) (Times @@ signs) == -1 &]
     	}
   ],
-  IndependentSet[ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True]]
+  IndependentSet[ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True], Method -> "Fold"]
 ];
 
 buildCorrelator[expr_, perm_, groupLengths_] := Module[{unsym, syms},

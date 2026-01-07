@@ -23,9 +23,25 @@ indQ[basis_, vec_] :=
       ]
     ]);
 
-Options[IndependentSet] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False};
+Options[IndependentSet] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False, Method -> Automatic};
 IndependentSet[{}] := {};
-IndependentSet[tensors_, OptionsPattern[]] := 
+IndependentSet[tensors_, opt : OptionsPattern[]] := Module[{comp1},
+	comp1 = Flatten[OptionValue["TensorFunction"][First[tensors]]];
+	Switch[OptionValue["Method"],
+		Automatic,
+		If[Length[comp1] <= 100000 && AllTrue[comp1, NumericQ],
+			ISReduce[tensors, Sequence @@ FilterRules[{opt}, Keys[Options[ISReduce]]]],
+			ISFold[tensors, Sequence @@ FilterRules[{opt}, Keys[Options[ISFold]]]]
+		],
+		"Fold",
+		ISFold[tensors, Sequence @@ FilterRules[{opt}, Keys[Options[ISFold]]]],
+		_,
+		ISReduce[tensors, Sequence @@ FilterRules[{opt}, Keys[Options[ISReduce]]]]
+	]
+];
+  
+Options[ISFold] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False};  
+ISFold[tensors_, OptionsPattern[]] := 
   If[! ArrayQ[OptionValue["TensorFunction"][tensors[[1]]]], 
    If[TrueQ[OptionValue["Indices"]], {1}, tensors[[{1}]]], 
    With[{indices = 
@@ -41,6 +57,17 @@ IndependentSet[tensors_, OptionsPattern[]] :=
             runningComps[[Length[#1] + 1]] = comp; 
             Append[#1, #2], #1]], #1] &, {}, Range@Length[tensors]]]},
      If[TrueQ[OptionValue["Indices"]], indices, tensors[[indices]]]]];
+     
+Options[ISReduce] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False};
+ISReduce[tensors_, opt :OptionsPattern[]] := Module[{comps, reduced, indices},
+	comps = Normal[Flatten@*OptionValue["TensorFunction"] /@ tensors] /. OptionValue["Rules"];
+	reduced = RowReduce[Transpose[N@comps]];
+	indices = (Table[FirstPosition[row, x : Except[0] /; NumericQ[x]], {row, reduced}] /. _?MissingQ -> Nothing)[[;; , 1]];
+	If[Length[indices] > 0 && MatrixRank[comps[[indices]]] != Length[indices],
+		ISFold[tensors, opt],
+		If[OptionValue["Indices"], indices, tensors[[indices]]]
+	]
+];
 
 uvpt[dim_, None] := {
    x[1, i_] :> Which[i == dim - 1, (Sqrt[-u^2 - (-1 + v)^2 + 2 u (1 + v)]/(u - 2(v + 1))), i == dim, (v - 1)/(u - 2(v + 1)), True, 0],
