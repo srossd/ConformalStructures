@@ -9,13 +9,19 @@ uvz[struct : {stringstruct[dim_, _, q_], __}, perm_, deriv_] := uvz[struct, perm
 
 evalRule[dim_, pointperm_, q_, z_, ratios_] := genericPoint[dim, q, z] /. x[i_, j_] :> If[i > Length[pointperm], None, x[InversePermutation[pointperm][[i]], j]] /. Thread[crossRatios[q] -> ratios];
 
+perms[groupLengths_] := 
+ Join @@@ 
+  Tuples[Table[
+    Permutations[Range@groupLengths[[i]]] + 
+     Total[groupLengths[[;; i - 1]]], {i, Length[groupLengths]}]]
+
 fastEval[expr_?NumericQ, ___] := expr;
 fastEval[expr_, perm_, pointperm_, groupLengths_, z_, ratios_] := Module[{qdefect, pieces, piecesEval, unsym, syms},
   qdefect = expr[[1, 1, 1, 3]];
   pieces = uvz[#, pointperm, None] & /@ expr[[1]];
   piecesEval = pieces /. Append[Thread[crossRatios[qdefect] -> ratios], zValue -> z];
   unsym = TensorTranspose[TensorProduct @@ piecesEval, InversePermutation@perm];
-  syms = Select[Permutations[Range@Total[groupLengths]], Sort /@ TakeList[(Range@Total[groupLengths])[[#]], groupLengths] == TakeList[Range@Total[groupLengths], groupLengths] &];
+  syms = perms[groupLengths];
   If[syms == {}, unsym, 1/Length[syms] Sum[TensorTranspose[unsym, p], {p, syms}]]
  ];
  
