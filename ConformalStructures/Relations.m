@@ -264,7 +264,7 @@ symbolicRelations[structs_] := With[{q = First@Cases[structs, correlator[___, q_
 ];
     
 fittedRelations[structs_] := 
-   Block[{zmax = 5, dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
+   Block[{zmax = 3, dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
     dim = First@Cases[structs, correlator[dim_, ___] :> dim, All];
     q = First@Cases[structs, correlator[___, q_, _] :> q, All];
     safes = safeCrossRatios[q];
