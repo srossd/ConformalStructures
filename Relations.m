@@ -24,7 +24,7 @@ indQ[basis_, vec_] :=
     ]);
 
 Options[IndependentSet] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False, Method -> Automatic};
-IndependentSet[{}] := {};
+IndependentSet[{}, OptionsPattern[]] := {};
 IndependentSet[tensors_, opt : OptionsPattern[]] := Module[{comp1},
 	comp1 = Flatten[OptionValue["TensorFunction"][First[tensors]]];
 	Switch[OptionValue["Method"],
@@ -40,7 +40,8 @@ IndependentSet[tensors_, opt : OptionsPattern[]] := Module[{comp1},
 	]
 ];
   
-Options[ISFold] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False};  
+Options[ISFold] = {"TensorFunction" -> CanonicallyOrderedComponents, "Rules" -> {}, "MaxIndependent" -> Infinity, "Indices" -> False}; 
+ISFold[{}, OptionsPattern[]] := {}; 
 ISFold[tensors_, OptionsPattern[]] := 
   If[! ArrayQ[OptionValue["TensorFunction"][tensors[[1]]]], 
    If[TrueQ[OptionValue["Indices"]], {1}, tensors[[{1}]]], 
