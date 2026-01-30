@@ -209,6 +209,7 @@ ConformalCorrelators[dim_, \[CapitalDelta]s_, spins_, derivs_,
   perm_, opt : OptionsPattern[]] := 
  ConformalCorrelators[dim, \[CapitalDelta]s, spins, derivs, perm, opt] = 
   Module[{exprs, structs, rules},
+  	If[Length[\[CapitalDelta]s] == 2 && !Equal@@\[CapitalDelta]s, Return[{}]];
    exprs = ConformalCorrelatorExpressions[dim, spins, opt];
    If[derivs === {},
     structs = buildCorrelator[Sequence @@ #, 2 Flatten[spins]] & /@ exprs;
