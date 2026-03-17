@@ -61,6 +61,16 @@ StyleBox[\"spins\",\nFontSlant->\"Italic\"]\)\!\(\*
 StyleBox[\",\",\nFontSlant->\"Italic\"]\)\!\(\*
 StyleBox[\" \",\nFontSlant->\"Italic\"]\)and so on.";
 
+z::usage = "z[\!\(\*
+StyleBox[\"perm\",\nFontSlant->\"Italic\"]\)] gives the cross-ratio \!\(\*
+StyleBox[\"z\",\nFontSlant->\"Italic\"]\) in two dimensions with points in the order \!\(\*
+StyleBox[\"perm\",\nFontSlant->\"Italic\"]\)";
+
+zb::usage = "zb[\!\(\*
+StyleBox[\"perm\",\nFontSlant->\"Italic\"]\)] gives the cross-ratio \!\(\*
+StyleBox[\"zb\",\nFontSlant->\"Italic\"]\) in two dimensions with points in the order \!\(\*
+StyleBox[\"perm\",\nFontSlant->\"Italic\"]\)";
+
 u::usage = "u[\!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\), \!\(\*
 StyleBox[\"perm\",\nFontSlant->\"Italic\"]\)] gives the cross-ratio \!\(\*

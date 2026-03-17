@@ -4,10 +4,10 @@ uvz[struct : {stringstruct[dim_, _, q_], __}, perm_, deriv_] := uvz[struct, perm
          Tensor[{struct}], 
        	 TensorSpinorDerivative[Tensor[{struct}], dim, InversePermutation[perm][[deriv]]]
       ]
-  ] /. evalRule[dim, perm, q, zValue, crossRatios[q]],
+  ] /. evalRule[dim, perm, q, zValue, crossRatios[dim, q]],
   zValue > 1];
 
-evalRule[dim_, pointperm_, q_, z_, ratios_] := genericPoint[dim, q, z] /. x[i_, j_] :> If[i > Length[pointperm], None, x[InversePermutation[pointperm][[i]], j]] /. Thread[crossRatios[q] -> ratios];
+evalRule[dim_, pointperm_, q_, z_, ratios_] := genericPoint[dim, q, z] /. x[i_, j_] :> If[i > Length[pointperm], None, x[InversePermutation[pointperm][[i]], j]] /. Thread[crossRatios[dim, q] -> ratios];
 
 perms[groupLengths_] := 
  Join @@@ 
@@ -16,10 +16,11 @@ perms[groupLengths_] :=
      Total[groupLengths[[;; i - 1]]], {i, Length[groupLengths]}]]
 
 fastEval[expr_?NumericQ, ___] := expr;
-fastEval[expr_, perm_, pointperm_, groupLengths_, z_, ratios_] := Module[{qdefect, pieces, piecesEval, unsym, syms},
+fastEval[expr_, perm_, pointperm_, groupLengths_, z_, ratios_] := Module[{dim, qdefect, pieces, piecesEval, unsym, syms},
+  dim = expr[[1, 1, 1, 1]];
   qdefect = expr[[1, 1, 1, 3]];
   pieces = uvz[#, pointperm, None] & /@ expr[[1]];
-  piecesEval = pieces /. Append[Thread[crossRatios[qdefect] -> ratios], zValue -> z];
+  piecesEval = pieces /. Append[Thread[crossRatios[dim, qdefect] -> ratios], zValue -> z];
   unsym = TensorTranspose[TensorProduct @@ piecesEval, InversePermutation@perm];
   syms = perms[groupLengths];
   If[syms == {}, unsym, 1/Length[syms] Sum[TensorTranspose[unsym, p], {p, syms}]]
@@ -54,9 +55,9 @@ fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {{"\[PartialD]", d
    expr = ConformalCorrelatorExpressions[dim, spins, "DefectCodimension" -> q][[i]];
    factors = expr[[1]] /. {t_Tensor :> t[[1]], 1 -> {}};
    pieces = uvz[#, perm, None] & /@ factors;
-   piecesEval = pieces /. Append[Thread[crossRatios[q] -> ratios], zValue -> z];
+   piecesEval = pieces /. Append[Thread[crossRatios[dim, q] -> ratios], zValue -> z];
    derivpieces = uvz[#, perm, pdidx] & /@ factors;
-   derivpiecesEval = derivpieces /. Append[Thread[crossRatios[q] -> ratios], zValue -> z];
+   derivpiecesEval = derivpieces /. Append[Thread[crossRatios[dim, q] -> ratios], zValue -> z];
    nbefore = 2 Total[Flatten[spins[[;; didx - 1]]]];
    nafter = 2 Total[Flatten[spins[[didx ;;]]]];
    fp1 = Join[nbefore + {1, 2}, Range[nbefore], 2 + Range[nbefore + 1, nbefore + nafter]];

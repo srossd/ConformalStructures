@@ -57,6 +57,7 @@ countSU2singlets[spins__] :=
     n_. su2irrep[0] :> n] /. _?MissingQ -> 0;
 
 Options[ConformalCorrelatorCount] = {"DefectCodimension" -> None};
+ConformalCorrelatorCount[2, spins_, OptionsPattern[]] := Infinity;
 ConformalCorrelatorCount[3, spins_, OptionsPattern[]] := Switch[{Length[spins], OptionValue["DefectCodimension"]},
   {2, None},
   Boole[Equal @@ spins],
@@ -108,6 +109,43 @@ buildCorrelator[expr_, perm_, groupLengths_] := Module[{unsym, syms},
 
 Clear[ConformalCorrelatorExpressions];
 Options[ConformalCorrelatorExpressions] = {"DefectCodimension" -> None, "Overcomplete" -> False};
+ConformalCorrelatorExpressions[2, spins_, opt : OptionsPattern[]] := 
+  ConformalCorrelatorExpressions[2, spins, opt] = If[ConformalCorrelatorCount[2, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]] == 0, {},
+   If[OptionValue["Overcomplete"],
+    Module[{vars},
+       vars = Flatten@Table[\[Alpha][i,j,k,l], {i, Length[spins]}, {j, Length[spins]}, {k, 2}, {l, k, 2}];
+       Flatten[Table[
+      {TensorProduct @@ tup, 
+       Ordering[
+        Join @@ Cases[
+          tup, {stringstruct[_, is_, _], Lowered[h_[2]], 
+            Lowered[h2_[2]]} :> 
+           Thread[{is[[{1, -1}]], {h, h2} /. {WeylSpinor -> 1, 
+               DottedWeylSpinor -> 2}}], All]]}
+      , {sol, 
+       Solve[Join[
+         Thread[Sum[\[Alpha][i, j, k, 
+              l] (SparseArray[{{i, k} -> 1/2}, {Length[spins], 2}] + 
+  SparseArray[{{j, l} -> 1/2}, {Length[spins], 2}]), {i, Length[spins]}, {j, Length[spins]}, {k, 2}, {l, k, 2}] == spins], (# >= 0) & /@ vars],
+         vars, Integers]},
+      {tup, 
+       Tuples[Flatten[
+         
+         Table[ConformalCorrelatorBuildingBlocks[2, Length[spins], 
+           List @@ var[[;; 2]], (List @@ var[[3 ;;]]) /. {2 -> -1}, "DefectCodimension" -> OptionValue["DefectCodimension"]], {var, Keys[sol]}, {ii, 
+           var /. sol}], 1]]}
+      ], 1]],
+    Module[{full, inds},
+     full = 
+      ConformalCorrelatorExpressions[2, spins, "DefectCodimension" -> OptionValue["DefectCodimension"], "Overcomplete" -> True];
+     inds = 
+      IndependentSet[full, "Indices" -> True, 
+       "TensorFunction" -> Function[{x}, Flatten[Table[fastEval[Sequence @@ x, Range@Length[spins], 2 Flatten[spins], zz, safeCrossRatios[OptionValue["DefectCodimension"]][[1]]], {zz, 2, 5}]]], 
+       "MaxIndependent" -> ConformalCorrelatorCount[2, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]]];
+     full[[inds]]
+     ]
+    ]
+  ];
 ConformalCorrelatorExpressions[3, spins_, opt : OptionsPattern[]] := 
   ConformalCorrelatorExpressions[3, spins, opt] = If[ConformalCorrelatorCount[3, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]] == 0, {},
    If[OptionValue["Overcomplete"],
@@ -178,6 +216,11 @@ ConformalCorrelatorExpressions[4, spins_, opt : OptionsPattern[]] :=
     ]
   ];
 
+spinIndices[2, spins_, derivs_, perm_] := Flatten[Table[{
+     Table[{Lowered[WeylSpinor[2]], Lowered[WeylSpinor[2]]}, Count[derivs[[;;, 2]], i]],
+     Table[Lowered[WeylSpinor[2]], 2 spins[[i,1]]], 
+     Table[Lowered[DottedWeylSpinor[2]], 2 spins[[i, 2]]]
+  }, {i, Length[spins]}]];
 spinIndices[3, spins_, derivs_, perm_] := 
   Table[Lowered[DiracSpinor[3]], 2 (Total[spins] + Length[derivs])];
 spinIndices[4, spins_, derivs_, perm_] := Flatten[Table[{
@@ -276,10 +319,9 @@ BuildTensor[
      indsPerX, siPerm, dsiPerm, siPos, dsiPos, fullPerm, baseexpr, 
      expr},
     indsPerX = 
-     Table[2 spins[[j]] + 
-       If[OddQ[dim], 2, 1] Count[derivs[[;; , 2]], j], {j, 
+     Table[2 spins[[j]] + Count[derivs[[;; , 2]], j] Which[dim == 4, {1, 1}, dim == 3, 2, dim == 2, {2, 0}], {j, 
        Length[\[CapitalDelta]s]}];
-    siPerm = If[EvenQ[dim],
+    siPerm = Which[dim == 4, (* 2D and 3D both have undotted indices on derivatives *)
       Flatten@{
         Table[
          Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
@@ -288,6 +330,7 @@ BuildTensor[
         Table[Total[indsPerX[[;; k, 1]]] - 2 spins[[k, 1]] + 
           Range[2 spins[[k, 1]]], {k, Length[\[CapitalDelta]s]}]
         },
+      dim == 3,
       Flatten@{
         Table[
          2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
@@ -295,6 +338,15 @@ BuildTensor[
           Length[derivs]}], 
         Table[Total[indsPerX[[;; k]]] - 2 spins[[k]] + 
           Range[2 spins[[k]]], {k, Length[\[CapitalDelta]s]}]
+        },
+      dim == 2,
+      Flatten@{
+        Table[
+         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
+          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j, 
+          Length[derivs]}], 
+        Table[Total[indsPerX[[;; k, 1]]] - 2 spins[[k, 1]] + 
+          Range[2 spins[[k, 1]]], {k, Length[\[CapitalDelta]s]}]
         }
       ];
     dsiPerm = If[EvenQ[dim],
@@ -316,7 +368,13 @@ BuildTensor[
          TensorSpinorDerivative[u[dim, perm, "DefectCodimension" -> q], dim, #2[[2]]], #1],
         "v", 
         TensorProduct[
-         TensorSpinorDerivative[v[dim, perm, "DefectCodimension" -> q], dim, #2[[2]]], #1]
+         TensorSpinorDerivative[v[dim, perm, "DefectCodimension" -> q], dim, #2[[2]]], #1],
+        "z", 
+        TensorProduct[
+         TensorSpinorDerivative[z[dim, perm], dim, #2[[2]]], #1],
+        "zb", 
+        TensorProduct[
+         TensorSpinorDerivative[zb[dim, perm], dim, #2[[2]]], #1]
         ] &, bd, Reverse[pd]];
     siPos = 
      Position[Indices[baseexpr], 

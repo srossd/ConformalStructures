@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[     79354,       2133]
-NotebookOptionsPosition[     76053,       2070]
-NotebookOutlinePosition[     76555,       2089]
-CellTagsIndexPosition[     76512,       2086]
+NotebookDataLength[     58653,       1618]
+NotebookOptionsPosition[     54657,       1546]
+NotebookOutlinePosition[     55161,       1565]
+CellTagsIndexPosition[     55118,       1562]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -25,1001 +25,477 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
+Cell[BoxData[{
+ RowBox[{"SigmaTensor", "[", "2", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"MatrixForm", "/@", 
+  RowBox[{"Components", "[", "%", "]"}]}]}], "Input",
+ CellChangeTimes->{{3.982157055240469*^9, 3.982157069886179*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"bedbaffb-1a0b-ce4f-aeb8-6cd7d3a12ef2"],
+
 Cell[BoxData[
+ RowBox[{"Tensor", "[", 
+  RowBox[{"{", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"sigma", "[", "]"}], ",", 
+     RowBox[{"Lowered", "[", 
+      RowBox[{"Spacetime", "[", "2", "]"}], "]"}], ",", 
+     RowBox[{"Lowered", "[", 
+      RowBox[{"WeylSpinor", "[", "2", "]"}], "]"}], ",", 
+     RowBox[{"Lowered", "[", 
+      RowBox[{"WeylSpinor", "[", "2", "]"}], "]"}]}], "}"}], "}"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{{3.98215705837632*^9, 3.9821570702351456`*^9}, 
+   3.9822267305184364`*^9},
+ CellLabel->"Out[1]=",ExpressionUUID->"9f3a4879-6846-fc4a-afb1-f18ee7e401e6"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {"1"}
+      },
+      GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[
+     SparseArray[Automatic, {1, 1}, 0, {1, {{0, 1}, {{1}}}, {1}}]]]], ",", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {"\[ImaginaryI]"}
+      },
+      GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[
+     SparseArray[
+      Automatic, {1, 1}, 0, {1, {{0, 1}, {{1}}}, {Complex[0, 1]}}]]]]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.98215705837632*^9, 3.9821570702351456`*^9}, 
+   3.98222673052195*^9},
+ CellLabel->"Out[2]=",ExpressionUUID->"986fcfd3-9666-334a-a80b-bd66c5922e40"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "/@", 
+  RowBox[{"Components", "[", 
+   RowBox[{"GammaTensor", "[", "2", "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.982226667031929*^9, 3.9822266787113667`*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"3476e008-45b2-7b4e-a421-5581d4b88840"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {"0", "1"},
+       {"1", "0"}
+      },
+      GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[
+     SparseArray[
+      Automatic, {2, 2}, 0, {1, {{0, 1, 2}, {{2}, {1}}}, {1, 1}}]]]], ",", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {"0", "\[ImaginaryI]"},
+       {
+        RowBox[{"-", "\[ImaginaryI]"}], "0"}
+      },
+      GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[
+     SparseArray[
+      Automatic, {2, 2}, 0, {
+       1, {{0, 1, 2}, {{2}, {1}}}, {Complex[0, 1], Complex[0, -1]}}]]]]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.982226668882881*^9, 3.98222667893754*^9}, 
+   3.9822267331745815`*^9},
+ CellLabel->"Out[3]=",ExpressionUUID->"59d06611-ab98-1e41-bd5e-7cf23ea41b67"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
  RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-  RowBox[{"3", ",", "4", ",", 
+  RowBox[{"2", ",", "4", ",", 
    RowBox[{"{", 
     RowBox[{"1", ",", "2"}], "}"}], ",", 
    RowBox[{"{", 
-    RowBox[{"1", ",", "1"}], "}"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.9766241666529713`*^9, 3.9766241772773533`*^9}},
- CellLabel->"In[2]:=",ExpressionUUID->"34c56e11-e997-ce42-b43f-f3b6a5f74ab7"],
+    RowBox[{"1", ",", "1"}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Simplify", "[", 
+  RowBox[{
+   RowBox[{"Normal", "@", 
+    RowBox[{"Components", "[", 
+     RowBox[{"%", "[", 
+      RowBox[{"[", "1", "]"}], "]"}], "]"}]}], "/.", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"Flatten", "@", 
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"x", "[", 
+             RowBox[{"i", ",", "1"}], "]"}], "+", 
+            RowBox[{"I", " ", 
+             RowBox[{"x", "[", 
+              RowBox[{"i", ",", "2"}], "]"}]}]}], "==", 
+           RowBox[{"z", "[", "i", "]"}]}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"x", "[", 
+             RowBox[{"i", ",", "1"}], "]"}], "-", 
+            RowBox[{"I", " ", 
+             RowBox[{"x", "[", 
+              RowBox[{"i", ",", "2"}], "]"}]}]}], "==", 
+           RowBox[{"zb", "[", "i", "]"}]}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", "4"}], "}"}]}], "]"}]}], ",", 
+     RowBox[{"Flatten", "@", 
+      RowBox[{"Array", "[", 
+       RowBox[{"x", ",", 
+        RowBox[{"{", 
+         RowBox[{"4", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.9766241666529713`*^9, 3.9766241772773533`*^9}, {
+   3.9806766854120502`*^9, 3.9806766948593655`*^9}, 3.980690196254919*^9, {
+   3.9807153279263687`*^9, 3.980715328110506*^9}, {3.9822263162650375`*^9, 
+   3.9822263439911766`*^9}, {3.9822266361539993`*^9, 3.9822266365539703`*^9}},
+ CellLabel->"In[20]:=",ExpressionUUID->"34c56e11-e997-ce42-b43f-f3b6a5f74ab7"],
 
 Cell[BoxData[
  RowBox[{"{", 
-  RowBox[{
-   RowBox[{"Tensor", "[", 
+  RowBox[{"Tensor", "[", 
+   RowBox[{"{", 
     RowBox[{"{", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"stringstruct", "[", 
-        RowBox[{"3", ",", 
-         RowBox[{"{", 
-          RowBox[{"1", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], "]"}], 
-   ",", 
-   RowBox[{"Tensor", "[", 
-    RowBox[{"{", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"stringstruct", "[", 
-        RowBox[{"3", ",", 
-         RowBox[{"{", 
-          RowBox[{"1", ",", "3", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], "]"}], 
-   ",", 
-   RowBox[{"Tensor", "[", 
-    RowBox[{"{", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"stringstruct", "[", 
-        RowBox[{"3", ",", 
-         RowBox[{"{", 
-          RowBox[{"1", ",", "4", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], "]"}], 
-   ",", 
-   RowBox[{"Tensor", "[", 
-    RowBox[{"{", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"stringstruct", "[", 
-        RowBox[{"3", ",", 
-         RowBox[{"{", 
-          RowBox[{"1", ",", "3", ",", "4", ",", "2"}], "}"}], ",", "None"}], 
-        "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-       RowBox[{"Lowered", "[", 
-        RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-    "]"}]}], "}"}]], "Output",
- CellChangeTimes->{{3.976624177887768*^9, 3.976624203088274*^9}},
- CellLabel->"Out[2]=",ExpressionUUID->"b6b92e8d-084a-8d44-a398-1367b78fd0e2"]
+     RowBox[{
+      RowBox[{"stringstruct", "[", 
+       RowBox[{"2", ",", 
+        RowBox[{"{", 
+         RowBox[{"1", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
+      RowBox[{"Lowered", "[", 
+       RowBox[{"WeylSpinor", "[", "2", "]"}], "]"}], ",", 
+      RowBox[{"Lowered", "[", 
+       RowBox[{"WeylSpinor", "[", "2", "]"}], "]"}]}], "}"}], "}"}], "]"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.976624177887768*^9, 3.976624203088274*^9}, {
+   3.980676688856228*^9, 3.9806766953168945`*^9}, 3.980690196886881*^9, 
+   3.9807152951049595`*^9, 3.98071532955768*^9, 3.980715388615631*^9, 
+   3.980715459838703*^9, 3.9807156728554955`*^9, {3.982226317388918*^9, 
+   3.982226344372692*^9}, 3.982226637334158*^9},
+ CellLabel->"Out[20]=",ExpressionUUID->"d0f5c222-e5f1-954e-a931-1125ce30ceaa"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"z", "[", "1", "]"}]}], "+", 
+     RowBox[{"z", "[", "2", "]"}]}], "}"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{{3.976624177887768*^9, 3.976624203088274*^9}, {
+   3.980676688856228*^9, 3.9806766953168945`*^9}, 3.980690196886881*^9, 
+   3.9807152951049595`*^9, 3.98071532955768*^9, 3.980715388615631*^9, 
+   3.980715459838703*^9, 3.9807156728554955`*^9, {3.982226317388918*^9, 
+   3.982226344372692*^9}, 3.982226637335909*^9},
+ CellLabel->"Out[21]=",ExpressionUUID->"0af2c5a4-1936-ef40-abab-5b74323610bc"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell[BoxData[
+Cell[BoxData[{
+ RowBox[{"ConformalCorrelators", "[", 
+  RowBox[{"2", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"3", "/", "2"}], ",", 
+     RowBox[{"3", "/", "2"}], ",", "1", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"1", "/", "2"}], ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"1", "/", "2"}], ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+   RowBox[{"{", "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}]}], "]"}], "\[IndentingNewLine]", 
  RowBox[{
+  RowBox[{"CanonicallyOrderedComponents", "[", 
+   RowBox[{"%", "[", 
+    RowBox[{"[", "1", "]"}], "]"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{"Simplify", "[", 
   RowBox[{
-   RowBox[{"ConformalCorrelatorExpressions", "[", 
-    RowBox[{"3", ",", 
-     RowBox[{"{", 
-      RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}]}], "]"}], "//", 
-   "Length"}], "//", "AbsoluteTiming"}]], "Input",
- CellChangeTimes->{{3.976623521678993*^9, 3.976623549471243*^9}, {
-  3.976623589214823*^9, 3.976623606119791*^9}, {3.976623952688898*^9, 
-  3.9766239825863304`*^9}, {3.976624143654217*^9, 3.9766241502713737`*^9}, {
-  3.976624239085943*^9, 3.976624280698185*^9}, {3.9766243612945576`*^9, 
-  3.976624378645632*^9}},
- CellLabel->"In[11]:=",ExpressionUUID->"08dd5f1b-6339-9745-bee5-16fb2ea45b1c"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{"292.9946762`", ",", "81"}], "}"}]], "Output",
- CellChangeTimes->{{3.97662352675902*^9, 3.9766235328730984`*^9}, {
-   3.9766235838482647`*^9, 3.9766236046334248`*^9}, 3.9766236389644623`*^9, {
-   3.9766239573714104`*^9, 3.9766239830596504`*^9}, 3.9766241505250587`*^9, {
-   3.9766242305027866`*^9, 3.97662426927429*^9}, 3.976624313959444*^9, {
-   3.976624366165539*^9, 3.976624375974142*^9}, 3.976624672028164*^9},
- CellLabel->"Out[11]=",ExpressionUUID->"a3a7433f-d169-ad41-8ce9-6ee6380e20b0"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"ConformalCorrelatorBuildingBlocks", "//", "DownValues"}]], "Input",
- CellChangeTimes->{{3.976623853294012*^9, 3.9766238904533215`*^9}},
- CellLabel->"In[20]:=",ExpressionUUID->"0fe6ba09-55a1-6149-8b01-d476d4033e4d"],
-
-Cell[BoxData[
- RowBox[{"{", 
+   RowBox[{"Normal", "[", "%", "]"}], "/.", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"Flatten", "@", 
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"x", "[", 
+             RowBox[{"i", ",", "1"}], "]"}], "+", 
+            RowBox[{"I", " ", 
+             RowBox[{"x", "[", 
+              RowBox[{"i", ",", "2"}], "]"}]}]}], "==", 
+           RowBox[{"z", "[", "i", "]"}]}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"x", "[", 
+             RowBox[{"i", ",", "1"}], "]"}], "-", 
+            RowBox[{"I", " ", 
+             RowBox[{"x", "[", 
+              RowBox[{"i", ",", "2"}], "]"}]}]}], "==", 
+           RowBox[{"zb", "[", "i", "]"}]}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", "4"}], "}"}]}], "]"}]}], ",", 
+     RowBox[{"Flatten", "@", 
+      RowBox[{"Array", "[", 
+       RowBox[{"x", ",", 
+        RowBox[{"{", 
+         RowBox[{"4", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Simplify", "[", 
   RowBox[{
    RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"2", ",", "2"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}]}], "]"}], "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "3", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3", ",", "4", ",", "2"}], "}"}], ",",
-             "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}]}], "]"}], 
-     "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "3", ",", "1"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "4", ",", "1"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "4", ",", "1"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "3", ",", "4", ",", "1"}], "}"}], ",",
-             "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "2"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}]}], "]"}], 
-     "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "4", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "3"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}]}], "]"}], 
-     "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "4", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "4", ",", "3"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"2", ",", "2"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}]}], "]"}], 
-     "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "3", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3", ",", "4", ",", "2"}], "}"}], ",",
-             "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}], ",", 
-       RowBox[{"\<\"Overcomplete\"\>", "\[Rule]", "True"}]}], "]"}], "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "1"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "1"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "4", ",", "1"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "3", ",", "1"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "4", ",", "1"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "4", ",", "1"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "3", ",", "4", ",", "1"}], "}"}], ",",
-             "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "2"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}], ",", 
-       RowBox[{"\<\"Overcomplete\"\>", "\[Rule]", "True"}]}], "]"}], "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "4", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "3"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}], ",", 
-       RowBox[{"\<\"Overcomplete\"\>", "\[Rule]", "True"}]}], "]"}], "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "4", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"1", ",", "2", ",", "4", ",", "3"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"2", ",", "2"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}], ",", 
-       RowBox[{"\<\"Overcomplete\"\>", "\[Rule]", "True"}]}], "]"}], "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "3", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "4", ",", "2"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "3", ",", "4", ",", "2"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3", ",", "4", ",", "2"}], "}"}], ",",
-             "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{"3", ",", "4", ",", 
-       RowBox[{"{", 
-        RowBox[{"2", ",", "3"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{"1", ",", "1"}], "}"}], ",", 
-       RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", "None"}], ",", 
-       RowBox[{"\<\"Overcomplete\"\>", "\[Rule]", "True"}]}], "]"}], "]"}], "\[RuleDelayed]", 
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "4", ",", "3"}], "}"}], ",", "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}], ",", 
-      RowBox[{"Tensor", "[", 
-       RowBox[{"{", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"stringstruct", "[", 
-           RowBox[{"3", ",", 
-            RowBox[{"{", 
-             RowBox[{"2", ",", "1", ",", "4", ",", "3"}], "}"}], ",", 
-            "None"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}], ",", 
-          RowBox[{"Lowered", "[", 
-           RowBox[{"DiracSpinor", "[", "3", "]"}], "]"}]}], "}"}], "}"}], 
-       "]"}]}], "}"}]}], ",", 
-   RowBox[{
-    RowBox[{"HoldPattern", "[", 
-     RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-      RowBox[{
-      "ConformalStructures`Private`dim_", ",", 
-       "ConformalStructures`Private`npts_", ",", 
-       RowBox[{"{", 
-        RowBox[{
-        "ConformalStructures`Private`i_", ",", 
-         "ConformalStructures`Private`j_"}], "}"}], ",", 
-       RowBox[{"ConformalStructures`Private`signs_List", ":", 
-        RowBox[{"{", 
-         RowBox[{"1", ",", "1"}], "}"}]}], ",", 
-       RowBox[{"ConformalStructures`Private`opt", ":", 
-        RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], "]"}], "\[RuleDelayed]", 
+    RowBox[{"%", "[", 
+     RowBox[{"[", 
+      RowBox[{"1", ",", "1", ",", "1"}], "]"}], "]"}], 
     RowBox[{"(", 
      RowBox[{
-      RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
-       RowBox[{
-       "ConformalStructures`Private`dim", ",", 
-        "ConformalStructures`Private`npts", ",", 
+      RowBox[{"z", "[", "1", "]"}], "-", 
+      RowBox[{"z", "[", "2", "]"}]}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"z", "[", "3", "]"}], "-", 
+      RowBox[{"z", "[", "4", "]"}]}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"zb", "[", "1", "]"}], "-", 
+      RowBox[{"zb", "[", "2", "]"}]}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"zb", "[", "3", "]"}], "-", 
+      RowBox[{"zb", "[", "4", "]"}]}], ")"}]}], ",", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"z", "[", "1", "]"}], ">", 
+     RowBox[{"z", "[", "2", "]"}], ">", 
+     RowBox[{"z", "[", "3", "]"}], ">", 
+     RowBox[{"z", "[", "4", "]"}]}], "&&", 
+    RowBox[{
+     RowBox[{"zb", "[", "1", "]"}], ">", 
+     RowBox[{"zb", "[", "2", "]"}], ">", 
+     RowBox[{"zb", "[", "3", "]"}], ">", 
+     RowBox[{"zb", "[", "4", "]"}]}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.980715479680029*^9, 3.980715520026947*^9}, {
+   3.9807156777348976`*^9, 3.9807156785102863`*^9}, {3.9817966296166973`*^9, 
+   3.981796713660591*^9}, {3.981812176866726*^9, 3.981812225674322*^9}, {
+   3.982226503893112*^9, 3.9822265511668167`*^9}, 3.982226614722313*^9},
+ CellLabel->"In[16]:=",ExpressionUUID->"128dcd0a-49d9-5b49-85a7-dbc86e5d6f71"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"Tensor", "[", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"correlator", "[", 
+       RowBox[{"2", ",", 
         RowBox[{"{", 
          RowBox[{
-         "ConformalStructures`Private`i", ",", 
-          "ConformalStructures`Private`j"}], "}"}], ",", 
-        "ConformalStructures`Private`signs", ",", 
-        "ConformalStructures`Private`opt"}], "]"}], "=", 
-      RowBox[{"If", "[", 
-       RowBox[{
-        RowBox[{"OptionValue", "[", "\<\"Overcomplete\"\>", "]"}], ",", 
-        RowBox[{"Table", "[", 
+          FractionBox["3", "2"], ",", 
+          FractionBox["3", "2"], ",", "1", ",", "1"}], "}"}], ",", 
+        RowBox[{"{", 
          RowBox[{
-          RowBox[{"If", "[", 
-           RowBox[{
-            RowBox[{
-             RowBox[{
-             "ConformalStructures`Private`i", "\[NotEqual]", 
-              "ConformalStructures`Private`j"}], "||", 
-             RowBox[{
-              RowBox[{"Length", "[", "ConformalStructures`Private`sub", "]"}],
-               ">", "0"}]}], ",", 
-            RowBox[{"StringStructure", "[", 
-             RowBox[{"ConformalStructures`Private`dim", ",", 
-              RowBox[{"{", 
-               RowBox[{"ConformalStructures`Private`i", ",", 
-                RowBox[{"Sequence", "@@", "ConformalStructures`Private`sub"}],
-                 ",", "ConformalStructures`Private`j"}], "}"}], ",", 
-              "ConformalStructures`Private`signs", ",", 
-              RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", 
-               RowBox[{
-               "OptionValue", "[", "\<\"DefectCodimension\"\>", "]"}]}]}], 
-             "]"}], ",", "Nothing"}], "]"}], ",", 
           RowBox[{"{", 
-           RowBox[{"ConformalStructures`Private`sub", ",", 
-            RowBox[{"Select", "[", 
-             RowBox[{
-              RowBox[{"Subsets", "[", 
-               RowBox[{"If", "[", 
-                RowBox[{
-                 RowBox[{
-                  RowBox[{
-                  "OptionValue", "[", "\<\"DefectCodimension\"\>", "]"}], "===",
-                   "None"}], ",", 
-                 RowBox[{"Complement", "[", 
-                  RowBox[{
-                   RowBox[{
-                   "Range", "[", "ConformalStructures`Private`npts", "]"}], ",", 
-                   RowBox[{"{", 
-                    RowBox[{
-                    "ConformalStructures`Private`i", ",", 
-                    "ConformalStructures`Private`j"}], "}"}]}], "]"}], ",", 
-                 RowBox[{"Complement", "[", 
-                  RowBox[{
-                   RowBox[{"Prepend", "[", 
-                    RowBox[{
-                    RowBox[{"Flatten", "[", 
-                    RowBox[{
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    "ConformalStructures`Private`k", ",", "\<\"Defect\"\>"}], 
-                    "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "ConformalStructures`Private`k", 
-                    ",", "\<\"Transverse\"\>"}], "}"}]}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "ConformalStructures`Private`k", ",", 
-                    "ConformalStructures`Private`npts"}], "}"}]}], "]"}], ",",
-                     "1"}], "]"}], ",", "0"}], "]"}], ",", 
-                   RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    "ConformalStructures`Private`i", 
-                    ",", "\<\"Transverse\"\>"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "ConformalStructures`Private`j", 
-                    ",", "\<\"Transverse\"\>"}], "}"}]}], "}"}]}], "]"}]}], 
-                "]"}], "]"}], ",", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"OddQ", "[", "ConformalStructures`Private`dim", "]"}],
-                 "||", 
-                RowBox[{
-                 RowBox[{
-                  SuperscriptBox[
-                   RowBox[{"(", 
-                    RowBox[{"-", "1"}], ")"}], 
-                   RowBox[{
-                    RowBox[{"Length", "[", 
-                    RowBox[{"If", "[", 
-                    RowBox[{
-                    RowBox[{"EvenQ", "[", 
-                    RowBox[{
-                    "OptionValue", "[", "\<\"DefectCodimension\"\>", "]"}], 
-                    "]"}], ",", 
-                    RowBox[{"DeleteCases", "[", 
-                    RowBox[{"#1", ",", "0"}], "]"}], ",", "#1"}], "]"}], 
-                    "]"}], "+", 
-                    FractionBox["ConformalStructures`Private`dim", "2"]}]], " ", 
-                  RowBox[{
-                  "Times", "@@", "ConformalStructures`Private`signs"}]}], "\[Equal]", 
-                 RowBox[{"-", "1"}]}]}], "&"}]}], "]"}]}], "}"}]}], "]"}], ",", 
-        RowBox[{"IndependentSet", "[", 
-         RowBox[{"ConformalCorrelatorBuildingBlocks", "[", 
+           RowBox[{
+            FractionBox["1", "2"], ",", "0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            FractionBox["1", "2"], ",", "0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+        RowBox[{"{", "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], ",", "None", ",",
+         "1"}], "]"}], ",", 
+      RowBox[{"Lowered", "[", 
+       RowBox[{"WeylSpinor", "[", "2", "]"}], "]"}], ",", 
+      RowBox[{"Lowered", "[", 
+       RowBox[{"WeylSpinor", "[", "2", "]"}], "]"}]}], "}"}], "}"}], "]"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.98071551247962*^9, 3.9807155203245564`*^9}, {
+   3.980715674422468*^9, 3.9807156796889763`*^9}, 3.9817966404322205`*^9, {
+   3.981796698201393*^9, 3.9817967139321594`*^9}, {3.9818121961820984`*^9, 
+   3.981812226097534*^9}, 3.9822265182081146`*^9, 3.9822265516010265`*^9, 
+   3.982226615106159*^9},
+ CellLabel->"Out[16]=",ExpressionUUID->"c30425ef-917d-ae49-ae50-b3f475204109"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      FractionBox[
+       RowBox[{
+        RowBox[{"x", "[", 
+         RowBox[{"1", ",", "1"}], "]"}], "+", 
+        RowBox[{"\[ImaginaryI]", " ", 
+         RowBox[{"x", "[", 
+          RowBox[{"1", ",", "2"}], "]"}]}], "-", 
+        RowBox[{"x", "[", 
+         RowBox[{"2", ",", "1"}], "]"}], "-", 
+        RowBox[{"\[ImaginaryI]", " ", 
+         RowBox[{"x", "[", 
+          RowBox[{"2", ",", "2"}], "]"}]}]}], 
+       RowBox[{
+        SuperscriptBox[
+         RowBox[{"(", 
           RowBox[{
-          "ConformalStructures`Private`dim", ",", 
-           "ConformalStructures`Private`npts", ",", 
-           RowBox[{"{", 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"x", "[", 
+               RowBox[{"1", ",", "1"}], "]"}], "-", 
+              RowBox[{"x", "[", 
+               RowBox[{"2", ",", "1"}], "]"}]}], ")"}], "2"], "+", 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"x", "[", 
+               RowBox[{"1", ",", "2"}], "]"}], "-", 
+              RowBox[{"x", "[", 
+               RowBox[{"2", ",", "2"}], "]"}]}], ")"}], "2"]}], ")"}], "2"], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          SuperscriptBox[
+           RowBox[{"(", 
             RowBox[{
-            "ConformalStructures`Private`i", ",", 
-             "ConformalStructures`Private`j"}], "}"}], ",", 
-           "ConformalStructures`Private`signs", ",", 
-           RowBox[{"\<\"DefectCodimension\"\>", "\[Rule]", 
-            RowBox[{"OptionValue", "[", "\<\"DefectCodimension\"\>", "]"}]}], 
-           ",", 
-           RowBox[{"\<\"Overcomplete\"\>", "\[Rule]", "True"}]}], "]"}], 
-         "]"}]}], "]"}]}], ")"}]}]}], "}"}]], "Output",
- CellChangeTimes->{{3.9766238697018147`*^9, 3.97662389079747*^9}},
- CellLabel->"Out[20]=",ExpressionUUID->"815d1ff4-eb85-8542-af42-4fd0904f1a63"]
+             RowBox[{"x", "[", 
+              RowBox[{"3", ",", "1"}], "]"}], "-", 
+             RowBox[{"x", "[", 
+              RowBox[{"4", ",", "1"}], "]"}]}], ")"}], "2"], "+", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"x", "[", 
+              RowBox[{"3", ",", "2"}], "]"}], "-", 
+             RowBox[{"x", "[", 
+              RowBox[{"4", ",", "2"}], "]"}]}], ")"}], "2"]}], ")"}]}]]}
+    },
+    GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[
+   SparseArray[
+    Automatic, {1, 1}, 0, {
+     1, {{0, 1}, {{
+       1}}}, {((ConformalStructures`x[1, 1] - ConformalStructures`x[
+           2, 1])^2 + (ConformalStructures`x[1, 2] - ConformalStructures`x[
+           2, 2])^2)^(-2) (ConformalStructures`x[1, 1] + 
+        Complex[0, 1] ConformalStructures`x[1, 2] - ConformalStructures`x[
+        2, 1] + Complex[0, -1] ConformalStructures`x[2, 2])/((
+         ConformalStructures`x[3, 1] - ConformalStructures`x[4, 1])^2 + (
+         ConformalStructures`x[3, 2] - ConformalStructures`x[
+         4, 2])^2)}}]]]]], "Output",
+ CellChangeTimes->{{3.98071551247962*^9, 3.9807155203245564`*^9}, {
+   3.980715674422468*^9, 3.9807156796889763`*^9}, 3.9817966404322205`*^9, {
+   3.981796698201393*^9, 3.9817967139321594`*^9}, {3.9818121961820984`*^9, 
+   3.981812226097534*^9}, 3.9822265182081146`*^9, 3.9822265516010265`*^9, 
+   3.9822266151088886`*^9},
+ CellLabel->
+  "Out[17]//MatrixForm=",ExpressionUUID->"75666b1b-13cd-d14f-aaef-\
+0e47c16b3a44"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"{", 
+    FractionBox["1", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"z", "[", "1", "]"}], "-", 
+        RowBox[{"z", "[", "2", "]"}]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"z", "[", "3", "]"}], "-", 
+        RowBox[{"z", "[", "4", "]"}]}], ")"}], " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"zb", "[", "1", "]"}], "-", 
+         RowBox[{"zb", "[", "2", "]"}]}], ")"}], "2"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"zb", "[", "3", "]"}], "-", 
+        RowBox[{"zb", "[", "4", "]"}]}], ")"}]}]], "}"}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.98071551247962*^9, 3.9807155203245564`*^9}, {
+   3.980715674422468*^9, 3.9807156796889763`*^9}, 3.9817966404322205`*^9, {
+   3.981796698201393*^9, 3.9817967139321594`*^9}, {3.9818121961820984`*^9, 
+   3.981812226097534*^9}, 3.9822265182081146`*^9, 3.9822265516010265`*^9, 
+   3.9822266151356144`*^9},
+ CellLabel->"Out[18]=",ExpressionUUID->"1fb0eea1-8cd4-e144-98b3-96052a48cc70"],
+
+Cell[BoxData[
+ FractionBox["1", 
+  RowBox[{
+   RowBox[{"zb", "[", "1", "]"}], "-", 
+   RowBox[{"zb", "[", "2", "]"}]}]]], "Output",
+ CellChangeTimes->{{3.98071551247962*^9, 3.9807155203245564`*^9}, {
+   3.980715674422468*^9, 3.9807156796889763`*^9}, 3.9817966404322205`*^9, {
+   3.981796698201393*^9, 3.9817967139321594`*^9}, {3.9818121961820984`*^9, 
+   3.981812226097534*^9}, 3.9822265182081146`*^9, 3.9822265516010265`*^9, 
+   3.982226615136614*^9},
+ CellLabel->"Out[19]=",ExpressionUUID->"229532ea-6889-9140-9638-d1f98039825d"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2069,7 +1545,7 @@ Cell[BoxData[
 }, Open  ]]
 },
 Evaluator->"Local 2",
-WindowSize->{1428, 719.25},
+WindowSize->{1138.5, 638.25},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
 CommonDefaultFormatTypes->{"Output"->StandardForm},
 Magnification:>1. Inherited,
@@ -2090,50 +1566,59 @@ CellTagsIndex->{}
 Notebook[{
 Cell[554, 20, 212, 3, 28, "Input",ExpressionUUID->"f1c307d0-f868-3042-be7f-9b79d1ccd148"],
 Cell[CellGroupData[{
-Cell[791, 27, 375, 8, 28, "Input",ExpressionUUID->"34c56e11-e997-ce42-b43f-f3b6a5f74ab7"],
-Cell[1169, 37, 2043, 57, 89, "Output",ExpressionUUID->"b6b92e8d-084a-8d44-a398-1367b78fd0e2"]
+Cell[791, 27, 307, 5, 47, "Input",ExpressionUUID->"bedbaffb-1a0b-ce4f-aeb8-6cd7d3a12ef2"],
+Cell[1101, 34, 591, 15, 32, "Output",ExpressionUUID->"9f3a4879-6846-fc4a-afb1-f18ee7e401e6"],
+Cell[1695, 51, 1309, 37, 32, "Output",ExpressionUUID->"986fcfd3-9666-334a-a80b-bd66c5922e40"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[3249, 99, 645, 13, 28, "Input",ExpressionUUID->"08dd5f1b-6339-9745-bee5-16fb2ea45b1c"],
-Cell[3897, 114, 532, 8, 32, "Output",ExpressionUUID->"a3a7433f-d169-ad41-8ce9-6ee6380e20b0"]
+Cell[3041, 93, 281, 5, 28, "Input",ExpressionUUID->"3476e008-45b2-7b4e-a421-5581d4b88840"],
+Cell[3325, 100, 1444, 42, 45, "Output",ExpressionUUID->"59d06611-ab98-1e41-bd5e-7cf23ea41b67"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[4466, 127, 238, 3, 28, "Input",ExpressionUUID->"0fe6ba09-55a1-6149-8b01-d476d4033e4d"],
-Cell[4707, 132, 34376, 889, 1365, "Output",ExpressionUUID->"815d1ff4-eb85-8542-af42-4fd0904f1a63"]
+Cell[4806, 147, 1813, 48, 66, "Input",ExpressionUUID->"34c56e11-e997-ce42-b43f-f3b6a5f74ab7"],
+Cell[6622, 197, 886, 20, 32, "Output",ExpressionUUID->"d0f5c222-e5f1-954e-a931-1125ce30ceaa"],
+Cell[7511, 219, 618, 13, 32, "Output",ExpressionUUID->"0af2c5a4-1936-ef40-abab-5b74323610bc"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[39120, 1026, 699, 15, 28, "Input",ExpressionUUID->"25084f65-5ec3-d248-9862-f717f0fa7f7b"],
-Cell[39822, 1043, 1351, 38, 47, "Output",ExpressionUUID->"d1e699b4-636f-494b-9d9a-3583e3f28dce"]
+Cell[8166, 237, 3365, 96, 85, "Input",ExpressionUUID->"128dcd0a-49d9-5b49-85a7-dbc86e5d6f71"],
+Cell[11534, 335, 1495, 38, 74, "Output",ExpressionUUID->"c30425ef-917d-ae49-ae50-b3f475204109"],
+Cell[13032, 375, 3019, 79, 55, "Output",ExpressionUUID->"75666b1b-13cd-d14f-aaef-0e47c16b3a44"],
+Cell[16054, 456, 1099, 29, 49, "Output",ExpressionUUID->"1fb0eea1-8cd4-e144-98b3-96052a48cc70"],
+Cell[17156, 487, 531, 10, 48, "Output",ExpressionUUID->"229532ea-6889-9140-9638-d1f98039825d"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[41210, 1086, 681, 18, 28, "Input",ExpressionUUID->"b24dc891-23b5-7f4e-b2e8-90af1d189609"],
-Cell[41894, 1106, 10690, 274, 214, "Output",ExpressionUUID->"59f2b89d-bc19-f448-ba2d-f4d97e6114d9"]
+Cell[17724, 502, 699, 15, 28, "Input",ExpressionUUID->"25084f65-5ec3-d248-9862-f717f0fa7f7b"],
+Cell[18426, 519, 1351, 38, 47, "Output",ExpressionUUID->"d1e699b4-636f-494b-9d9a-3583e3f28dce"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[52621, 1385, 673, 17, 28, "Input",ExpressionUUID->"8e4fd9e8-6e98-954b-9ff8-f3e112f7ea01"],
-Cell[53297, 1404, 1918, 53, 69, "Output",ExpressionUUID->"66cc9059-13c3-8a4e-ac4a-9748ad6c847c"]
+Cell[19814, 562, 681, 18, 28, "Input",ExpressionUUID->"b24dc891-23b5-7f4e-b2e8-90af1d189609"],
+Cell[20498, 582, 10690, 274, 214, "Output",ExpressionUUID->"59f2b89d-bc19-f448-ba2d-f4d97e6114d9"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[55252, 1462, 711, 20, 28, "Input",ExpressionUUID->"95cade5e-9a95-6e43-a584-654e5e04be27"],
-Cell[55966, 1484, 1024, 29, 45, "Output",ExpressionUUID->"87792309-a03e-c24b-8df8-98c75636e3c1"]
+Cell[31225, 861, 673, 17, 28, "Input",ExpressionUUID->"8e4fd9e8-6e98-954b-9ff8-f3e112f7ea01"],
+Cell[31901, 880, 1918, 53, 69, "Output",ExpressionUUID->"66cc9059-13c3-8a4e-ac4a-9748ad6c847c"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[57027, 1518, 445, 10, 28, "Input",ExpressionUUID->"c4fa673a-3fc3-c64e-a7c8-8dd209f3b0cb"],
-Cell[57475, 1530, 1610, 52, 58, "Output",ExpressionUUID->"e1317c2b-a492-4a4a-ac5c-988177f292bc"]
+Cell[33856, 938, 711, 20, 28, "Input",ExpressionUUID->"95cade5e-9a95-6e43-a584-654e5e04be27"],
+Cell[34570, 960, 1024, 29, 45, "Output",ExpressionUUID->"87792309-a03e-c24b-8df8-98c75636e3c1"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[59122, 1587, 987, 24, 47, "Input",ExpressionUUID->"a94e23f7-6758-ed47-9fc9-e030c7169a3b"],
-Cell[60112, 1613, 451, 11, 26, "Message",ExpressionUUID->"38c46794-696f-3e49-a6b7-cf992e872c47"],
-Cell[60566, 1626, 417, 10, 22, "Message",ExpressionUUID->"1f79f1ea-09c4-f840-b554-d182c36df603"],
-Cell[60986, 1638, 417, 10, 22, "Message",ExpressionUUID->"f506f21e-cfd4-e744-b889-ee9178c1eb99"],
-Cell[61406, 1650, 3040, 82, 51, "Output",ExpressionUUID->"9f42bb51-ac90-2246-a01a-d1ad3077b051"],
-Cell[64449, 1734, 419, 10, 26, "Message",ExpressionUUID->"427f631b-6f6d-e746-be7e-4edc8257dc60"],
-Cell[64871, 1746, 342, 9, 26, "Message",ExpressionUUID->"d58e22ca-6705-bd40-b07b-250576954a0b"],
-Cell[65216, 1757, 1656, 45, 51, "Output",ExpressionUUID->"163579bd-6038-1940-b9a2-74ac032d0e66"]
+Cell[35631, 994, 445, 10, 28, "Input",ExpressionUUID->"c4fa673a-3fc3-c64e-a7c8-8dd209f3b0cb"],
+Cell[36079, 1006, 1610, 52, 58, "Output",ExpressionUUID->"e1317c2b-a492-4a4a-ac5c-988177f292bc"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[66909, 1807, 257, 5, 28, "Input",ExpressionUUID->"7fafdb3c-7ef2-4d43-8c41-cd6bd39e59bb"],
-Cell[67169, 1814, 8868, 253, 126, "Output",ExpressionUUID->"cb349d75-cacb-a746-aa8b-c3db25684302"]
+Cell[37726, 1063, 987, 24, 47, "Input",ExpressionUUID->"a94e23f7-6758-ed47-9fc9-e030c7169a3b"],
+Cell[38716, 1089, 451, 11, 26, "Message",ExpressionUUID->"38c46794-696f-3e49-a6b7-cf992e872c47"],
+Cell[39170, 1102, 417, 10, 26, "Message",ExpressionUUID->"1f79f1ea-09c4-f840-b554-d182c36df603"],
+Cell[39590, 1114, 417, 10, 26, "Message",ExpressionUUID->"f506f21e-cfd4-e744-b889-ee9178c1eb99"],
+Cell[40010, 1126, 3040, 82, 51, "Output",ExpressionUUID->"9f42bb51-ac90-2246-a01a-d1ad3077b051"],
+Cell[43053, 1210, 419, 10, 26, "Message",ExpressionUUID->"427f631b-6f6d-e746-be7e-4edc8257dc60"],
+Cell[43475, 1222, 342, 9, 26, "Message",ExpressionUUID->"d58e22ca-6705-bd40-b07b-250576954a0b"],
+Cell[43820, 1233, 1656, 45, 51, "Output",ExpressionUUID->"163579bd-6038-1940-b9a2-74ac032d0e66"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45513, 1283, 257, 5, 28, "Input",ExpressionUUID->"7fafdb3c-7ef2-4d43-8c41-cd6bd39e59bb"],
+Cell[45773, 1290, 8868, 253, 126, "Output",ExpressionUUID->"cb349d75-cacb-a746-aa8b-c3db25684302"]
 }, Open  ]]
 }
 ]

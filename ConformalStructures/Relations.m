@@ -70,14 +70,16 @@ ISReduce[tensors_, opt :OptionsPattern[]] := Module[{comps, reduced, indices},
 	]
 ];
 
-uvpt[dim_, None] := {
+uvpt[2, None] := {x[1, i_] :> {-((I (z - zb))/((-2 + z) (-2 + zb))), -((-z - zb + z zb)/((-2 + z) (-2 + zb)))}[[i]], x[2, _] :> 0, x[3, i_] :> -Boole[i == 2], x[4, i_] :> Boole[i == 2]};
+
+uvpt[dim_, None] /; dim > 2 := {
    x[1, i_] :> Which[i == dim - 1, (Sqrt[-u^2 - (-1 + v)^2 + 2 u (1 + v)]/(u - 2(v + 1))), i == dim, (v - 1)/(u - 2(v + 1)), True, 0],
    x[2,  _] :> 0, 
    x[3, i_] :> -Boole[i == dim], 
    x[4, i_] :> Boole[i == dim]
 };
 
-uvpt[dim_, q_Integer] /; q > 1 := 
+uvpt[dim_, q_Integer] /; dim > 2 && q > 1 := 
    {x[1, i_] :> Boole[i == 4],
  x[2, 3] -> Sqrt[-((-1 + v^2) (8 u v^2 + 2 v^3 + 4 u Sqrt[v^2 (-1 + 2 u + v) (1 + 2 u + v)] + v (-1 + 8 u^2 + 2 Sqrt[v^2 (-1 + 2 u + v) (1 + 2 u + v)])))]/Sqrt[v], 
  x[2, 4] -> 2 u v + v^2 + Sqrt[v^2 (-1 + 2 u + v) (1 + 2 u + v)], 
@@ -88,11 +90,14 @@ uvpt[dim_, 1] = {x[1, 4] -> 1, x[1, _] -> 0, x[2, 4] -> 1, x[2, 3] -> 2 Sqrt[u],
 sct[dim_, x_, b_] := (x - b x . Components[MetricTensor[dim]] . x)/(1 - 2 (b . Components[MetricTensor[dim]] . x) + (b . Components[MetricTensor[dim]] . b) (x . Components[MetricTensor[dim]] . x));
 
 genericPoint[dim_, q_, z_] := Simplify@Flatten@Table[x[i, j] -> sct[dim, Table[x[i, kk] /. uvpt[dim, q], {kk, dim}], If[q===None,PadLeft,PadRight][{z}, dim]][[j]], {i, 4}, {j, dim}];
-genericPoint[dim_, q_, z_, i_] := genericPoint[dim, q, z] /. Thread[crossRatios[q] -> safeCrossRatios[q][[i]]];
+genericPoint[dim_, q_, z_, i_] := genericPoint[dim, q, z] /. Thread[crossRatios[dim, q] -> safeCrossRatios[q][[i]]];
 
-crossRatios[None] = {u, v};
-crossRatios[1] = {u};
-crossRatios[q_Integer] /; q > 1 := {u,v};
+crossRatios[2, None] := {z, zb};
+Format[zb, TraditionalForm] := OverBar[z];
+
+crossRatios[dim_, None] /; dim > 2 = {u, v};
+crossRatios[dim_, 1] /; dim > 2 = {u};
+crossRatios[dim_, q_Integer] /; dim > 2 && q > 1 := {u,v};
 
 (* solutions (u, v) to u = p^2, v = q^2, (u - v - 1)^2 - 4v^2 = r^2, found using ratpoints *)
 safeCrossRatios[None] := {{25/16, 9/16}, {1369/2704, 9/16}, {755161/641601, 1156/2025}, {45369/
@@ -253,15 +258,15 @@ unrollRows[mat_, subset_, numRows_] :=
     Length[mat[[1]]]}];
     
 StructureRelations[structs_] := StructureRelations[structs] = If[
-     First@Cases[structs, c_correlator :> c[[-2]], All] =!= None || (Length[structs] >= 4 || First@Cases[structs, c_correlator :> Length[c[[2]]], All] >= 4), 
+     First@Cases[structs, c_correlator :> c[[-2]], All] =!= None || (Length[structs] >= 4 || First@Cases[structs, c_correlator :> Length[c[[2]]], All] >= 4) && First@Cases[structs, c_correlator :> c[[1]], All] > 2, 
    	 fittedRelations[structs],
    	 symbolicRelations[structs]
   ];
   
-crossRatioAssumptions[q_] := If[q === None, And @@ (1/2 < # < 2 & /@ crossRatios[q]), And @@ (0 < # & /@ crossRatios[q])];
+crossRatioAssumptions[dim_, q_] := If[q === None, And @@ (1/2 < # < 2 & /@ crossRatios[dim, q]), And @@ (0 < # & /@ crossRatios[dim, q])];
 symbolicRelations[structs_] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
-   If[# === {}, {}, FullSimplify[RowReduce[#, ZeroTest -> (Function[expr, Simplify[expr, crossRatioAssumptions[q]] === 0])], crossRatioAssumptions[q]]] &@
-   FullSimplify[NullSpace[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, z], {z, 2, 5}], 1]], crossRatioAssumptions[q]]
+   If[# === {}, {}, FullSimplify[RowReduce[#, ZeroTest -> (Function[expr, Simplify[expr, crossRatioAssumptions[dim, q]] === 0])], crossRatioAssumptions[dim, q]]] &@
+   FullSimplify[NullSpace[FullSimplify[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, zz], {zz, If[dim == 2, Range[3, Length[structs] + 5], Range[2, 5]]}], 1], crossRatioAssumptions[dim, q]]], crossRatioAssumptions[dim, q]]
 ];
     
 fittedRelations[structs_] := 
@@ -302,7 +307,7 @@ fittedRelations[structs_] :=
          ];
        Do[If[
           ans[{j, idxs[[i]]}] === -None, 
-          ans[{j, idxs[[i]]}] = -((fitRational[sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, "Prefactors" -> Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, True, {1 &}]] @@ crossRatios[q]) /. _None -> None)], 
+          ans[{j, idxs[[i]]}] = -((fitRational[sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, "Prefactors" -> Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, True, {1 &}]] @@ crossRatios[dim, q]) /. _None -> None)], 
           {j, Length[other]}, {i, Length[idxs]}
        ];
        step = step + 1
@@ -352,7 +357,7 @@ fittedRelations[structs_] :=
          ];
          Do[If[
           ans[{j, idxs[[i]]}] === -None, 
-          ans[{j, idxs[[i]]}] = -((fitRational[sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, "Prefactors" -> Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, True, {1 &}]] @@ crossRatios[q]) /. _None -> None)], 
+          ans[{j, idxs[[i]]}] = -((fitRational[sols /. {{uvs__}, b_} :> {uvs, b[[j, i]]}, step, "Prefactors" -> Which[q === None, {1 &, Sqrt[#1] &, Sqrt[#2] &, Sqrt[#1 #2] &}, q === 2, {1 &, Sqrt[1 - #2^2] &}, True, {1 &}]] @@ crossRatios[dim, q]) /. _None -> None)], 
           {j, Length[other]}, {i, Length[idxs]}
          ];
        
