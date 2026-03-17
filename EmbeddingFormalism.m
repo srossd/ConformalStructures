@@ -103,7 +103,7 @@ ChargeConjugationMatrix[dim_, OptionsPattern[]] :=
     If[OptionValue["Raised"], Raised, Lowered][DiracSpinor[dim]]}}];
     
 BuildTensor[{chargeconj[], Lowered[WeylSpinor[dim_]], Lowered[WeylSpinor[dim_]]}] := Components@Contract[TensorProduct[WeylProjection[dim], WeylProjection[dim, "Transpose" -> True]], {{2, 3}}];
-BuildTensor[{chargeconj[], Lowered[DottedWeylSpinor[dim_]], Lowered[DottedWeylSpinor[dim_]]}] := Components@Contract[TensorProduct[WeylProjection[4, "Dotted" -> True], WeylProjection[4, "Transpose" -> True, "Dotted" -> True]], {{2, 3}}];
+BuildTensor[{chargeconj[], Lowered[DottedWeylSpinor[dim_]], Lowered[DottedWeylSpinor[dim_]]}] := Components@Contract[TensorProduct[WeylProjection[dim, "Dotted" -> True], WeylProjection[dim, "Transpose" -> True, "Dotted" -> True]], {{2, 3}}];
 BuildTensor[{chargeconj[], Raised[WeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] := Inverse@Transpose@Components[WeylChargeConjugationMatrix[dim]];
 BuildTensor[{chargeconj[], Raised[DottedWeylSpinor[dim_]], Raised[DottedWeylSpinor[dim_]]}] := Inverse@Transpose@Components[WeylChargeConjugationMatrix[dim, "Dotted" -> True]];
     
@@ -161,7 +161,7 @@ SigmaTensor[dim_, opt : OptionsPattern[]] /; EvenQ[dim] :=
        {2, False},
        {Lowered[WeylSpinor[dim]], Lowered[WeylSpinor[dim]]},
        {2, True},
-       {Lowered[DottedWeylSpinor[dim]], Lowered[DottedWeylSpinor[dim]]}
+       {Raised[DottedWeylSpinor[dim]], Raised[DottedWeylSpinor[dim]]}
        ]}}];
 BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]], 
      Lowered[WeylSpinor[dim_]], Lowered[DottedWeylSpinor[dim_]]}] /; 
@@ -173,13 +173,31 @@ BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]],
      WeylProjection[dim, "Transpose" -> True, "Dotted" -> True]], {{2,
        4}, {5, 6}}], {2, 1, 3}]
 BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]], 
-     Raised[DottedWeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] /; 
+     Lowered[WeylSpinor[dim_]], Lowered[WeylSpinor[dim_]]}] /; 
   Mod[dim, 4] == 2 := 
  SparseArray@TensorTranspose[
   Components@
    Contract[
     TensorProduct[WeylProjection[dim], GammaTensor[dim], 
+     WeylProjection[dim, "Transpose" -> True]], {{2,
+       4}, {5, 6}}], {2, 1, 3}]
+BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]], 
+     Raised[DottedWeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] /; 
+  Mod[dim, 4] == 0 := 
+ SparseArray@TensorTranspose[
+  Components@
+   Contract[
+    TensorProduct[WeylProjection[dim, "Dotted" -> True], GammaTensor[dim], 
      WeylProjection[dim, "Transpose" -> True]], {{2, 4}, {5, 6}}], {2,
+    1, 3}]
+BuildTensor[{sigma[OptionsPattern[]], Lowered[Spacetime[dim_]], 
+     Raised[DottedWeylSpinor[dim_]], Raised[DottedWeylSpinor[dim_]]}] /; 
+  Mod[dim, 4] == 2 := 
+ SparseArray@TensorTranspose[
+  Components@
+   Contract[
+    TensorProduct[WeylProjection[dim, "Dotted" -> True], GammaTensor[dim], 
+     WeylProjection[dim, "Transpose" -> True, "Dotted" -> True]], {{2, 4}, {5, 6}}], {2,
     1, 3}]
 
 
@@ -216,6 +234,12 @@ Options[CoordinateSquared] = {"DefectCodimension" -> None, "Defect" -> False, "T
 CoordinateSquared[dim_, i_, j_] /; i > j := CoordinateSquared[dim, j, i];
 AddExplicitRule[CoordinateSquared[dim_, i__Integer, opt : OptionsPattern[]] :> Components@Contract[TensorProduct[MetricTensor[dim, opt], Coordinate[dim, i], Coordinate[dim, i]], {{1, 3}, {2, 4}}]];
 AddExplicitRule[InnerProduct[dim_, i_, j_, opt : OptionsPattern[]] :> Components@Contract[TensorProduct[MetricTensor[dim, opt], Coordinate[dim, i], Coordinate[dim, j]], {{1, 3}, {2, 4}}]];
+
+AddExplicitRule[z[ii_Integer, jj_Integer] :> (x[ii, 1] - I x[ii, 2]) - (x[jj, 1] - I x[jj, 2])]; (* opposite the usual convention, makes everything else easier *)
+AddExplicitRule[zb[ii_Integer, jj_Integer] :> (x[ii, 1] + I x[ii, 2]) - (x[jj, 1] + I x[jj, 2])];
+      
+AddExplicitRule[z[dim_, {ii_, jj_, kk_, ll_}, OptionsPattern[]] :> (z[ii, jj] z[kk, ll])/(z[ii, kk] z[jj, ll])];
+AddExplicitRule[zb[dim_, {ii_, jj_, kk_, ll_}, OptionsPattern[]] :> (zb[ii, jj] zb[kk, ll])/(zb[ii, kk] zb[jj, ll])];
       
 AddExplicitRule[u[dim_, {ii_, jj_, kk_, ll_}, OptionsPattern[]] :> (CoordinateSquared[dim, ii, jj] CoordinateSquared[dim, kk, ll])/(CoordinateSquared[dim, ii, kk] CoordinateSquared[dim, jj, ll])];
 AddExplicitRule[v[dim_, {ii_, jj_, kk_, ll_}, OptionsPattern[]] :> (CoordinateSquared[dim, ii, ll] CoordinateSquared[dim, jj, kk])/(CoordinateSquared[dim, ii, kk] CoordinateSquared[dim, jj, ll])];

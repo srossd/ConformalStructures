@@ -42,7 +42,7 @@ Format[correlator[dim_, \[CapitalDelta]s_, spins_, derivs_, perm_, q_, i_], Trad
 	]
  ];
    
-uvpowers[dim_, i_, perm_] := 
+uvpowers[dim_, i_, perm_] /; dim > 2 := 
  uvpowers[dim, i, perm] = 
   With[{p1 = {1, -1, 0, 0, -1, 1}, p2 = {0, -1, 1, 1, -1, 0}, 
     q = (CoordinateSquared[dim, ##] D[If[i == 1, u, v][dim, perm] /. TensorTools`Private`explicitRules, 
@@ -52,9 +52,17 @@ uvpowers[dim_, i_, perm_] :=
      Thread[Flatten[q - \[Alpha]1 p1 - \[Alpha]2 p2] == 
        0], {\[Alpha]1, \[Alpha]2}][[1]]
    ]
+
+sp[perm_] := First@Sort[{perm, perm[[{2, 1, 4, 3}]], perm[[{3, 4, 1, 2}]], perm[[{4, 3, 2, 1}]]}];
+zcross = {
+	z[dim_, perm_] :> <| {1,2,3,4} -> z, {1,2,4,3} -> z/(z-1), {1,3,2,4} -> 1/z, {1,3,4,2} -> 1/(1-z), {1,4,2,3} -> (z-1)/z, {1,4,3,2} -> 1-z|>[sp[perm]], 
+	zb[dim_, perm_] :> <| {1,2,3,4} -> z, {1,2,4,3} -> z/(z-1), {1,3,2,4} -> 1/z, {1,3,4,2} -> 1/(1-z), {1,4,2,3} -> (z-1)/z, {1,4,3,2} -> 1-z|>[sp[perm]] /. z-> zb
+};
+
+Format[expr : z[dim_, perm : {_,_,_,_}], TraditionalForm] := (expr /. zcross /. {z -> "Z", zb -> "\!\(\*OverscriptBox[\(Z\), \(_\)]\)"});
+Format[expr : zb[dim_, perm : {_,_,_,_}], TraditionalForm] := (expr /. zcross /. {z -> "Z", zb -> "\!\(\*OverscriptBox[\(Z\), \(_\)]\)"});
      
-Format[u[dim_, perm : {_,_,_,_}], TraditionalForm] := 
-  "U"^#1 "V"^#2 & @@ uvpowers[dim, 1, perm];
+Format[u[dim_, perm : {_,_,_,_}], TraditionalForm] := "U"^#1 "V"^#2 & @@ uvpowers[dim, 1, perm];
 Format[v[dim_, perm : {_,_,_,_}], TraditionalForm] := "U"^#1 "V"^#2 & @@ uvpowers[dim, 2, perm];
 
 Format[u[dim_, perm : {_,_}], TraditionalForm] := "U";
