@@ -257,11 +257,18 @@ unrollRows[mat_, subset_, numRows_] :=
      mat] /. {a_Integer, b_Integer} :> {subset[[a]], b}, {numRows, 
     Length[mat[[1]]]}];
     
-StructureRelations[structs_] := StructureRelations[structs] = If[
+Options[StructureRelations] = {Method -> "Automatic"};
+StructureRelations[structs_, OptionsPattern[]] := StructureRelations[structs] = Which[OptionValue[Method] == "Fit",
+	fittedRelations[structs],
+	OptionValue[Method] == "Symbolic",
+	symbolicRelations[structs],
+	True,
+	If[
      First@Cases[structs, c_correlator :> c[[-2]], All] =!= None || (Length[structs] >= 4 || First@Cases[structs, c_correlator :> Length[c[[2]]], All] >= 4) && First@Cases[structs, c_correlator :> c[[1]], All] > 2, 
    	 fittedRelations[structs],
    	 symbolicRelations[structs]
-  ];
+    ]
+];
   
 crossRatioAssumptions[dim_, q_] := If[q === None, And @@ (1/2 < # < 2 & /@ crossRatios[dim, q]), And @@ (0 < # & /@ crossRatios[dim, q])];
 symbolicRelations[structs_] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
@@ -276,7 +283,7 @@ fittedRelations[structs_] :=
     safes = safeCrossRatios[q];
     structComps = Flatten[Table[Transpose[ArrayFlatten[Flatten[{Normal[
        If[
-         First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
+         Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
            fastEvalCOC[#,z,safes[[11]]],
            Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 11]
        ]
@@ -295,7 +302,7 @@ fittedRelations[structs_] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
@@ -345,7 +352,7 @@ fittedRelations[structs_] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
