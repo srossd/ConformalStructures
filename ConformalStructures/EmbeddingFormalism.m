@@ -6,12 +6,10 @@ SignatureFactor[] := $signatureFactor;
 SetSignature["Lorentzian"] := ($signatureFactor = I;);
 SetSignature["Euclidean"] := ($signatureFactor = 1;);
 
-SetSignature::badsig = 
-  "The signature `` is not recognized; use \"Lorentzian\" or \
-\"Euclidean\".";
+SetSignature::badsig = "The signature `` is not recognized; use \"Lorentzian\" or \"Euclidean\".";
 SetSignature[sig_] := Message[SetSignature::badsig, sig];
 
-IndexData[Spacetime[dim_]] := Index[dim + 2, "Greek", 12];
+IndexData[Spacetime[dim_]] := Index[dim, "Greek", 12];
 IndexData[DiracSpinor[dim_]] := 
   Index[2^Floor[dim/2], "Greek", 1, Style[#, Bold] &];
 IndexData[WeylSpinor[dim_]] := Index[2^Floor[(dim - 1)/2], "Greek", 1];
@@ -129,8 +127,8 @@ ChiralGamma[dim_] :=
      Lowered[DiracSpinor[dim]], Raised[DiracSpinor[dim]]}}];
 
 \[Delta]mat[dim_] := 
-  If[$signatureFactor == I, weylGammas[1, dim - 1][[1]], 
-   IdentityMatrix[2^Floor[dim/2]]];
+  If[$signatureFactor == I, SparseArray[weylGammas[1, dim - 1][[1]]], 
+   SparseArray@IdentityMatrix[2^Floor[dim/2]]];
 Dmat[dim_] := $signatureFactor^2 KroneckerProduct[-I PauliMatrix[2], 
     IdentityMatrix[2^Floor[dim/2]]];
 
@@ -268,7 +266,7 @@ Options[EmbeddingCoordinateSlash] = {"DefectCodimension" -> None, "Defect" -> Fa
 EmbeddingCoordinateSlash[dim_, i__Integer, opt : OptionsPattern[]] := Contract[TensorProduct[EmbeddingCoordinate[dim, i, opt], EmbeddingGammaTensor[dim]], {{1, 2}}]
 
 
-BuildTensor[{OverBar[spinor[i_]], Lowered[DiracSpinor[dim_]], Raised[EmbeddingDiracSpinor[dim_]]}] := SparseArray@ArrayFlatten[{{IdentityMatrix[2^Floor[dim/2]], -Components[CoordinateSlash[dim, i]] . \[Delta]mat[dim]}}];
+BuildTensor[{OverBar[spinor[i_]], Lowered[DiracSpinor[dim_]], Raised[EmbeddingDiracSpinor[dim_]]}] := SparseArray@ArrayFlatten[{{IdentityMatrix[2^Floor[dim/2]], -Components[CoordinateSlash[dim, i]] . Inverse[\[Delta]mat[dim]]}}];
 BuildTensor[{spinor[i_], Lowered[EmbeddingDiracSpinor[dim_]], Raised[DiracSpinor[dim_]]}] := SparseArray@ArrayFlatten[{{Components[CoordinateSlash[dim, i]]}, {\[Delta]mat[dim]}}];
 
 Options[EmbeddingPolarizationSpinor] = {"Bar" -> False};

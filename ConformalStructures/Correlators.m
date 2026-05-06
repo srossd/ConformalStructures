@@ -18,7 +18,7 @@ Indices[TensorDerivative[t_, dim_, i_]] :=
 TensorPermutation[TensorDerivative[t_, dim_, i_]] := 
   Join[{1}, 1 + TensorPermutation[t]];
 NCON[TensorDerivative[a_, dim_, i_]] := NCON[TensorProduct[Tensor[{{("\[PartialD]")^Row[{"(", i, ")"}], Lowered[Spacetime[dim]]}, {"("}}], a, Tensor[{{")"}}]]];
-Format[td_TensorDerivative, TraditionalForm] := tensorFormat[td];
+Format[td_TensorDerivative, TraditionalForm] := TensorTools`Private`tensorFormat[td];
 
 
 InactiveComponents[TensorDerivative[t_, dim_, i_]] := 
@@ -291,8 +291,7 @@ ConformalTest[dim_, \[CapitalDelta]s_, spins_, perm_,
        2 \[CapitalDelta]s[[InversePermutation[perm][[i]]]] Contract[
          TensorProduct[MetricTensor[dim], Coordinate[dim, i], 
           struct], {{2, 3}}], {i, Length[\[CapitalDelta]s]}] + Sum[
-      similar = 
-       1 + Select[Range[j], indices[[#, 2]] == indices[[j, 2]] &];
+      similar = Prepend[2 + Select[Range[j - 1], indices[[#, 2]] == indices[[j, 2]] &], 2];
       indperm = 
        InversePermutation@PermutationList[Cycles[{similar}], Length[indices] + 1];
       2 TensorPermute[
