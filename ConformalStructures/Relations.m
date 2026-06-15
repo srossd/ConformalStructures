@@ -1,6 +1,26 @@
 (* Wolfram Language package *)
 
-zeroVecQ[vec_] := 
+(* Drop the memoized (fully concrete) DownValues of a symbol while keeping its
+   defining rules.  Memoized results have no pattern objects in their argument,
+   whereas the rules that generate them do, so we keep exactly the entries whose
+   left-hand side still contains a Blank/Pattern. *)
+SetAttributes[clearMemoized, HoldFirst];
+clearMemoized[sym_Symbol] := DownValues[sym] = Select[DownValues[sym],
+   ! FreeQ[First[#], Blank | BlankSequence | BlankNullSequence | Pattern] &];
+
+(* Flush every cache that can depend on the spacetime signature.  BuildTensor
+   holds the explicit (signature-dependent) components of correlators and string
+   structures; the others memoize results derived from those components.  Their
+   defining pattern rules are preserved, so everything regenerates on demand. *)
+ClearConformalCache[] := (
+   clearMemoized[BuildTensor];
+   clearMemoized[ConformalCorrelators];
+   clearMemoized[StringStructure];
+   clearMemoized[StructureRelations];
+   clearMemoized[uvz];
+);
+
+zeroVecQ[vec_] :=
   MatchQ[vec, {0 ..}] || 
    MatchQ[Simplify[ArrayRules[vec][[;; , 2]]], {0 ..}];
 

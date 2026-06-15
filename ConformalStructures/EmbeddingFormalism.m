@@ -3,8 +3,11 @@
 $signatureFactor = 1;
 SignatureFactor[] := $signatureFactor;
 
-SetSignature["Lorentzian"] := ($signatureFactor = I;);
-SetSignature["Euclidean"] := ($signatureFactor = 1;);
+(* Changing the signature invalidates every memoized tensor component that was
+   built under the previous signature, so flush the caches when it changes.
+   ClearConformalCache is defined in Relations.m. *)
+SetSignature["Lorentzian"] := (If[$signatureFactor =!= I, ClearConformalCache[]]; $signatureFactor = I;);
+SetSignature["Euclidean"] := (If[$signatureFactor =!= 1, ClearConformalCache[]]; $signatureFactor = 1;);
 
 SetSignature::badsig = "The signature `` is not recognized; use \"Lorentzian\" or \"Euclidean\".";
 SetSignature[sig_] := Message[SetSignature::badsig, sig];

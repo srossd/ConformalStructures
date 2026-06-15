@@ -1,0 +1,60 @@
+name: deploy
+
+# Builds the install-ready paclet from dev and publishes it to the main branch.
+#
+# The "build" (without documentation) is pure file restructuring: the contents
+# of dev's ConformalStructures/ source directory, plus PacletInfo.m and
+# README.md, become the root of main. No Wolfram Engine is needed, so this runs
+# on a free GitHub-hosted runner.
+#
+# It runs via workflow_run so it only fires after the tests workflow succeeds,
+# and only for the dev branch. (workflow_run reads this file from the default
+# branch, so dev must be the default branch.)
+#
+# When documentation notebooks are added later, this is where a notebook-compile
+# step would go (which needs a front end, e.g. the Pi under xvfb).
+
+on:
+  workflow_run:
+    workflows: ["tests"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'dev'
+    runs-on: ubuntu-latest
+    env:
+      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - name: Check out dev at the tested commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Assemble flattened paclet
+        run: |
+          mkdir -p "$RUNNER_TEMP/build"
+          cp -r ConformalStructures/. "$RUNNER_TEMP/build/"
+          cp PacletInfo.m README.md "$RUNNER_TEMP/build/"
+
+      - name: Publish to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B main origin/main
+          git rm -rfq . || true
+          cp -r "$RUNNER_TEMP/build/." .
+          git add -A
+          if git diff --cached --quiet; then
+            echo "main already matches the dev build; nothing to publish."
+          else
+            git commit -m "Build paclet from dev @ ${HEAD_SHA:0:7}"
+            git push origin main
+          fi
