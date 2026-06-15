@@ -257,27 +257,30 @@ unrollRows[mat_, subset_, numRows_] :=
      mat] /. {a_Integer, b_Integer} :> {subset[[a]], b}, {numRows, 
     Length[mat[[1]]]}];
     
-Options[StructureRelations] = {Method -> "Automatic"};
-StructureRelations[structs_, OptionsPattern[]] := StructureRelations[structs] = Which[OptionValue[Method] == "Fit",
-	fittedRelations[structs],
+Options[StructureRelations] = {Method -> "Automatic", "MaximumZ" -> Automatic};
+StructureRelations[structs_, opt : OptionsPattern[]] := StructureRelations[structs] = Which[OptionValue[Method] == "Fit",
+	fittedRelations[structs, Sequence @@ FilterRules[{opt}, Options[fittedRelations]]],
 	OptionValue[Method] == "Symbolic",
-	symbolicRelations[structs],
+	symbolicRelations[structs, Sequence @@ FilterRules[{opt}, Options[symbolicRelations]]],
 	True,
 	If[
      First@Cases[structs, c_correlator :> c[[-2]], All] =!= None || (Length[structs] >= 4 || First@Cases[structs, c_correlator :> Length[c[[2]]], All] >= 4) && First@Cases[structs, c_correlator :> c[[1]], All] > 2, 
-   	 fittedRelations[structs],
-   	 symbolicRelations[structs]
+   	 fittedRelations[structs, Sequence @@ FilterRules[{opt}, Options[fittedRelations]]],
+   	 symbolicRelations[structs, Sequence @@ FilterRules[{opt}, Options[symbolicRelations]]]
     ]
 ];
   
 crossRatioAssumptions[dim_, q_] := If[q === None, And @@ (1/2 < # < 2 & /@ crossRatios[dim, q]), And @@ (0 < # & /@ crossRatios[dim, q])];
-symbolicRelations[structs_] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
+
+Options[symbolicRelations] = {"MaximumZ" -> Automatic};
+symbolicRelations[structs_, OptionsPattern[]] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
    If[# === {}, {}, FullSimplify[RowReduce[#, ZeroTest -> (Function[expr, Simplify[expr, crossRatioAssumptions[dim, q]] === 0])], crossRatioAssumptions[dim, q]]] &@
-   FullSimplify[NullSpace[FullSimplify[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, zz], {zz, If[dim == 2, Range[3, Length[structs] + 5], Range[2, 5]]}], 1], crossRatioAssumptions[dim, q]]], crossRatioAssumptions[dim, q]]
+   FullSimplify[NullSpace[FullSimplify[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, zz], {zz, If[OptionValue["MaximumZ"] === Automatic, If[dim == 2, Range[3, Length[structs] + 5], Range[2, 5]], Range[2, OptionValue["MaximumZ"]]]}], 1], crossRatioAssumptions[dim, q]]], crossRatioAssumptions[dim, q]]
 ];
-    
-fittedRelations[structs_] := 
-   Block[{zmax = 3, dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
+  
+Options[fittedRelations] = {"MaximumZ" -> Automatic};  
+fittedRelations[structs_, OptionsPattern[]] := 
+   Block[{zmax = If[OptionValue["MaximumZ"] === Automatic, 5, OptionValue["MaximumZ"]], dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
     dim = First@Cases[structs, correlator[dim_, ___] :> dim, All];
     q = First@Cases[structs, correlator[___, q_, _] :> q, All];
     safes = safeCrossRatios[q];
