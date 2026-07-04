@@ -225,9 +225,56 @@ spinIndices[3, spins_, derivs_, perm_] :=
   Table[Lowered[DiracSpinor[3]], 2 (Total[spins] + Length[derivs])];
 spinIndices[4, spins_, derivs_, perm_] := Flatten[Table[{
      Table[{Lowered[WeylSpinor[4]], Lowered[DottedWeylSpinor[4]]}, Count[derivs[[;;, 2]], i]],
-     Table[Lowered[WeylSpinor[4]], 2 spins[[i,1]]], 
+     Table[Lowered[WeylSpinor[4]], 2 spins[[i,1]]],
      Table[Lowered[DottedWeylSpinor[4]], 2 spins[[i, 2]]]
   }, {i, Length[spins]}]];
+
+(* ------------------------------------------------------------------ *)
+(* 6d (SO(6) = SU(4)) representation machinery                         *)
+(* ------------------------------------------------------------------ *)
+
+(* An SO(6) irrep is specified by an SU(4) Dynkin label {a, b, c}.  The
+   corresponding Young diagram over the fundamental (Weyl spinor) 4 has row
+   lengths {a+b+c, b+c, c}, so the operator carries a+2b+3c Weyl-spinor indices,
+   Young-projected onto that diagram.  Pure-fundamental SU(4) tableaux are
+   irreducible, so no trace removal is needed. *)
+
+validDynkinQ[label_] := MatchQ[label, {Repeated[_Integer?NonNegative, {3}]}];
+dynkinToPartition[{a_, b_, c_}] := DeleteCases[{a + b + c, b + c, c}, 0];
+dynkinBoxes[{a_, b_, c_}] := a + 2 b + 3 c;
+
+(* rows and columns (as position blocks) of the row-filled tableau of shape lambda *)
+tableauBlocks[lambda_] := With[{rows = TakeList[Range[Total[lambda]], lambda]},
+   {rows, Table[Select[rows, Length[#] >= j &][[;; , j]], {j, Max[lambda]}]}];
+
+(* all permutations (as image lists) that permute only within the given blocks *)
+blockPerms[blocks_, n_] := Map[
+   Function[choice, Module[{s = Range[n]}, Do[s[[blocks[[k]]]] = choice[[k]], {k, Length[blocks]}]; s]],
+   Tuples[Permutations /@ blocks]];
+
+(* Young symmetrizer c = (row symmetrizer).(column antisymmetrizer), as a list of
+   {index permutation, coefficient} terms suitable for a TensorTranspose average. *)
+youngSymmetrizerTerms[lambda_] := youngSymmetrizerTerms[lambda] = Module[{n = Total[lambda], rows, cols, terms},
+   If[n == 0, Return[{{{}, 1}}]];
+   {rows, cols} = tableauBlocks[lambda];
+   terms = Flatten[Table[{rho[[kappa]], Signature[kappa]},
+       {rho, blockPerms[rows, n]}, {kappa, blockPerms[cols, n]}], 1];
+   {#[[1, 1]], Total[#[[;; , 2]]]} & /@ GatherBy[terms, First]];
+
+(* dimension of the SU(4) irrep = rank of the Young symmetrizer on (C^4)^{tensor n};
+   used to validate the projector against known representation dimensions. *)
+su4IrrepDimension[label_] := Module[{lambda = dynkinToPartition[label], n, tuples, idx, permMat},
+   n = Total[lambda];
+   If[n == 0, Return[1]];
+   tuples = Tuples[Range[4], n];
+   idx = First /@ PositionIndex[tuples];
+   permMat[sigma_] := SparseArray[Table[{idx[t[[sigma]]], idx[t]} -> 1, {t, tuples}], {4^n, 4^n}];
+   MatrixRank[Total[Function[term, term[[2]] permMat[term[[1]]]] /@ youngSymmetrizerTerms[lambda]]]];
+
+(* 6d spin indices: a+2b+3c Weyl-spinor indices per operator.  Chirality (dotted
+   realization of conjugate reps) and derivative indices are later milestones. *)
+spinIndices[6, spins_, {}, perm_] := Flatten[Table[
+   Table[Lowered[WeylSpinor[6]], dynkinBoxes[spins[[i]]]], {i, Length[spins]}], 1];
 
 Options[KinematicPrefactor] = {"DefectCodimension" -> None};
 KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, opt : OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (Total /@ spins)}, 1/Which[
