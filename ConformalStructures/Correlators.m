@@ -296,10 +296,21 @@ su4IrrepDimension[label_] := Module[{lambda = dynkinToPartition[label], n, tuple
    permMat[sigma_] := SparseArray[Table[{idx[t[[sigma]]], idx[t]} -> 1, {t, tuples}], {4^n, 4^n}];
    MatrixRank[Total[Function[term, term[[2]] permMat[term[[1]]]] /@ youngSymmetrizerTerms[lambda]]]];
 
-(* 6d spin indices: a+2b+3c Weyl-spinor indices per operator.  Chirality (dotted
-   realization of conjugate reps) and derivative indices are later milestones. *)
+(* Chirality convention: an undotted Weyl index is the fundamental 4 = [1,0,0], a
+   dotted Weyl index the antifundamental 4bar = [0,0,1].  A rep [a,b,c] is realized
+   either undotted (Young shape dynkinToPartition[{a,b,c}]) or dotted (shape of the
+   conjugate {c,b,a}); the canonical choice is whichever has fewer boxes (undotted
+   if a >= c, else dotted), so a rep and its conjugate get matching box counts and
+   their connecting strings pair 4 with 4bar. *)
+opDottedQ6[rep_] := rep[[1]] < rep[[3]];
+opPartition6[rep_, dotted_] := dynkinToPartition[If[dotted, Reverse[rep], rep]];
+opBoxes6[rep_, dotted_] := Total[opPartition6[rep, dotted]];
+opIndexHead6[dotted_] := If[dotted, DottedWeylSpinor, WeylSpinor];
+
 spinIndices[6, spins_, {}, perm_] := Flatten[Table[
-   Table[Lowered[WeylSpinor[6]], dynkinBoxes[spins[[i]]]], {i, Length[spins]}], 1];
+   With[{d = opDottedQ6[spins[[i]]]},
+      Table[Lowered[opIndexHead6[d][6]], opBoxes6[spins[[i]], d]]],
+   {i, Length[spins]}], 1];
 
 (* like buildCorrelator, but projects each operator's index block with the Young
    symmetrizer for its rep (partition) rather than fully symmetrizing. *)
@@ -313,16 +324,57 @@ buildCorrelator6[expr_, perm_, partitions_] := Module[{unsym, boxes, starts},
       ] /@ Tuples[youngSymmetrizerTerms /@ partitions]]
 ];
 
-(* Overcomplete structures for a 6d 2-point function of a self-conjugate rep:
-   dynkinBoxes strings between points 1 and 2 (all undotted), later Young-projected
-   at each operator.  Non-self-conjugate (unequal box counts) needs the dotted /
-   conjugate machinery and is a later milestone. *)
-ConformalCorrelatorExpressions[6, spins_, opt : OptionsPattern[]] /;
-   Length[spins] == 2 && dynkinBoxes[spins[[1]]] == dynkinBoxes[spins[[2]]] && dynkinBoxes[spins[[1]]] >= 1 :=
+(* SU(4) alpha-system: distribute each operator's spinor-index boxes among strings
+   S_i X..X S_j between operators (a string deposits one index at each endpoint) and
+   loops S_i X..X S_i (which deposit two indices on one operator, coupling it to
+   coordinates).  For a chirality assignment chi (one per operator) the box counts
+   n_i are fixed and the distribution solves  sum_j alpha[{i,j}] (with a loop {i,i}
+   counting twice) == n_i.  Each solution, fanned over the building blocks' X
+   insertions, gives a candidate structure; the reduction Young-projects and keeps
+   an independent subset (exact arithmetic), capped at ConformalCorrelatorCount. *)
+ConformalCorrelatorExpressions[6, spins_, opt : OptionsPattern[]] :=
  ConformalCorrelatorExpressions[6, spins, opt] =
-  With[{n = dynkinBoxes[spins[[1]]], q = OptionValue["DefectCodimension"]},
-   {{Tensor[Table[{stringstruct[6, {1, 2}, q], Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]]}, n]],
-     Join[Range[1, 2 n - 1, 2], Range[2, 2 n, 2]]}}
+  If[ConformalCorrelatorCount[6, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]] == 0, {},
+   If[OptionValue["Overcomplete"],
+    Module[{npts = Length[spins], q = OptionValue["DefectCodimension"], chi, boxes, pairs, avars, sols},
+     chi = opDottedQ6 /@ spins;
+     boxes = MapThread[opBoxes6, {spins, chi}];
+     pairs = Join[Table[{i, i}, {i, npts}], Subsets[Range[npts], {2}]];
+     avars = \[Alpha] /@ pairs;
+     sols = Solve[Join[
+        Table[Sum[Count[pairs[[p]], k] \[Alpha][pairs[[p]]], {p, Length[pairs]}] == boxes[[k]], {k, npts}],
+        Thread[avars >= 0]], avars, Integers];
+     Join @@ Table[
+       With[{slots = Flatten[Table[
+            ConformalCorrelatorBuildingBlocks[6, npts, pairs[[p]],
+              {If[chi[[pairs[[p, 1]]]], -1, 1], If[chi[[pairs[[p, 2]]]], -1, 1]}, "DefectCodimension" -> q],
+            {p, Length[pairs]}, {ii, \[Alpha][pairs[[p]]] /. sol}], 1]},
+        Table[
+          {TensorProduct @@ tup,
+           Ordering[Join @@ Cases[tup,
+             {stringstruct[_, is_, _], Lowered[h_[6]], Lowered[h2_[6]]} :>
+               Thread[{is[[{1, -1}]], {h, h2} /. {WeylSpinor -> 1, DottedWeylSpinor -> 2}}], All]]},
+          {tup, Tuples[slots]}]],
+       {sol, sols}]
+    ],
+    (* Reduce the overcomplete set to an independent basis, capped at the known
+       count.  The structures carry Sqrt prefactors (algebraic, not rational like
+       the d=2,3,4 fastEval path), so exact LinearSolve is slow; instead we select
+       greedily at high precision (30 digits, far below any spurious singular value)
+       which avoids the machine-precision rank artifact.  We sample several random
+       configurations (the same set for every structure); the safe-cross-ratio
+       genericPoint configuration is near-degenerate for 3-point functions. *)
+    Module[{full, partitions, q = OptionValue["DefectCodimension"], npts = Length[spins], cnt, pts, comps, picked = {}},
+     full = ConformalCorrelatorExpressions[6, spins, "DefectCodimension" -> q, "Overcomplete" -> True];
+     partitions = MapThread[opPartition6, {spins, opDottedQ6 /@ spins}];
+     cnt = ConformalCorrelatorCount[6, spins, "DefectCodimension" -> q];
+     pts = BlockRandom[SeedRandom[1]; Table[RandomInteger[{2, 40}, npts 6], {3}]];
+     comps = Table[With[{c = Normal[buildCorrelator6[Sequence @@ ex, partitions]]},
+        Flatten@Table[N[c /. Thread[Flatten@Array[x, {npts, 6}] -> p], 30], {p, pts}]], {ex, full}];
+     Do[If[Length[picked] < cnt && MatrixRank[comps[[Append[picked, i]]]] > Length[picked], AppendTo[picked, i]], {i, Length[full]}];
+     full[[picked]]
+    ]
+   ]
   ];
 
 (* scaling "spin" entering the kinematic prefactor: the leading orthogonal weight
@@ -378,7 +430,7 @@ ConformalCorrelators[6, \[CapitalDelta]s_, spins_, derivs_, perm_, opt : Options
   Module[{exprs, structs, rules, q = OptionValue["DefectCodimension"], partitions},
    If[Length[\[CapitalDelta]s] == 2 && ! Equal @@ \[CapitalDelta]s, Return[{}]];
    exprs = ConformalCorrelatorExpressions[6, spins, opt];
-   partitions = dynkinToPartition /@ spins;
+   partitions = MapThread[opPartition6, {spins, opDottedQ6 /@ spins}];
    If[derivs === {},
     structs = buildCorrelator6[Sequence @@ #, partitions] & /@ exprs;
     rules = If[perm === Automatic, {}, x[i_, j_] :> x[perm[[i]], j]];
@@ -402,8 +454,9 @@ ConformalTest[dim_, \[CapitalDelta]s_, spins_, perm_,
      dim == 3,
      Flatten[Table[{perm[[i]], {}}, {i, Length[spins]}, {j, 2 spins[[i]]}], 1],
      dim == 6,
-     (* all-undotted Weyl indices, dynkinBoxes per operator *)
-     Flatten[Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> False}}, {i, Length[spins]}, {j, dynkinBoxes[spins[[i]]]}], 1],
+     (* canonical per-operator chirality; opBoxes6 indices each *)
+     Flatten[Table[With[{d = opDottedQ6[spins[[i]]]},
+        Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> d}}, opBoxes6[spins[[i]], d]]], {i, Length[spins]}], 1],
      True,
      Flatten[
       Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> k == 2}}, {i,

@@ -145,6 +145,32 @@ Module[{cc, pt, mag},
    assert["stress tensor 2pt: structure is nonzero", NumericQ[mag] && mag > 0, mag]];
 
 (* ------------------------------------------------------------------ *)
+(* P3 three-point functions (SU(4) alpha-system)                      *)
+(* ------------------------------------------------------------------ *)
+
+Print["=== P3 three-point functions ==="];
+
+(* the alpha-system reduces the overcomplete set to exactly the structure count *)
+Module[{s = {0, 0, 0}, v = {0, 1, 0}, T = {0, 2, 0}},
+   assert["3pt <ssV>: #independent == count == 1",
+      Length[ConformalCorrelatorExpressions[6, {s, s, v}]] == 1 == ConformalCorrelatorCount[6, {s, s, v}]];
+   assert["3pt <sVV>: #independent == count == 2",
+      Length[ConformalCorrelatorExpressions[6, {s, v, v}]] == 2 == ConformalCorrelatorCount[6, {s, v, v}]];
+   assert["3pt <VVV>: #independent == count == 4",
+      Length[ConformalCorrelatorExpressions[6, {v, v, v}]] == 4 == ConformalCorrelatorCount[6, {v, v, v}]];
+   assert["3pt <ssT>: #independent == count == 1",
+      Length[ConformalCorrelatorExpressions[6, {s, s, T}]] == 1 == ConformalCorrelatorCount[6, {s, s, T}]]];
+
+(* a 3pt correlator built by the alpha-system is conformally invariant *)
+Module[{ct, comps, pt, res},
+   ct = ConformalTest[6, {3, 3, 4}, {{0, 0, 0}, {0, 0, 0}, {0, 1, 0}}, {1, 2, 3}];
+   comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
+   SeedRandom[11]; pt = Thread[Flatten@Array[x, {3, 6}] -> RandomInteger[{2, 30}, 18]];
+   res = Max[Abs[N[Flatten[comps /. pt]]]];
+   assert["3pt <ssV>: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
+      NumericQ[res] && res < tol6, res]];
+
+(* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
 If[$failed > 0, Exit[1], Exit[0]];
