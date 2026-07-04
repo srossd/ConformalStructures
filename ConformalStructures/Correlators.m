@@ -83,6 +83,31 @@ ConformalCorrelatorCount[4, spins_, OptionsPattern[]] := Switch[{Length[spins], 
   Infinity
 ]
 
+(* d=6 counting uses SU(4) tensor-product decompositions from GroupMath, loaded on
+   demand so that d = 2,3,4 do not depend on it.  The number of n-point structures
+   is the number of little-group singlets in the product of the operators' reps.
+   By the SO(6)->SO(5)->SO(4) branching (Gelfand-Tsetlin interlacing), an SO(6)
+   irrep [a,b,c] contributes:
+     3pt (SO(5) singlets): 1 iff it is symmetric-traceless [0,k,0], else 0;
+     4pt (SO(4) singlets): (b+1) iff a==c, else 0.
+   Verified against the CPPR building-block counts, e.g. <VVV>=4, <TTT>=11. *)
+ConformalCorrelatorCount::nogm = "d=6 correlator counting requires the GroupMath package (https://renatofonseca.net/groupmath), which was not found on $Path.";
+ensureGroupMath[] := ensureGroupMath[] =
+  If[FindFile["GroupMath`"] === $Failed, Message[ConformalCorrelatorCount::nogm]; False, Quiet[Needs["GroupMath`"]]; True];
+
+ConformalCorrelatorCount[6, spins_, OptionsPattern[]] := Switch[{Length[spins], OptionValue["DefectCodimension"]},
+  {2, None},
+  Boole[spins[[2]] === Reverse[spins[[1]]]],
+  {3, None},
+  If[ensureGroupMath[], Total@Cases[GroupMath`ReduceRepProduct[GroupMath`SU4, spins], {{0, _, 0}, mult_} :> mult], $Failed],
+  {4, None},
+  If[ensureGroupMath[], Total@Cases[GroupMath`ReduceRepProduct[GroupMath`SU4, spins], {{da_, db_, dc_}, mult_} /; da == dc :> (db + 1) mult], $Failed],
+  {x_ /; x >= 5, None},
+  If[ensureGroupMath[], Times @@ (GroupMath`DimR[GroupMath`SU4, #] & /@ spins), $Failed],
+  {_, _},
+  Infinity
+]
+
 Options[ConformalCorrelatorBuildingBlocks] = {"DefectCodimension" -> None, "Overcomplete" -> False};
 ConformalCorrelatorBuildingBlocks[dim_, npts_, {i_, j_}, signs_, opt : OptionsPattern[]] := 
 ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, opt] = If[OptionValue["Overcomplete"],

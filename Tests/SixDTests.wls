@@ -90,6 +90,32 @@ Module[{spins = {{0, 2, 0}, {0, 1, 0}, {1, 0, 0}}, inds},
       MatchQ[inds, {Lowered[WeylSpinor[6]] ..}], inds]];
 
 (* ------------------------------------------------------------------ *)
+(* P1 ConformalCorrelatorCount[6] (little-group singlet counting)      *)
+(* ------------------------------------------------------------------ *)
+
+Print["=== ConformalCorrelatorCount[6] ==="];
+With[{sc = {0, 0, 0}, v = {0, 1, 0}, T = {0, 2, 0}, sp = {1, 0, 0}, asp = {0, 0, 1}, vsp = {1, 1, 0}},
+   cnt[reps_] := ConformalCorrelatorCount[6, reps];
+   (* 2-point: nonzero iff conjugate reps *)
+   assert["2pt <T Tbar> == 1 (self-conjugate)", cnt[{T, T}] === 1, cnt[{T, T}]];
+   assert["2pt <T V> == 0",                     cnt[{T, v}] === 0, cnt[{T, v}]];
+   assert["2pt <4 4bar> == 1",                  cnt[{sp, asp}] === 1, cnt[{sp, asp}]];
+   assert["2pt <4 4> == 0",                     cnt[{sp, sp}] === 0, cnt[{sp, sp}]];
+   (* 3-point: # of symmetric-traceless [0,k,0] in the product *)
+   assert["3pt <sss> == 1",  cnt[{sc, sc, sc}] === 1, cnt[{sc, sc, sc}]];
+   assert["3pt <ssT> == 1",  cnt[{sc, sc, T}] === 1, cnt[{sc, sc, T}]];
+   assert["3pt <ssV> == 1",  cnt[{sc, sc, v}] === 1, cnt[{sc, sc, v}]];
+   assert["3pt <sVV> == 2",  cnt[{sc, v, v}] === 2, cnt[{sc, v, v}]];
+   assert["3pt <VVV> == 4  (V1V2V3 + 3 H_ij V_k)", cnt[{v, v, v}] === 4, cnt[{v, v, v}]];
+   assert["3pt <TTT> == 11 (CPPR building-block count)", cnt[{T, T, T}] === 11, cnt[{T, T, T}]];
+   assert["3pt <ss[1,1,0]> == 0 (vector-spinor, no SO(5) singlet)", cnt[{sc, sc, vsp}] === 0, cnt[{sc, sc, vsp}]];
+   (* 4-point: Sum (b+1) over [a,b,c] with a==c *)
+   assert["4pt <ssss> == 1", cnt[{sc, sc, sc, sc}] === 1, cnt[{sc, sc, sc, sc}]];
+   assert["4pt <sssV> == 2 (6 -> 4+1+1 under SO(4))", cnt[{sc, sc, sc, v}] === 2, cnt[{sc, sc, sc, v}]];
+   assert["4pt <sssT> == 3", cnt[{sc, sc, sc, T}] === 3, cnt[{sc, sc, sc, T}]];
+];
+
+(* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
 If[$failed > 0, Exit[1], Exit[0]];
