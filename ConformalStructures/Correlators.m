@@ -301,8 +301,38 @@ su4IrrepDimension[label_] := Module[{lambda = dynkinToPartition[label], n, tuple
 spinIndices[6, spins_, {}, perm_] := Flatten[Table[
    Table[Lowered[WeylSpinor[6]], dynkinBoxes[spins[[i]]]], {i, Length[spins]}], 1];
 
+(* like buildCorrelator, but projects each operator's index block with the Young
+   symmetrizer for its rep (partition) rather than fully symmetrizing. *)
+buildCorrelator6[expr_, perm_, partitions_] := Module[{unsym, boxes, starts},
+   unsym = TensorTranspose[Components[expr], InversePermutation@perm];
+   boxes = Total /@ partitions;
+   starts = Prepend[Accumulate[Most[boxes]], 0];
+   Total[Function[combo,
+       (Times @@ combo[[;; , 2]]) TensorTranspose[unsym,
+          Join @@ Table[starts[[k]] + combo[[k, 1]], {k, Length[partitions]}]]
+      ] /@ Tuples[youngSymmetrizerTerms /@ partitions]]
+];
+
+(* Overcomplete structures for a 6d 2-point function of a self-conjugate rep:
+   dynkinBoxes strings between points 1 and 2 (all undotted), later Young-projected
+   at each operator.  Non-self-conjugate (unequal box counts) needs the dotted /
+   conjugate machinery and is a later milestone. *)
+ConformalCorrelatorExpressions[6, spins_, opt : OptionsPattern[]] /;
+   Length[spins] == 2 && dynkinBoxes[spins[[1]]] == dynkinBoxes[spins[[2]]] && dynkinBoxes[spins[[1]]] >= 1 :=
+ ConformalCorrelatorExpressions[6, spins, opt] =
+  With[{n = dynkinBoxes[spins[[1]]], q = OptionValue["DefectCodimension"]},
+   {{Tensor[Table[{stringstruct[6, {1, 2}, q], Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]]}, n]],
+     Join[Range[1, 2 n - 1, 2], Range[2, 2 n, 2]]}}
+  ];
+
+(* scaling "spin" entering the kinematic prefactor: the leading orthogonal weight
+   l1.  For d=2,3,4 this is the sum of the spin labels; for d=6 (SU(4) Dynkin
+   {a,b,c}) it is b + (a+c)/2. *)
+repScalingSpin[dim_, rep_] := Total[rep];
+repScalingSpin[6, {a_, b_, c_}] := b + (a + c)/2;
+
 Options[KinematicPrefactor] = {"DefectCodimension" -> None};
-KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, opt : OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (Total /@ spins)}, 1/Which[
+KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, opt : OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (repScalingSpin[dim, #] & /@ spins)}, 1/Which[
 	   OptionValue["DefectCodimension"] =!= None && Length[\[CapitalDelta]s] == 2,
 	   CoordinateSquared[dim, 1, "Transverse" -> True, opt]^(kappas[[1]]/2) CoordinateSquared[dim, 2, "Transverse" -> True, opt]^(kappas[[2]]/2),
 	   Length[\[CapitalDelta]s] == 2,
@@ -340,7 +370,27 @@ ConformalCorrelators[dim_, \[CapitalDelta]s_, spins_, derivs_,
         Sequence @@ spinIndices[dim, spins, derivs, perm]}}], {i, 
      Min[ConformalCorrelatorCount[dim, spins, opt], Length[exprs]]}]
    ]
-   
+
+(* d=6 build: same shape as the generic path, but projects each operator's index
+   block with its Young symmetrizer (buildCorrelator6) instead of symmetrizing. *)
+ConformalCorrelators[6, \[CapitalDelta]s_, spins_, derivs_, perm_, opt : OptionsPattern[]] :=
+ ConformalCorrelators[6, \[CapitalDelta]s, spins, derivs, perm, opt] =
+  Module[{exprs, structs, rules, q = OptionValue["DefectCodimension"], partitions},
+   If[Length[\[CapitalDelta]s] == 2 && ! Equal @@ \[CapitalDelta]s, Return[{}]];
+   exprs = ConformalCorrelatorExpressions[6, spins, opt];
+   partitions = dynkinToPartition /@ spins;
+   If[derivs === {},
+    structs = buildCorrelator6[Sequence @@ #, partitions] & /@ exprs;
+    rules = If[perm === Automatic, {}, x[i_, j_] :> x[perm[[i]], j]];
+    Do[
+     BuildTensor[{correlator[6, \[CapitalDelta]s, spins, derivs, perm, q, i], Sequence @@ spinIndices[6, spins, derivs, perm]}] =
+      If[ArrayQ[structs[[i]]], SparseArray, Identity][Explicit@KinematicPrefactor[6, \[CapitalDelta]s, spins, opt] Normal[structs[[i]]] /. rules],
+     {i, Length[structs]}]
+   ];
+   Table[Tensor[{{correlator[6, \[CapitalDelta]s, spins, derivs, perm, q, i], Sequence @@ spinIndices[6, spins, derivs, perm]}}],
+    {i, Min[ConformalCorrelatorCount[6, spins, opt], Length[exprs]]}]
+  ];
+
 BuildTensor[{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], inds___}] /; {inds} == spinIndices[dim, spins, {}, perm] := (
 	ConformalCorrelators[dim, \[CapitalDelta]s, spins, {}, perm, "DefectCodimension" -> q];
 	BuildTensor[{correlator[dim, \[CapitalDelta]s, spins, {}, perm, q, i], inds}]
@@ -348,10 +398,15 @@ BuildTensor[{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], ind
    
 ConformalTest[dim_, \[CapitalDelta]s_, spins_, perm_, 
    opt : OptionsPattern[]] := Module[{indices, similar, indperm},
-   indices = If[dim == 3,
+   indices = Which[
+     dim == 3,
      Flatten[Table[{perm[[i]], {}}, {i, Length[spins]}, {j, 2 spins[[i]]}], 1],
+     dim == 6,
+     (* all-undotted Weyl indices, dynkinBoxes per operator *)
+     Flatten[Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> False}}, {i, Length[spins]}, {j, dynkinBoxes[spins[[i]]]}], 1],
+     True,
      Flatten[
-      Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> k == 2}}, {i, 
+      Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> k == 2}}, {i,
         Length[spins]}, {k, 2}, {j, 2 spins[[i, k]]}], 2]
      ];
    Table[

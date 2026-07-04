@@ -116,6 +116,35 @@ With[{sc = {0, 0, 0}, v = {0, 1, 0}, T = {0, 2, 0}, sp = {1, 0, 0}, asp = {0, 0,
 ];
 
 (* ------------------------------------------------------------------ *)
+(* P2 two-point functions (Young projection + ConformalTest)          *)
+(* ------------------------------------------------------------------ *)
+
+Print["=== P2 two-point functions ==="];
+SetSignature["Euclidean"];
+tol6 = 10^-8;
+
+(* vector [0,1,0]: full special-conformal invariance check *)
+Module[{cc, ct, comps, pt, res},
+   cc = ConformalCorrelators[6, {4, 4}, {{0, 1, 0}, {0, 1, 0}}, {}, {1, 2}];
+   assert["vector 2pt: nstructs == count == 1",
+      Length[cc] == 1 && ConformalCorrelatorCount[6, {{0, 1, 0}, {0, 1, 0}}] == 1, Length[cc]];
+   ct = ConformalTest[6, {4, 4}, {{0, 1, 0}, {0, 1, 0}}, {1, 2}];
+   comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
+   SeedRandom[11]; pt = Thread[Flatten@Array[x, {2, 6}] -> RandomInteger[{2, 30}, 12]];
+   res = Max[Abs[N[Flatten[comps /. pt]]]];
+   assert["vector 2pt: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
+      NumericQ[res] && res < tol6, res]];
+
+(* stress tensor [0,2,0]: build + nonzero (its ConformalTest at 8 indices is slow) *)
+Module[{cc, pt, mag},
+   cc = ConformalCorrelators[6, {6, 6}, {{0, 2, 0}, {0, 2, 0}}, {}, {1, 2}];
+   assert["stress tensor 2pt: nstructs == count == 1",
+      Length[cc] == 1 && ConformalCorrelatorCount[6, {{0, 2, 0}, {0, 2, 0}}] == 1, Length[cc]];
+   SeedRandom[5]; pt = Thread[Flatten@Array[x, {2, 6}] -> RandomInteger[{2, 30}, 12]];
+   mag = Max[Abs[N[Flatten[Normal[CanonicallyOrderedComponents[cc[[1]]]] /. pt]]]];
+   assert["stress tensor 2pt: structure is nonzero", NumericQ[mag] && mag > 0, mag]];
+
+(* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
 If[$failed > 0, Exit[1], Exit[0]];
