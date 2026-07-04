@@ -90,6 +90,9 @@ testConformal[label_, dim_, ds_, spins_, perm_, npts_] := Module[{r},
 Print["=== ConformalTest invariance (Euclidean) ==="];
 SetSignature["Euclidean"];
 testConformal["2D 3pt scalars",            2, {1, 1, 1},    {{0, 0}, {0, 0}, {0, 0}},                     {1, 2, 3},    3];
+(* 2D is 2 mod 4, so this exercises the Weyl rotation generator that was broken
+   there (WeylChargeConjugationMatrix vanishes); a spinning 2D case guards it. *)
+testConformal["2D 3pt with a left-moving spin-1", 2, {2, 1, 1}, {{1, 0}, {0, 0}, {0, 0}},                 {1, 2, 3},    3];
 testConformal["3D 3pt scalar-scalar-vector",3, {1, 1, 2},   {0, 0, 1},                                    {1, 2, 3},    3];
 testConformal["3D 4pt with one vector",    3, {1, 1, 1, 2}, {0, 0, 0, 1},                                 {1, 2, 3, 4}, 4];
 testConformal["4D 3pt with one vector",    4, {2, 1, 1},    {{1/2, 1/2}, {0, 0}, {0, 0}},                 {1, 2, 3},    3];
