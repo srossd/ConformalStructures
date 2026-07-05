@@ -233,6 +233,33 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, c
    assert["4pt <ssVV>: stacking frames inflates overcomplete rank above the count (motivates single-frame reduction)",
       stacked > 5, {stacked, Length[full]}]];
 
+(* StructureRelations for a 6d 4pt overcomplete set: two point orderings of <sssV>
+   span a 2-dimensional space, so there are 2 relations whose coefficients are
+   cross-ratio functions.  This exercises the general 6d relations path
+   (fittedRelations -> CanonicallyOrderedComponents /. genericPoint at
+   safeCrossRatios); the fastEval fast path is gated to dim <= 4 because it assumes
+   the rational d<=4 expression format and returns wrong values for the
+   Young-projected 6d structures. *)
+Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel, res},
+   gp = ConformalStructures`Private`genericPoint;
+   crs = ConformalStructures`Private`crossRatios;
+   scr = ConformalStructures`Private`safeCrossRatios;
+   oA = ConformalCorrelators[6, {3, 3, 3, 4}, {sc, sc, sc, v}, {}, {1, 2, 3, 4}];
+   oB = ConformalCorrelators[6, {3, 3, 3, 4}, {sc, sc, sc, v}, {}, {2, 1, 3, 4}];
+   structs = Join[oA, oB];
+   rank = MatrixRank@N@Table[Flatten[Normal[CanonicallyOrderedComponents[s]] /. gp[6, None, 7/3, 1]], {s, structs}];
+   rel = Block[{Print = (Null &), Run = (0 &)}, StructureRelations[structs]];
+   assert["4pt <sssV> relations: #relations == #structs - rank == 2",
+      Length[Normal[rel]] == Length[structs] - rank == 2, {Length[Normal[rel]], Length[structs], rank}];
+   assert["4pt <sssV> relations: coefficients involve cross-ratios u,v",
+      ! FreeQ[Normal[rel], Alternatives @@ crs[6, None]], Normal[rel]];
+   res = Module[{comps, relN},
+      comps = Table[Flatten[Normal[CanonicallyOrderedComponents[s]] /. gp[6, None, 7/3, 1]], {s, structs}];
+      relN = Normal[rel] /. Thread[crs[6, None] -> scr[None][[1]]];
+      Max[Abs[N[Flatten[{relN . comps}]]]]];
+   assert["4pt <sssV> relations: vanish numerically  [" <> ToString[res, InputForm] <> "]",
+      NumericQ[res] && res < tol6, res]];
+
 (* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
