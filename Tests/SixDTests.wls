@@ -170,6 +170,18 @@ Module[{ct, comps, pt, res},
    assert["3pt <ssV>: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
       NumericQ[res] && res < tol6, res]];
 
+(* chiral (non-self-conjugate) 3pt: op2 = 4 (undotted), op3 = 4bar (dotted), so
+   their connecting string uses an odd number of coordinate slashes (opposite
+   chirality). *)
+Module[{sp = {1, 0, 0}, asp = {0, 0, 1}, s = {0, 0, 0}, ct, comps, pt, res},
+   assert["3pt <s psi psibar>: count == 1", ConformalCorrelatorCount[6, {s, sp, asp}] == 1];
+   ct = ConformalTest[6, {3, 4, 4}, {s, sp, asp}, {1, 2, 3}];
+   comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
+   SeedRandom[11]; pt = Thread[Flatten@Array[x, {3, 6}] -> RandomInteger[{2, 30}, 18]];
+   res = Max[Abs[N[Flatten[comps /. pt]]]];
+   assert["3pt <s psi psibar> (chiral, 4-4bar): ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
+      NumericQ[res] && res < tol6, res]];
+
 (* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
