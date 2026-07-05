@@ -357,30 +357,29 @@ ConformalCorrelatorExpressions[6, spins_, opt : OptionsPattern[]] :=
           {tup, Tuples[slots]}]],
        {sol, sols}]
     ],
-    (* Reduce the overcomplete set to an independent basis.  Independence must be
-       judged at a SINGLE conformal configuration.  For n >= 4 points, distinct
-       configurations have different cross-ratios, so two structures related by a
-       cross-ratio function (S_i = f(u,v) S_j) -- genuinely dependent as tensor
-       structures -- look independent if components from several configurations are
-       stacked, inflating the rank above the true count.  We therefore run a greedy
-       rank selection separately at each of a few random configurations (30-digit
-       precision, far below any spurious singular value, avoiding the machine-
-       precision rank artifact; the structures carry algebraic Sqrt prefactors so
-       exact LinearSolve is slow) and keep the largest independent set, so a single
-       near-degenerate configuration cannot undercount.  For n <= 3 there are no
-       cross-ratios and every configuration gives the same rank. *)
+    (* Reduce the overcomplete set to an independent basis at a SINGLE generic
+       configuration.  Independence must be judged at one conformal frame: for
+       n >= 4 points the cross-ratios are fixed there, so two structures related by
+       a cross-ratio function (S_i = f(u,v) S_j) -- genuinely dependent as tensor
+       structures -- stay dependent, whereas stacking several frames would inflate
+       the rank above the true count.  For n <= 3 there are no cross-ratios and
+       every frame gives the same rank.
+
+       The bare structures carry only Sqrt[(X_ij^2)^2]-type factors from the string
+       normalizations; at integer coordinates those radicands are perfect squares,
+       so Sqrt auto-evaluates and the components are exact rationals -- no floating
+       point and none of the algebraic numbers that a non-square configuration
+       would introduce.  The reduction is therefore done in exact arithmetic via
+       IndependentSet[..., Method -> "Fold"], whose indQ samples components when the
+       flattened vector is wide, keeping the exact linear algebra fast. *)
     Module[{full, partitions, q = OptionValue["DefectCodimension"], npts = Length[spins],
-            tensors, cfgs, comps, greedy, picks},
+            tensors, cfg},
      full = ConformalCorrelatorExpressions[6, spins, "DefectCodimension" -> q, "Overcomplete" -> True];
      partitions = MapThread[opPartition6, {spins, opDottedQ6 /@ spins}];
      tensors = Normal[buildCorrelator6[Sequence @@ #, partitions]] & /@ full;
-     cfgs = BlockRandom[SeedRandom[1]; Table[RandomInteger[{2, 40}, npts 6], {3}]];
-     comps = Table[Flatten[{N[t /. Thread[Flatten@Array[x, {npts, 6}] -> cfg], 30]}], {cfg, cfgs}, {t, tensors}];
-     greedy[mat_] := Module[{picked = {}},
-        Do[If[MatrixRank[mat[[Append[picked, i]]]] > Length[picked], AppendTo[picked, i]], {i, Length[full]}];
-        picked];
-     picks = greedy /@ comps;
-     full[[First@MaximalBy[picks, Length]]]
+     cfg = BlockRandom[SeedRandom[1]; Thread[Flatten@Array[x, {npts, 6}] -> RandomInteger[{2, 40}, npts 6]]];
+     full[[IndependentSet[tensors, "TensorFunction" -> (Flatten[{Normal[# /. cfg]}] &),
+        "Indices" -> True, Method -> "Fold"]]]
     ]
    ]
   ];
