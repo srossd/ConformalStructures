@@ -183,6 +183,57 @@ Module[{sp = {1, 0, 0}, asp = {0, 0, 1}, s = {0, 0, 0}, ct, comps, pt, res},
       NumericQ[res] && res < tol6, res]];
 
 (* ------------------------------------------------------------------ *)
+(* P4 four-point functions (alpha-system + single-frame reduction)     *)
+(* ------------------------------------------------------------------ *)
+
+Print["=== P4 four-point functions ==="];
+
+Module[{s = {0, 0, 0}, v = {0, 1, 0}},
+   (* all-scalar: a single trivial (index-free) structure -- guards the scalar
+      edge case in the reduction *)
+   assert["4pt <ssss>: #independent == count == 1",
+      Length[ConformalCorrelatorExpressions[6, {s, s, s, s}]] == 1 == ConformalCorrelatorCount[6, {s, s, s, s}]];
+   assert["4pt <sssV>: #independent == count == 2",
+      Length[ConformalCorrelatorExpressions[6, {s, s, s, v}]] == 2 == ConformalCorrelatorCount[6, {s, s, s, v}]];
+   assert["4pt <ssVV>: #independent == count == 5",
+      Length[ConformalCorrelatorExpressions[6, {s, s, v, v}]] == 5 == ConformalCorrelatorCount[6, {s, s, v, v}]]];
+
+(* a 4pt structure built by the alpha-system is conformally invariant *)
+Module[{s = {0, 0, 0}, v = {0, 1, 0}, ct, comps, pt, res},
+   ct = ConformalTest[6, {3, 3, 3, 4}, {s, s, s, v}, {1, 2, 3, 4}];
+   comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
+   SeedRandom[11]; pt = Thread[Flatten@Array[x, {4, 6}] -> RandomInteger[{2, 30}, 24]];
+   res = Max[Abs[N[Flatten[comps /. pt]]]];
+   assert["4pt <sssV>: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
+      NumericQ[res] && res < tol6, res]];
+
+(* Independence of a 4pt basis must be judged at a SINGLE conformal frame: for
+   n >= 4 points the cross-ratios vary between frames, so structures related by a
+   cross-ratio function are dependent as tensor structures even though stacking
+   several frames makes them look independent.  Guard that (a) the reduced <ssVV>
+   basis has full rank at one generic frame and (b) the overcomplete set's rank is
+   inflated when frames are stacked -- the artifact the single-frame reduction
+   avoids. *)
+Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, cfgs, m, single, stacked},
+   bc = ConformalStructures`Private`buildCorrelator6;
+   od = ConformalStructures`Private`opDottedQ6;
+   op = ConformalStructures`Private`opPartition6;
+   reps = {s, s, v, v};
+   parts = MapThread[op, {reps, od /@ reps}];
+   red = ConformalCorrelatorExpressions[6, reps];
+   full = ConformalCorrelatorExpressions[6, reps, "Overcomplete" -> True];
+   SeedRandom[99]; cfg = RandomInteger[{2, 40}, 24];
+   m = Table[Flatten[{N[Normal[bc[Sequence @@ ex, parts]] /. Thread[Flatten@Array[x, {4, 6}] -> cfg], 30]}], {ex, red}];
+   single = MatrixRank[m];
+   assert["4pt <ssVV>: reduced basis has full rank (5) at a single frame",
+      single == Length[red] == 5, single];
+   SeedRandom[7]; cfgs = Table[RandomInteger[{2, 40}, 24], {3}];
+   m = Table[Flatten@Table[N[Normal[bc[Sequence @@ ex, parts]] /. Thread[Flatten@Array[x, {4, 6}] -> c], 30], {c, cfgs}], {ex, full}];
+   stacked = MatrixRank[m];
+   assert["4pt <ssVV>: stacking frames inflates overcomplete rank above the count (motivates single-frame reduction)",
+      stacked > 5, {stacked, Length[full]}]];
+
+(* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
 If[$failed > 0, Exit[1], Exit[0]];

@@ -357,22 +357,30 @@ ConformalCorrelatorExpressions[6, spins_, opt : OptionsPattern[]] :=
           {tup, Tuples[slots]}]],
        {sol, sols}]
     ],
-    (* Reduce the overcomplete set to an independent basis, capped at the known
-       count.  The structures carry Sqrt prefactors (algebraic, not rational like
-       the d=2,3,4 fastEval path), so exact LinearSolve is slow; instead we select
-       greedily at high precision (30 digits, far below any spurious singular value)
-       which avoids the machine-precision rank artifact.  We sample several random
-       configurations (the same set for every structure); the safe-cross-ratio
-       genericPoint configuration is near-degenerate for 3-point functions. *)
-    Module[{full, partitions, q = OptionValue["DefectCodimension"], npts = Length[spins], cnt, pts, comps, picked = {}},
+    (* Reduce the overcomplete set to an independent basis.  Independence must be
+       judged at a SINGLE conformal configuration.  For n >= 4 points, distinct
+       configurations have different cross-ratios, so two structures related by a
+       cross-ratio function (S_i = f(u,v) S_j) -- genuinely dependent as tensor
+       structures -- look independent if components from several configurations are
+       stacked, inflating the rank above the true count.  We therefore run a greedy
+       rank selection separately at each of a few random configurations (30-digit
+       precision, far below any spurious singular value, avoiding the machine-
+       precision rank artifact; the structures carry algebraic Sqrt prefactors so
+       exact LinearSolve is slow) and keep the largest independent set, so a single
+       near-degenerate configuration cannot undercount.  For n <= 3 there are no
+       cross-ratios and every configuration gives the same rank. *)
+    Module[{full, partitions, q = OptionValue["DefectCodimension"], npts = Length[spins],
+            tensors, cfgs, comps, greedy, picks},
      full = ConformalCorrelatorExpressions[6, spins, "DefectCodimension" -> q, "Overcomplete" -> True];
      partitions = MapThread[opPartition6, {spins, opDottedQ6 /@ spins}];
-     cnt = ConformalCorrelatorCount[6, spins, "DefectCodimension" -> q];
-     pts = BlockRandom[SeedRandom[1]; Table[RandomInteger[{2, 40}, npts 6], {3}]];
-     comps = Table[With[{c = Normal[buildCorrelator6[Sequence @@ ex, partitions]]},
-        Flatten@Table[N[c /. Thread[Flatten@Array[x, {npts, 6}] -> p], 30], {p, pts}]], {ex, full}];
-     Do[If[Length[picked] < cnt && MatrixRank[comps[[Append[picked, i]]]] > Length[picked], AppendTo[picked, i]], {i, Length[full]}];
-     full[[picked]]
+     tensors = Normal[buildCorrelator6[Sequence @@ #, partitions]] & /@ full;
+     cfgs = BlockRandom[SeedRandom[1]; Table[RandomInteger[{2, 40}, npts 6], {3}]];
+     comps = Table[Flatten[{N[t /. Thread[Flatten@Array[x, {npts, 6}] -> cfg], 30]}], {cfg, cfgs}, {t, tensors}];
+     greedy[mat_] := Module[{picked = {}},
+        Do[If[MatrixRank[mat[[Append[picked, i]]]] > Length[picked], AppendTo[picked, i]], {i, Length[full]}];
+        picked];
+     picks = greedy /@ comps;
+     full[[First@MaximalBy[picks, Length]]]
     ]
    ]
   ];
