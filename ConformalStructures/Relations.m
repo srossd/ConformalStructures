@@ -18,6 +18,7 @@ ClearConformalCache[] := (
    clearMemoized[StringStructure];
    clearMemoized[StructureRelations];
    clearMemoized[uvz];
+   clearMemoized[fastEvalPiece6];
 );
 
 zeroVecQ[vec_] :=
@@ -299,11 +300,9 @@ symbolicRelations[structs_, OptionsPattern[]] := With[{q = First@Cases[structs, 
 ];
   
 Options[fittedRelations] = {"MaximumZ" -> Automatic};
-(* The fastEval fast path (used below for >=4-index, non-derivative structures)
-   assumes the rational d<=4 correlator-expression format; the d=6 structures are
-   Young-projected and carry algebraic Sqrt prefactors, so fastEval returns wrong
-   values for them.  The dim <= 4 guards on the fastEvalCOC branches route d=6
-   through the exact CanonicallyOrderedComponents /. genericPoint evaluation. *)
+(* fastEval has a d=6 branch only for NON-derivative correlators (fastEval.m); d=6
+   structures with derivatives are not handled there, so the guards below keep those
+   on the exact CanonicallyOrderedComponents /. genericPoint evaluation. *)
 fittedRelations[structs_, OptionsPattern[]] :=
    Block[{zmax = If[OptionValue["MaximumZ"] === Automatic, 5, OptionValue["MaximumZ"]], dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
     dim = First@Cases[structs, correlator[dim_, ___] :> dim, All];
@@ -311,7 +310,7 @@ fittedRelations[structs_, OptionsPattern[]] :=
     safes = safeCrossRatios[q];
     structComps = Flatten[Table[Transpose[ArrayFlatten[Flatten[{Normal[
        If[
-         dim <= 4 && Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
+         (dim <= 4 || Max@Cases[#, c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
            fastEvalCOC[#,z,safes[[11]]],
            Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 11]
        ]
@@ -330,7 +329,7 @@ fittedRelations[structs_, OptionsPattern[]] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 dim <= 4 && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 (dim <= 4 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
@@ -380,7 +379,7 @@ fittedRelations[structs_, OptionsPattern[]] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 dim <= 4 && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 (dim <= 4 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]

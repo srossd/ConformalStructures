@@ -312,17 +312,22 @@ spinIndices[6, spins_, {}, perm_] := Flatten[Table[
       Table[Lowered[opIndexHead6[d][6]], opBoxes6[spins[[i]], d]]],
    {i, Length[spins]}], 1];
 
-(* like buildCorrelator, but projects each operator's index block with the Young
-   symmetrizer for its rep (partition) rather than fully symmetrizing. *)
-buildCorrelator6[expr_, perm_, partitions_] := Module[{unsym, boxes, starts},
-   unsym = TensorTranspose[Components[expr], InversePermutation@perm];
-   boxes = Total /@ partitions;
+(* Young-project an already-assembled, index-reordered tensor: symmetrize each
+   operator's index block with the Young symmetrizer for its rep (partition),
+   rather than fully symmetrizing.  Shared by buildCorrelator6 (symbolic assembly)
+   and the d=6 fast path in fastEval.m (numeric assembly at a concrete frame). *)
+youngProject6[unsym_, partitions_] := Module[{boxes = Total /@ partitions, starts},
    starts = Prepend[Accumulate[Most[boxes]], 0];
    Total[Function[combo,
        (Times @@ combo[[;; , 2]]) TensorTranspose[unsym,
           Join @@ Table[starts[[k]] + combo[[k, 1]], {k, Length[partitions]}]]
       ] /@ Tuples[youngSymmetrizerTerms /@ partitions]]
 ];
+
+(* like buildCorrelator, but projects each operator's index block with the Young
+   symmetrizer for its rep (partition) rather than fully symmetrizing. *)
+buildCorrelator6[expr_, perm_, partitions_] :=
+   youngProject6[TensorTranspose[Components[expr], InversePermutation@perm], partitions];
 
 (* SU(4) alpha-system: distribute each operator's spinor-index boxes among strings
    S_i X..X S_j between operators (a string deposits one index at each endpoint) and

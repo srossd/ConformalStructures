@@ -235,11 +235,9 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, c
 
 (* StructureRelations for a 6d 4pt overcomplete set: two point orderings of <sssV>
    span a 2-dimensional space, so there are 2 relations whose coefficients are
-   cross-ratio functions.  This exercises the general 6d relations path
-   (fittedRelations -> CanonicallyOrderedComponents /. genericPoint at
-   safeCrossRatios); the fastEval fast path is gated to dim <= 4 because it assumes
-   the rational d<=4 expression format and returns wrong values for the
-   Young-projected 6d structures. *)
+   cross-ratio functions.  (2-index structures take the exact genericPoint path;
+   >=4-index structures take the d=6 fastEval fast path -- see the agreement test
+   below.) *)
 Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel, res},
    gp = ConformalStructures`Private`genericPoint;
    crs = ConformalStructures`Private`crossRatios;
@@ -259,6 +257,33 @@ Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel,
       Max[Abs[N[Flatten[{relN . comps}]]]]];
    assert["4pt <sssV> relations: vanish numerically  [" <> ToString[res, InputForm] <> "]",
       NumericQ[res] && res < tol6, res]];
+
+(* The d=6 fastEval fast path (fastEval.m) evaluates each string-structure piece at
+   the concrete frame and Young-projects the numeric tensor product; it must
+   reproduce the exact CanonicallyOrderedComponents / Components at every sampled
+   frame.  This is what accelerates fittedRelations for >=4-index structures
+   (<ssVV> relations: ~13 s vs ~400 s via the symbolic path).
+
+   CAUTION: do NOT introduce top-level symbols named u or v in this suite -- they
+   are the cross-ratio symbols in crossRatios[6]/uvpt, and shadowing them at global
+   scope corrupts genericPoint (its uvpt coordinate silently becomes a vector).
+   Module-local names are safe, but this test uses vv to be unambiguous. *)
+Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, fe, feCOC, gp, scr, corr, dCOC, dNat},
+   fe = ConformalStructures`Private`fastEval;
+   feCOC = ConformalStructures`Private`fastEvalCOC;
+   gp = ConformalStructures`Private`genericPoint;
+   scr = ConformalStructures`Private`safeCrossRatios;
+   corr = ConformalCorrelators[6, {4, 4, 4, 4}, {sc, sc, vv, vv}, {}, {1, 2, 3, 4}];
+   dCOC = Max@Table[Max[Abs[N[Flatten[Normal[feCOC[corr[[k]], z, scr[None][[ii]]]]] -
+        Flatten[Normal[CanonicallyOrderedComponents[corr[[k]]]] /. gp[6, None, z, ii]]]]],
+      {k, Length[corr]}, {z, {2, 3}}, {ii, {1, 7}}];
+   dNat = Max@Table[Max[Abs[N[Flatten[Normal[fe[corr[[k]], z, scr[None][[ii]]]]] -
+        Flatten[Normal[Components[corr[[k]]]] /. gp[6, None, z, ii]]]]],
+      {k, Length[corr]}, {z, {2, 3}}, {ii, {1, 7}}];
+   assert["6d fastEvalCOC == CanonicallyOrderedComponents (<ssVV>)  [max|diff|=" <> ToString[dCOC, InputForm] <> "]",
+      NumericQ[dCOC] && dCOC < tol6, dCOC];
+   assert["6d fastEval == Components (<ssVV>)  [max|diff|=" <> ToString[dNat, InputForm] <> "]",
+      NumericQ[dNat] && dNat < tol6, dNat]];
 
 (* ------------------------------------------------------------------ *)
 Print["================================================================"];

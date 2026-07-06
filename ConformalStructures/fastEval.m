@@ -28,11 +28,28 @@ fastEval[expr_, perm_, pointperm_, groupLengths_, z_, ratios_] := Module[{dim, q
  
  
 
+(* d = 6: the operators' reps are Young-projected (SU(4)), which the generic
+   symmetrization below does not reproduce, so this more specific rule takes over.
+   Evaluate each string-structure piece at the CONCRETE frame and Young-project the
+   numeric tensor product -- the numeric counterpart of buildCorrelator6.  Each
+   piece is a small 4x4 tensor, cached and reused across structures that share the
+   string.  (Do not push symbolic cross-ratios through uvz as the generic path
+   does: for 6d string structures the concrete substitution keeps the pieces
+   rectangular.) *)
+fastEvalPiece6[spec_, perm_, q_, z_, ratios_] := fastEvalPiece6[spec, perm, q, z, ratios] =
+   Normal[Components[Tensor[{spec}]]] /. evalRule[6, perm, q, z, ratios];
+
+fastEval[Tensor[{{correlator[6, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], ___}}], z_, ratios_] :=
+   With[{ex = ConformalCorrelatorExpressions[6, spins, "DefectCodimension" -> q][[i]]},
+     (Explicit@KinematicPrefactor[6, \[CapitalDelta]s, spins, "DefectCodimension" -> q] /. evalRule[6, perm, q, z, ratios]) youngProject6[
+        TensorTranspose[TensorProduct @@ (fastEvalPiece6[#, perm, q, z, ratios] & /@ ex[[1, 1]]), InversePermutation@ex[[2]]],
+        MapThread[opPartition6, {spins, opDottedQ6 /@ spins}]]];
+
 fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], ___}}], z_, ratios_] := (Explicit@KinematicPrefactor[dim, \[CapitalDelta]s, spins, "DefectCodimension" -> q] /. evalRule[dim, perm, q, z, ratios]) fastEval[
-     Sequence @@ ConformalCorrelatorExpressions[dim, spins, "DefectCodimension" -> q][[i]], 
-     perm, 
-     2 Flatten[spins], 
-     z, 
+     Sequence @@ ConformalCorrelatorExpressions[dim, spins, "DefectCodimension" -> q][[i]],
+     perm,
+     2 Flatten[spins],
+     z,
      ratios
 ];
 
