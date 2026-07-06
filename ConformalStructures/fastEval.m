@@ -56,14 +56,25 @@ fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_]
 fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {{s : ("u" | "v"), didx_}}, perm_, q_, i_], inds___}}],z_, ratios_] := Module[{deriv, rest, nbefore},
    rest = fastEval[Tensor[{{correlator[dim, \[CapitalDelta]s, spins, {}, perm, q, i], inds}}], z, ratios];
    deriv = Normal[Components[TensorSpinorDerivative[ToExpression[s][dim, perm, "DefectCodimension" -> q], dim, perm[[didx]]]]] /. evalRule[dim, Range[Length[\[CapitalDelta]s]], q, z, ratios];
-   nbefore = 2 Total[Flatten[spins[[;; didx - 1]]]];
+   (* indices of the operators before didx; the spinor derivative contributes two
+      indices either way (sigma is {Weyl, dotted} in 0 mod 4, {Weyl, Weyl} in 2 mod 4) *)
+   nbefore = If[dim == 6, Total[opBoxes6[#, opDottedQ6[#]] & /@ spins[[;; didx - 1]]], 2 Total[Flatten[spins[[;; didx - 1]]]]];
    TensorTranspose[
-      TensorProduct[deriv, rest], 
+      TensorProduct[deriv, rest],
       InversePermutation@Join[2 + Range[nbefore], {1, 2}, 2 + Range[nbefore + 1, Length[{inds}]]]
    ]
 ];
 
-fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {{"\[PartialD]", didx_}}, perm_, q_, i_], inds___}}], z_, ratios_] := 
+(* d = 6 spacetime (\[PartialD]) derivative.  The piece-wise fast path below assumes
+   the d<=4 symmetrization and the rational uvz evaluation, neither of which holds in
+   6D (the reps are Young-projected and uvz goes ragged), so this more specific rule
+   evaluates the derivative structure directly via its Components -- correct, though
+   not accelerated.  A fast 6D \[PartialD] path is future work; the u and v
+   derivatives above already take the fast path. *)
+fastEval[t : Tensor[{{correlator[6, _, _, {{"\[PartialD]", _}}, perm_, q_, _], ___}}], z_, ratios_] :=
+   Normal[Components[t]] /. evalRule[6, perm, q, z, ratios];
+
+fastEval[Tensor[{{correlator[dim_, \[CapitalDelta]s_, spins_, {{"\[PartialD]", didx_}}, perm_, q_, i_], inds___}}], z_, ratios_] :=
   Module[{rule, prefactor, prefactorEval, pdidx, expr, factors, pieces, piecesEval, derivpieces, derivpiecesEval, fp1, fp2, nbefore, nafter, unsym, groupLengths, syms},
    rule = evalRule[dim, perm, q, z, ratios];
    prefactor = Explicit@KinematicPrefactor[dim, \[CapitalDelta]s, spins, "DefectCodimension" -> q];

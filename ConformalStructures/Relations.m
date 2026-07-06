@@ -300,9 +300,11 @@ symbolicRelations[structs_, OptionsPattern[]] := With[{q = First@Cases[structs, 
 ];
   
 Options[fittedRelations] = {"MaximumZ" -> Automatic};
-(* fastEval has a d=6 branch only for NON-derivative correlators (fastEval.m); d=6
-   structures with derivatives are not handled there, so the guards below keep those
-   on the exact CanonicallyOrderedComponents /. genericPoint evaluation. *)
+(* fastEval covers d=6 correlators including derivatives (fastEval.m): non-derivative
+   and u/v-derivative structures take the accelerated path, while d=6 spacetime
+   (\[PartialD]) derivatives fall back to a direct Components evaluation inside
+   fastEval (correct, not accelerated).  The dim==6 clause in the guards below routes
+   all d=6 structures through fastEvalCOC accordingly. *)
 fittedRelations[structs_, OptionsPattern[]] :=
    Block[{zmax = If[OptionValue["MaximumZ"] === Automatic, 5, OptionValue["MaximumZ"]], dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
     dim = First@Cases[structs, correlator[dim_, ___] :> dim, All];
@@ -310,7 +312,7 @@ fittedRelations[structs_, OptionsPattern[]] :=
     safes = safeCrossRatios[q];
     structComps = Flatten[Table[Transpose[ArrayFlatten[Flatten[{Normal[
        If[
-         (dim <= 4 || Max@Cases[#, c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
+         (dim <= 4 || dim == 6 || Max@Cases[#, c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
            fastEvalCOC[#,z,safes[[11]]],
            Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 11]
        ]
@@ -329,7 +331,7 @@ fittedRelations[structs_, OptionsPattern[]] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 (dim <= 4 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 (dim <= 4 || dim == 6 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
@@ -379,7 +381,7 @@ fittedRelations[structs_, OptionsPattern[]] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 (dim <= 4 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 (dim <= 4 || dim == 6 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]

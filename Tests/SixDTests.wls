@@ -322,6 +322,26 @@ Module[{vv = {0, 1, 0}, sc = {0, 0, 0}, sp = {1, 0, 0}, asp = {0, 0, 1},
    assert["6d deriv on dotted op (chirality split): value multiset matches TSD[base]  [" <> ToString[ms, InputForm] <> "]",
       NumericQ[ms] && ms < tol6, ms]];
 
+(* fastEval for d=6 derivative correlators: u/v derivatives take the accelerated
+   piece-wise path; spacetime (\[PartialD]) derivatives fall back to a direct
+   Components evaluation inside fastEval.  Both must reproduce
+   CanonicallyOrderedComponents.  Uses <sssV> (a spinning operator) so the derivative
+   structure has >= 4 indices -- the regime fittedRelations routes to fastEval. *)
+Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, feC, gp, scr, du, dd, diffU, diffD},
+   feC = ConformalStructures`Private`fastEvalCOC;
+   gp = ConformalStructures`Private`genericPoint;
+   scr = ConformalStructures`Private`safeCrossRatios;
+   du = ConformalCorrelators[6, {2, 2, 2, 3}, {sc, sc, sc, vv}, {{"u", 4}}, {1, 2, 3, 4}][[1]];
+   dd = ConformalCorrelators[6, {2, 2, 2, 3}, {sc, sc, sc, vv}, {{"\[PartialD]", 4}}, {1, 2, 3, 4}][[1]];
+   diffU = Max@Table[Max[Abs[N[Flatten[Normal[feC[du, z, scr[None][[ii]]]]] -
+        Flatten[Normal[CanonicallyOrderedComponents[du]] /. gp[6, None, z, ii]]]]], {z, {2, 3}}, {ii, {1, 7}}];
+   diffD = Max@Table[Max[Abs[N[Flatten[Normal[feC[dd, z, scr[None][[ii]]]]] -
+        Flatten[Normal[CanonicallyOrderedComponents[dd]] /. gp[6, None, z, ii]]]]], {z, {2, 3}}, {ii, {1, 7}}];
+   assert["6d u-derivative fastEvalCOC == CanonicallyOrderedComponents (<sssV>)  [" <> ToString[diffU, InputForm] <> "]",
+      NumericQ[diffU] && diffU < tol6, diffU];
+   assert["6d \[PartialD]-derivative fastEvalCOC == CanonicallyOrderedComponents (<sssV>)  [" <> ToString[diffD, InputForm] <> "]",
+      NumericQ[diffD] && diffD < tol6, diffD]];
+
 (* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
