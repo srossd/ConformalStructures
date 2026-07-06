@@ -285,6 +285,43 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, fe, feCOC, gp, scr, corr, dCOC, dNat},
    assert["6d fastEval == Components (<ssVV>)  [max|diff|=" <> ToString[dNat, InputForm] <> "]",
       NumericQ[dNat] && dNat < tol6, dNat]];
 
+(* Derivative correlators (slow path): the D=6 descendant machinery -- spinIndices
+   plus the derivative BuildTensor index bookkeeping.  A spinor derivative adds two
+   undotted Weyl indices (D=6 is 2 mod 4).  We validate against the direct
+   TensorSpinorDerivative of the base structure: (a) the index list, (b) for a
+   derivative on op2 -- where op1's indices precede the derivative's, exercising the
+   interleaving reorder -- the built components equal TSD[base] transposed per the
+   index convention, and (c) for a derivative on a dotted operator (chirality split)
+   the value multiset is preserved. *)
+Module[{vv = {0, 1, 0}, sc = {0, 0, 0}, sp = {1, 0, 0}, asp = {0, 0, 1},
+        gp, tsd, spinInds, base, deriv, built, ref, dbase, dderiv, dbuilt, dref, dInt, ms},
+   gp = ConformalStructures`Private`genericPoint;
+   tsd = Symbol[First[Names["*`TensorSpinorDerivative"]]];
+   spinInds = ConformalStructures`Private`spinIndices;
+   assert["6d deriv: spinIndices adds two Weyl indices per spinor derivative",
+      spinInds[6, {sc, sc, sc, sc}, {{"\[PartialD]", 1}}, {1, 2, 3, 4}] ===
+        {Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]]}];
+   (* <VV>, derivative on op2: spinIndices places the derivative's indices after
+      op1's, while TSD prepends them -> reorder {3,4,1,2,5,6} *)
+   base = ConformalCorrelators[6, {3, 3}, {vv, vv}, {}, {1, 2}][[1]];
+   deriv = ConformalCorrelators[6, {3, 3}, {vv, vv}, {{"\[PartialD]", 2}}, {1, 2}][[1]];
+   built = Normal[Components[deriv]] /. gp[6, None, 2, 1];
+   ref = Normal[Components[tsd[base, 6, 2]]] /. gp[6, None, 2, 1];
+   dInt = Max[Abs[N[Flatten[built - TensorTranspose[ref, {3, 4, 1, 2, 5, 6}]]]]];
+   assert["6d deriv <VV>, d on op2: built == TSD[base] reordered per convention  [" <> ToString[dInt, InputForm] <> "]",
+      NumericQ[dInt] && dInt < tol6, dInt];
+   (* <s psi psibar>, derivative on the dotted psibar (op3): chirality split *)
+   dbase = ConformalCorrelators[6, {2, 2, 2}, {sc, sp, asp}, {}, {1, 2, 3}][[1]];
+   dderiv = ConformalCorrelators[6, {2, 2, 2}, {sc, sp, asp}, {{"\[PartialD]", 3}}, {1, 2, 3}][[1]];
+   assert["6d deriv on dotted op: index list has three Weyl and one dotted-Weyl",
+      Sort[spinInds[6, {sc, sp, asp}, {{"\[PartialD]", 3}}, {1, 2, 3}]] ===
+        Sort[{Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]], Lowered[DottedWeylSpinor[6]]}]];
+   dbuilt = Normal[Components[dderiv]] /. gp[6, None, 2, 1];
+   dref = Normal[Components[tsd[dbase, 6, 3]]] /. gp[6, None, 2, 1];
+   ms = Max[Abs[Sort[N@Chop[Flatten[dbuilt], 10^-8]] - Sort[N@Chop[Flatten[dref], 10^-8]]]];
+   assert["6d deriv on dotted op (chirality split): value multiset matches TSD[base]  [" <> ToString[ms, InputForm] <> "]",
+      NumericQ[ms] && ms < tol6, ms]];
+
 (* ------------------------------------------------------------------ *)
 Print["================================================================"];
 Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];

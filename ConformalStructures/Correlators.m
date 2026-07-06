@@ -307,10 +307,16 @@ opPartition6[rep_, dotted_] := dynkinToPartition[If[dotted, Reverse[rep], rep]];
 opBoxes6[rep_, dotted_] := Total[opPartition6[rep, dotted]];
 opIndexHead6[dotted_] := If[dotted, DottedWeylSpinor, WeylSpinor];
 
-spinIndices[6, spins_, {}, perm_] := Flatten[Table[
-   With[{d = opDottedQ6[spins[[i]]]},
-      Table[Lowered[opIndexHead6[d][6]], opBoxes6[spins[[i]], d]]],
-   {i, Length[spins]}], 1];
+(* Index list of a d=6 correlator.  Each operator contributes opBoxes6 indices of a
+   single chirality (Weyl if a>=c, dotted-Weyl otherwise).  A spinor derivative on an
+   operator contributes two undotted Weyl indices (D=6 is 2 mod 4, so the sigma
+   tensor is {Weyl, Weyl}); these lead each operator's block, matching the D=2/D=4
+   convention and the derivative BuildTensor's index placement. *)
+spinIndices[6, spins_, derivs_, perm_] := Flatten[Table[
+   With[{d = opDottedQ6[spins[[i]]]}, {
+      Table[{Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]]}, Count[derivs[[;; , 2]], i]],
+      Table[Lowered[opIndexHead6[d][6]], opBoxes6[spins[[i]], d]]
+   }], {i, Length[spins]}]];
 
 (* Young-project an already-assembled, index-reordered tensor: symmetrize each
    operator's index block with the Young symmetrizer for its rep (partition),
@@ -509,8 +515,12 @@ BuildTensor[
       pd = derivs /. {type_, n_Integer} :> {type, perm[[n]]}, 
      indsPerX, siPerm, dsiPerm, siPos, dsiPos, fullPerm, baseexpr, 
      expr},
-    indsPerX = 
-     Table[2 spins[[j]] + Count[derivs[[;; , 2]], j] Which[dim == 4, {1, 1}, dim == 3, 2, dim == 2, {2, 0}], {j, 
+    indsPerX =
+     Table[If[dim == 6,
+        (* {undotted, dotted}: an operator carries opBoxes6 indices of one chirality,
+           each derivative adds two undotted (D=6 is 2 mod 4) *)
+        With[{dt = opDottedQ6[spins[[j]]]}, {If[dt, 0, opBoxes6[spins[[j]], dt]], If[dt, opBoxes6[spins[[j]], dt], 0]}] + Count[derivs[[;; , 2]], j] {2, 0},
+        2 spins[[j]] + Count[derivs[[;; , 2]], j] Which[dim == 4, {1, 1}, dim == 3, 2, dim == 2, {2, 0}]], {j,
        Length[\[CapitalDelta]s]}];
     siPerm = Which[dim == 4, (* 2D and 3D both have undotted indices on derivatives *)
       Flatten@{
@@ -533,11 +543,21 @@ BuildTensor[
       dim == 2,
       Flatten@{
         Table[
-         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
-          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j, 
-          Length[derivs]}], 
-        Table[Total[indsPerX[[;; k, 1]]] - 2 spins[[k, 1]] + 
+         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] +
+          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j,
+          Length[derivs]}],
+        Table[Total[indsPerX[[;; k, 1]]] - 2 spins[[k, 1]] +
           Range[2 spins[[k, 1]]], {k, Length[\[CapitalDelta]s]}]
+        },
+      dim == 6,  (* like dim==2 (two undotted per derivative); the operator's own
+                    undotted count is indsPerX[[k,1]] minus the derivative indices *)
+      Flatten@{
+        Table[
+         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] +
+          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j,
+          Length[derivs]}],
+        Table[With[{own = indsPerX[[k, 1]] - 2 Count[derivs[[;; , 2]], k]},
+           Total[indsPerX[[;; k, 1]]] - own + Range[own]], {k, Length[\[CapitalDelta]s]}]
         }
       ];
     dsiPerm = If[EvenQ[dim],
@@ -555,8 +575,8 @@ BuildTensor[
            Total[indsPerX[[;; derivs[[j, 2]] - 1, 2]]] + 1, {j,
            Length[derivs]}],
          {}],
-        Table[Total[indsPerX[[;; k, 2]]] - 2 spins[[k, 2]] +
-          Range[2 spins[[k, 2]]], {k, Length[\[CapitalDelta]s]}]
+        Table[With[{own = If[dim == 6, indsPerX[[k, 2]], 2 spins[[k, 2]]]},
+           Total[indsPerX[[;; k, 2]]] - own + Range[own]], {k, Length[\[CapitalDelta]s]}]
         },
       {}
       ];
