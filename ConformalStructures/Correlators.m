@@ -542,11 +542,20 @@ BuildTensor[
       ];
     dsiPerm = If[EvenQ[dim],
       Flatten@{
-        Table[
-         Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
-          Total[indsPerX[[;; derivs[[j, 2]] - 1, 2]]] + 1, {j, 
-          Length[derivs]}], 
-        Table[Total[indsPerX[[;; k, 2]]] - 2 spins[[k, 2]] + 
+        (* A spinor derivative carries a dotted index only in D = 0 (mod 4), where
+           the sigma tensor is {Weyl, dotted-Weyl}; in D = 2 (mod 4) it is
+           {Weyl, Weyl} (two undotted, cf. siPerm's dim==2 branch), so it deposits
+           no dotted index and this derivative part must be empty -- otherwise it
+           emits a phantom dotted slot per derivative that collides with the
+           operator-dotted slots (harmless in 2D, where Weyl indices are
+           1-dimensional, but corrupting in 6D). *)
+        If[Mod[dim, 4] == 0,
+         Table[
+          Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] +
+           Total[indsPerX[[;; derivs[[j, 2]] - 1, 2]]] + 1, {j,
+           Length[derivs]}],
+         {}],
+        Table[Total[indsPerX[[;; k, 2]]] - 2 spins[[k, 2]] +
           Range[2 spins[[k, 2]]], {k, Length[\[CapitalDelta]s]}]
         },
       {}
