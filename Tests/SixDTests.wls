@@ -1,28 +1,31 @@
 #!/usr/bin/env wolframscript
 (* ::Package:: *)
 
-(* Validation for the in-progress d = 6 (SO(6) = SU(4)) support.
+(* Validation for the d = 6 (SO(6) = SU(4)) support.
 
-   Run from the repository root with:
+   Runs standalone from the repository root:
 
        wolframscript -file Tests/SixDTests.wls
 
-   This is separate from Tests/RegressionTests.wls (the stable CI suite) while
-   d = 6 is under construction.  Milestone P0 covers the representation
-   primitives: the SU(4) Dynkin -> Young-projector pipeline and spinIndices[6],
-   validated by reproducing known irrep dimensions. *)
+   It is also included by Tests/RegressionTests.wls, which runs the whole suite
+   (main + d=6) under one process on CI: RegressionTests sets $sixDIncluded and
+   Get[]s this file, so the package-load, harness, and summary/Exit below are
+   skipped and the two suites share one $passed / $failed tally.  Milestone P0
+   covers the representation primitives: the SU(4) Dynkin -> Young-projector
+   pipeline and spinIndices[6], validated by reproducing known irrep dimensions. *)
 
-repoRoot = DirectoryName[DirectoryName[$InputFileName]];
-If[repoRoot === "", repoRoot = Directory[]];
-PrependTo[$Path, repoRoot];
-Needs["ConformalStructures`"];
-
-loaded = FindFile["ConformalStructures`"];
-Print["Loaded package from: ", loaded];
-forwardSlash[p_] := StringReplace[p, "\\" -> "/"];
-If[! StringContainsQ[forwardSlash[loaded], forwardSlash[repoRoot]],
-  Print["ERROR: package loaded from ", loaded, ", not the repository checkout (", repoRoot, ")."];
-  Exit[1]];
+If[! TrueQ[$sixDIncluded],
+   repoRoot = DirectoryName[DirectoryName[$InputFileName]];
+   If[repoRoot === "", repoRoot = Directory[]];
+   PrependTo[$Path, repoRoot];
+   Needs["ConformalStructures`"];
+   loaded = FindFile["ConformalStructures`"];
+   Print["Loaded package from: ", loaded];
+   forwardSlash[p_] := StringReplace[p, "\\" -> "/"];
+   If[! StringContainsQ[forwardSlash[loaded], forwardSlash[repoRoot]],
+     Print["ERROR: package loaded from ", loaded, ", not the repository checkout (", repoRoot, ")."];
+     Exit[1]];
+];
 
 dim6      = ConformalStructures`Private`su4IrrepDimension;
 partition = ConformalStructures`Private`dynkinToPartition;
@@ -30,10 +33,12 @@ boxes     = ConformalStructures`Private`dynkinBoxes;
 validQ    = ConformalStructures`Private`validDynkinQ;
 spinInds  = ConformalStructures`Private`spinIndices;
 
-$passed = 0; $failed = 0;
-assert[label_, cond_, info_: ""] := If[TrueQ[cond],
-   $passed++; Print["  PASS  ", label],
-   $failed++; Print["  FAIL  ", label, If[info === "", "", "  (" <> ToString[info, InputForm] <> ")"]]];
+If[! TrueQ[$sixDIncluded],
+   $passed = 0; $failed = 0;
+   assert[label_, cond_, info_: ""] := If[TrueQ[cond],
+      $passed++; Print["  PASS  ", label],
+      $failed++; Print["  FAIL  ", label, If[info === "", "", "  (" <> ToString[info, InputForm] <> ")"]]];
+];
 
 (* ------------------------------------------------------------------ *)
 (* P0.1 SU(4) irrep dimensions via the Young projector                *)
@@ -96,11 +101,14 @@ Module[{spins = {{0, 2, 0}, {0, 1, 0}, {1, 0, 0}}, inds},
 Print["=== ConformalCorrelatorCount[6] ==="];
 With[{sc = {0, 0, 0}, v = {0, 1, 0}, T = {0, 2, 0}, sp = {1, 0, 0}, asp = {0, 0, 1}, vsp = {1, 1, 0}},
    cnt[reps_] := ConformalCorrelatorCount[6, reps];
-   (* 2-point: nonzero iff conjugate reps *)
-   assert["2pt <T Tbar> == 1 (self-conjugate)", cnt[{T, T}] === 1, cnt[{T, T}]];
+   (* 2-point: nonzero iff same rep.  In 2 mod 4 the coordinate slash sigma_{AB}
+      lives in 4(x)4, so the short string pairs a chiral rep with ITSELF, not with
+      its SU(4) dual [c,b,a].  Real reps (a==c) are self-dual so unaffected. *)
+   assert["2pt <T T> == 1 (real rep)",          cnt[{T, T}] === 1, cnt[{T, T}]];
    assert["2pt <T V> == 0",                     cnt[{T, v}] === 0, cnt[{T, v}]];
-   assert["2pt <4 4bar> == 1",                  cnt[{sp, asp}] === 1, cnt[{sp, asp}]];
-   assert["2pt <4 4> == 0",                     cnt[{sp, sp}] === 0, cnt[{sp, sp}]];
+   assert["2pt <4 4bar> == 0 (dual pairing has no structure)", cnt[{sp, asp}] === 0, cnt[{sp, asp}]];
+   assert["2pt <4 4> == 1 (same-chirality short string)",      cnt[{sp, sp}] === 1, cnt[{sp, sp}]];
+   assert["2pt <4bar 4bar> == 1",               cnt[{asp, asp}] === 1, cnt[{asp, asp}]];
    (* 3-point: # of symmetric-traceless [0,k,0] in the product *)
    assert["3pt <sss> == 1",  cnt[{sc, sc, sc}] === 1, cnt[{sc, sc, sc}]];
    assert["3pt <ssT> == 1",  cnt[{sc, sc, T}] === 1, cnt[{sc, sc, T}]];
@@ -143,6 +151,26 @@ Module[{cc, pt, mag},
    SeedRandom[5]; pt = Thread[Flatten@Array[x, {2, 6}] -> RandomInteger[{2, 30}, 12]];
    mag = Max[Abs[N[Flatten[Normal[CanonicallyOrderedComponents[cc[[1]]]] /. pt]]]];
    assert["stress tensor 2pt: structure is nonzero", NumericQ[mag] && mag > 0, mag]];
+
+(* chiral spinor [1,0,0]: the 2pt is the same-chirality short string <4 4> (NOT the
+   SU(4) dual <4 4bar>).  In 2 mod 4 the coordinate slash sigma_{AB} lives in 4(x)4,
+   so a chiral rep pairs with ITSELF.  Regression for the Correlators.m:100 count. *)
+Module[{cc, ct, comps, pt, mag, res},
+   cc = ConformalCorrelators[6, {3, 3}, {{1, 0, 0}, {1, 0, 0}}, {}, {1, 2}];
+   assert["chiral spinor 2pt <4 4>: nstructs == count == 1",
+      Length[cc] == 1 && ConformalCorrelatorCount[6, {{1, 0, 0}, {1, 0, 0}}] == 1, Length[cc]];
+   assert["chiral spinor 2pt: dual pairing <4 4bar> has no structure (count 0)",
+      ConformalCorrelatorCount[6, {{1, 0, 0}, {0, 0, 1}}] == 0 &&
+      ConformalCorrelators[6, {3, 3}, {{1, 0, 0}, {0, 0, 1}}, {}, {1, 2}] === {},
+      ConformalCorrelatorCount[6, {{1, 0, 0}, {0, 0, 1}}]];
+   SeedRandom[5]; pt = Thread[Flatten@Array[x, {2, 6}] -> RandomInteger[{2, 30}, 12]];
+   mag = Max[Abs[N[Flatten[Normal[CanonicallyOrderedComponents[cc[[1]]]] /. pt]]]];
+   assert["chiral spinor 2pt: structure is nonzero", NumericQ[mag] && mag > 0, mag];
+   ct = ConformalTest[6, {3, 3}, {{1, 0, 0}, {1, 0, 0}}, {1, 2}];
+   comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
+   res = Max[Abs[N[Flatten[comps /. pt]]]];
+   assert["chiral spinor 2pt: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
+      NumericQ[res] && res < tol6, res]];
 
 (* ------------------------------------------------------------------ *)
 (* P3 three-point functions (SU(4) alpha-system)                      *)
@@ -342,7 +370,28 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, feC, gp, scr, du, dd, diffU, diffD},
    assert["6d \[PartialD]-derivative fastEvalCOC == CanonicallyOrderedComponents (<sssV>)  [" <> ToString[diffD, InputForm] <> "]",
       NumericQ[diffD] && diffD < tol6, diffD]];
 
-(* ------------------------------------------------------------------ *)
-Print["================================================================"];
-Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
-If[$failed > 0, Exit[1], Exit[0]];
+(* Fast 6d \[PartialD] path across the cases that stress its index bookkeeping:
+   a MULTI-FACTOR correlator (<ssVV>, where an operator's indices are split across
+   string factors -- regression for the "move derivative indices to front"
+   permutation, which was silently correct only for a single factor) and a
+   DOTTED operator (<s 4 4bar>, exercising the dsiPerm branch). *)
+Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, sp = {1, 0, 0}, asp = {0, 0, 1}, feC, gp, scr, cases, diffs},
+   feC = ConformalStructures`Private`fastEvalCOC;
+   gp = ConformalStructures`Private`genericPoint;
+   scr = ConformalStructures`Private`safeCrossRatios;
+   cases = {
+      {"<ssVV> \[PartialD] on op3 (multi-factor)", {2, 2, 3, 3}, {sc, sc, vv, vv}, 3, {1, 2, 3, 4}},
+      {"<s 4 4bar> \[PartialD] on op3 (dotted op)", {3, 4, 4}, {sc, sp, asp}, 3, {1, 2, 3}}};
+   Do[Module[{corr, diff},
+      corr = ConformalCorrelators[6, c[[2]], c[[3]], {{"\[PartialD]", c[[4]]}}, c[[5]]][[1]];
+      diff = Max@Table[Max[Abs[N[Flatten[Normal[feC[corr, z, scr[None][[ii]]]]] -
+           Flatten[Normal[CanonicallyOrderedComponents[corr]] /. gp[6, None, z, ii]]]]], {z, {2, 3}}, {ii, {1, 7}}];
+      assert["6d \[PartialD]-derivative fastEvalCOC == COC  " <> c[[1]] <> "  [" <> ToString[diff, InputForm] <> "]",
+         NumericQ[diff] && diff < tol6, diff]], {c, cases}]];
+
+(* summary / Exit only when run standalone; when included the parent suite tallies *)
+If[! TrueQ[$sixDIncluded],
+   Print["================================================================"];
+   Print[ToString[$passed], " passed, ", ToString[$failed], " failed."];
+   If[$failed > 0, Exit[1], Exit[0]];
+];

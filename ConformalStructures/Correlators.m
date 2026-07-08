@@ -97,7 +97,11 @@ ensureGroupMath[] := ensureGroupMath[] =
 
 ConformalCorrelatorCount[6, spins_, OptionsPattern[]] := Switch[{Length[spins], OptionValue["DefectCodimension"]},
   {2, None},
-  Boole[spins[[2]] === Reverse[spins[[1]]]],
+  (* In 2 mod 4 the coordinate slash sigma_{AB} lives in 4(x)4 = Lambda^2 4, so the
+     short-string 2pt S1.S2 pairs a chiral rep with ITSELF (same chirality), not with
+     its SU(4) dual [c,b,a]=Reverse[...] (which is the 0 mod 4 rule).  For real reps
+     (a==c, e.g. vector/stress tensor) self and Reverse coincide. *)
+  Boole[spins[[2]] === spins[[1]]],
   {3, None},
   If[ensureGroupMath[], Total@Cases[GroupMath`ReduceRepProduct[GroupMath`SU4, spins], {{0, _, 0}, mult_} :> mult], $Failed],
   {4, None},

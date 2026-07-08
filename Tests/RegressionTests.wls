@@ -231,6 +231,16 @@ assert["ClearConformalCache[] runs without error and returns Null",
    ClearConformalCache[] === Null];
 
 (* ------------------------------------------------------------------ *)
+(* d = 6 (SO(6) = SU(4)) suite                                        *)
+(* ------------------------------------------------------------------ *)
+
+(* Run the d=6 tests in-process so CI covers them too.  $sixDIncluded tells
+   SixDTests.wls to skip its own package-load, harness, and summary/Exit and
+   share this suite's $passed / $failed tally. *)
+$sixDIncluded = True;
+Get[FileNameJoin[{repoRoot, "Tests", "SixDTests.wls"}]];
+
+(* ------------------------------------------------------------------ *)
 (* Summary                                                            *)
 (* ------------------------------------------------------------------ *)
 
