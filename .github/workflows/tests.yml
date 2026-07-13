@@ -24,7 +24,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Ensure TensorTools dependency is installed
-        run: wolframscript -code 'If[FindFile["TensorTools`"] === $Failed, Get["https://raw.githubusercontent.com/srossd/TensorTools/main/Install.m"]]'
+        # Retry the one network-bound step so a brief GitHub blip during a fresh
+        # install doesn't fail the job (already-installed runners skip the Get).
+        run: |
+          for attempt in 1 2 3; do
+            wolframscript -code 'If[FindFile["TensorTools`"] =!= $Failed, Exit[0]]; Get["https://raw.githubusercontent.com/srossd/TensorTools/main/Install.m"]; Exit[If[FindFile["TensorTools`"] === $Failed, 1, 0]]' && exit 0
+            echo "TensorTools install attempt $attempt failed; retrying in 15s..." >&2
+            sleep 15
+          done
+          exit 1
 
       - name: Run regression tests
         run: wolframscript -file Tests/RegressionTests.wls
