@@ -156,14 +156,18 @@ Module[{cc, ct, comps, pt, res},
    assert["vector 2pt: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
       NumericQ[res] && res < tol6, res]];
 
-(* stress tensor [0,2,0]: build + nonzero (its ConformalTest at 8 indices is slow) *)
-Module[{cc, pt, mag},
-   cc = ConformalCorrelators[6, {6, 6}, {{0, 2, 0}, {0, 2, 0}}, {}, {1, 2}];
-   assert["stress tensor 2pt: nstructs == count == 1",
-      Length[cc] == 1 && ConformalCorrelatorCount[6, {{0, 2, 0}, {0, 2, 0}}] == 1, Length[cc]];
-   SeedRandom[5]; pt = Thread[Flatten@Array[x, {2, 6}] -> RandomInteger[{2, 30}, 12]];
-   mag = Max[Abs[N[Flatten[Normal[CanonicallyOrderedComponents[cc[[1]]]] /. pt]]]];
-   assert["stress tensor 2pt: structure is nonzero", NumericQ[mag] && mag > 0, mag]];
+(* stress tensor [0,2,0]: 8-index build (4^8 components) peaks ~730 MB, so on CI
+   (CS_CI_LOWMEM) check only the count; the full build + nonzero check runs locally. *)
+If[ciLowMem,
+   assert["stress tensor 2pt: count == 1 (build skipped, CS_CI_LOWMEM)",
+      ConformalCorrelatorCount[6, {{0, 2, 0}, {0, 2, 0}}] == 1],
+   Module[{cc, pt, mag},
+      cc = ConformalCorrelators[6, {6, 6}, {{0, 2, 0}, {0, 2, 0}}, {}, {1, 2}];
+      assert["stress tensor 2pt: nstructs == count == 1",
+         Length[cc] == 1 && ConformalCorrelatorCount[6, {{0, 2, 0}, {0, 2, 0}}] == 1, Length[cc]];
+      SeedRandom[5]; pt = Thread[Flatten@Array[x, {2, 6}] -> RandomInteger[{2, 30}, 12]];
+      mag = Max[Abs[N[Flatten[Normal[CanonicallyOrderedComponents[cc[[1]]]] /. pt]]]];
+      assert["stress tensor 2pt: structure is nonzero", NumericQ[mag] && mag > 0, mag]]];
 
 (* chiral spinor [1,0,0]: the 2pt is the same-chirality short string <4 4> (NOT the
    SU(4) dual <4 4bar>).  In 2 mod 4 the coordinate slash sigma_{AB} lives in 4(x)4,
@@ -247,14 +251,18 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}},
    assert["4pt <ssVV>: #independent == count == 5",
       Length[ConformalCorrelatorExpressions[6, {s, s, v, v}]] == 5 == ConformalCorrelatorCount[6, {s, s, v, v}]]];
 
-(* a 4pt structure built by the alpha-system is conformally invariant *)
-Module[{s = {0, 0, 0}, v = {0, 1, 0}, ct, comps, pt, res},
-   ct = ConformalTest[6, {3, 3, 3, 4}, {s, s, s, v}, {1, 2, 3, 4}];
-   comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
-   SeedRandom[11]; pt = Thread[Flatten@Array[x, {4, 6}] -> RandomInteger[{2, 30}, 24]];
-   res = Max[Abs[N[Flatten[comps /. pt]]]];
-   assert["4pt <sssV>: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
-      NumericQ[res] && res < tol6, res]];
+(* a 4pt structure built by the alpha-system is conformally invariant.  The
+   SCT-acted 4pt correlator, materialized symbolically here, peaks ~1 GB, so this
+   runs locally only; conformal invariance is still checked at 2pt/3pt on CI. *)
+sectionClear[];
+If[! ciLowMem,
+   Module[{s = {0, 0, 0}, v = {0, 1, 0}, ct, comps, pt, res},
+      ct = ConformalTest[6, {3, 3, 3, 4}, {s, s, s, v}, {1, 2, 3, 4}];
+      comps = Normal[CanonicallyOrderedComponents[#]] & /@ ct;
+      SeedRandom[11]; pt = Thread[Flatten@Array[x, {4, 6}] -> RandomInteger[{2, 30}, 24]];
+      res = Max[Abs[N[Flatten[comps /. pt]]]];
+      assert["4pt <sssV>: ConformalTest residual ~ 0  [" <> ToString[res, InputForm] <> "]",
+         NumericQ[res] && res < tol6, res]]];
 
 (* Independence of a 4pt basis must be judged at a SINGLE conformal frame: for
    n >= 4 points the cross-ratios vary between frames, so structures related by a
@@ -263,6 +271,7 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, ct, comps, pt, res},
    basis has full rank at one generic frame and (b) the overcomplete set's rank is
    inflated when frames are stacked -- the artifact the single-frame reduction
    avoids. *)
+sectionClear[];
 Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, cfgs, m, single, stacked},
    bc = ConformalStructures`Private`buildCorrelator6;
    od = ConformalStructures`Private`opDottedQ6;
@@ -287,6 +296,7 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, c
    cross-ratio functions.  (2-index structures take the exact genericPoint path;
    >=4-index structures take the d=6 fastEval fast path -- see the agreement test
    below.) *)
+sectionClear[];
 Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel, res},
    gp = ConformalStructures`Private`genericPoint;
    crs = ConformalStructures`Private`crossRatios;
@@ -353,14 +363,16 @@ Module[{vv = {0, 1, 0}, sc = {0, 0, 0}, sp = {1, 0, 0}, asp = {0, 0, 1},
       spinInds[6, {sc, sc, sc, sc}, {{"\[PartialD]", 1}}, {1, 2, 3, 4}] ===
         {Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]]}];
    (* <VV>, derivative on op2: spinIndices places the derivative's indices after
-      op1's, while TSD prepends them -> reorder {3,4,1,2,5,6} *)
-   base = ConformalCorrelators[6, {3, 3}, {vv, vv}, {}, {1, 2}][[1]];
-   deriv = ConformalCorrelators[6, {3, 3}, {vv, vv}, {{"\[PartialD]", 2}}, {1, 2}][[1]];
-   built = Normal[Components[deriv]] /. gp[6, None, 2, 1];
-   ref = Normal[Components[tsd[base, 6, 2]]] /. gp[6, None, 2, 1];
-   dInt = Max[Abs[N[Flatten[built - TensorTranspose[ref, {3, 4, 1, 2, 5, 6}]]]]];
-   assert["6d deriv <VV>, d on op2: built == TSD[base] reordered per convention  [" <> ToString[dInt, InputForm] <> "]",
-      NumericQ[dInt] && dInt < tol6, dInt];
+      op1's, while TSD prepends them -> reorder {3,4,1,2,5,6}.  <VV>+d is a 6-index
+      structure whose symbolic Components cost ~1 GB, so this runs locally only. *)
+   If[! ciLowMem,
+      base = ConformalCorrelators[6, {3, 3}, {vv, vv}, {}, {1, 2}][[1]];
+      deriv = ConformalCorrelators[6, {3, 3}, {vv, vv}, {{"\[PartialD]", 2}}, {1, 2}][[1]];
+      built = Normal[Components[deriv]] /. gp[6, None, 2, 1];
+      ref = Normal[Components[tsd[base, 6, 2]]] /. gp[6, None, 2, 1];
+      dInt = Max[Abs[N[Flatten[built - TensorTranspose[ref, {3, 4, 1, 2, 5, 6}]]]]];
+      assert["6d deriv <VV>, d on op2: built == TSD[base] reordered per convention  [" <> ToString[dInt, InputForm] <> "]",
+         NumericQ[dInt] && dInt < tol6, dInt]];
    (* <s psi psibar>, derivative on the dotted psibar (op3): chirality split *)
    dbase = ConformalCorrelators[6, {2, 2, 2}, {sc, sp, asp}, {}, {1, 2, 3}][[1]];
    dderiv = ConformalCorrelators[6, {2, 2, 2}, {sc, sp, asp}, {{"\[PartialD]", 3}}, {1, 2, 3}][[1]];
@@ -404,9 +416,13 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, sp = {1, 0, 0}, asp = {0, 0, 1}, feC, gp
    feC = ConformalStructures`Private`fastEvalCOC;
    gp = ConformalStructures`Private`genericPoint;
    scr = ConformalStructures`Private`safeCrossRatios;
-   cases = {
-      {"<ssVV> \[PartialD] on op3 (multi-factor)", {2, 2, 3, 3}, {sc, sc, vv, vv}, 3, {1, 2, 3, 4}},
-      {"<s 4 4bar> \[PartialD] on op3 (dotted op)", {3, 4, 4}, {sc, sp, asp}, 3, {1, 2, 3}}};
+   (* <ssVV>+d is a 6-index descendant whose CanonicallyOrderedComponents oracle
+      costs ~1 GB, so CI runs only the light dotted case (which exercises dsiPerm);
+      the full multi-factor case runs locally. *)
+   cases = If[ciLowMem,
+      {{"<s 4 4bar> \[PartialD] on op3 (dotted op)", {3, 4, 4}, {sc, sp, asp}, 3, {1, 2, 3}}},
+      {{"<ssVV> \[PartialD] on op3 (multi-factor)", {2, 2, 3, 3}, {sc, sc, vv, vv}, 3, {1, 2, 3, 4}},
+       {"<s 4 4bar> \[PartialD] on op3 (dotted op)", {3, 4, 4}, {sc, sp, asp}, 3, {1, 2, 3}}}];
    Do[Module[{corr, diff},
       corr = ConformalCorrelators[6, c[[2]], c[[3]], {{"\[PartialD]", c[[4]]}}, c[[5]]][[1]];
       diff = Max@Table[Max[Abs[N[Flatten[Normal[feC[corr, z, scr[None][[ii]]]]] -
