@@ -236,7 +236,11 @@ assert["ClearConformalCache[] runs without error and returns Null",
 
 (* Run the d=6 tests in-process so CI covers them too.  $sixDIncluded tells
    SixDTests.wls to skip its own package-load, harness, and summary/Exit and
-   share this suite's $passed / $failed tally. *)
+   share this suite's $passed / $failed tally.  Free the memoized correlators
+   from the suite above first: both suites build hundreds of MB of tensors, and
+   on the memory-constrained CI runner the two must not stack in one process. *)
+ClearConformalCache[];
+ClearSystemCache[];
 $sixDIncluded = True;
 Get[FileNameJoin[{repoRoot, "Tests", "SixDTests.wls"}]];
 

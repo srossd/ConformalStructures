@@ -33,6 +33,16 @@ boxes     = ConformalStructures`Private`dynkinBoxes;
 validQ    = ConformalStructures`Private`validDynkinQ;
 spinInds  = ConformalStructures`Private`spinIndices;
 
+(* The CI runner (a Raspberry Pi) has ~1.2 GB free.  On it, CS_CI_LOWMEM=1 skips
+   the single heaviest build (<VVV>, whose exact reduction peaks ~1.4 GB, above the
+   runner's RAM); its GroupMath count is still checked, and a full local run builds
+   it.  sectionClear[] drops the memoized correlators between sections so their
+   memory does not stack on top of each section's own peak.  The remaining ~1.1 GB
+   spikes (symbolic Components of >=6-index structures) are covered by swap on the
+   runner.  Both are no-ops in a full local run. *)
+ciLowMem = (Environment["CS_CI_LOWMEM"] === "1");
+sectionClear[] := If[ciLowMem, ClearConformalCache[]; ClearSystemCache[];];
+
 If[! TrueQ[$sixDIncluded],
    $passed = 0; $failed = 0;
    assert[label_, cond_, info_: ""] := If[TrueQ[cond],
@@ -55,8 +65,11 @@ dimCases = {
    {{0, 0, 0}, 1,  "singlet"},
    {{0, 0, 1}, 4,  "anti-chiral spinor"},
    {{1, 0, 1}, 15, "adjoint"},
-   {{3, 0, 0}, 20, "[3,0,0]"},
-   {{1, 1, 1}, 64, "[1,1,1]"}
+   {{3, 0, 0}, 20, "[3,0,0]"}
+   (* NB: su4IrrepDimension MatrixRanks a 4^n x 4^n matrix (n = boxes), so a
+      6-box rep such as {1,1,1} costs ~1.3 GB -- too much for the CI runner.
+      The projector is covered here up to 4 boxes and end-to-end by the
+      correlator ConformalTest cases below. *)
 };
 Do[assert[
    ToString[c[[1]], InputForm] <> "  (" <> c[[3]] <> ")  dim=" <> ToString[dim6[c[[1]]]],
@@ -176,6 +189,7 @@ Module[{cc, ct, comps, pt, mag, res},
 (* P3 three-point functions (SU(4) alpha-system)                      *)
 (* ------------------------------------------------------------------ *)
 
+sectionClear[];
 Print["=== P3 three-point functions ==="];
 
 (* the alpha-system reduces the overcomplete set to exactly the structure count *)
@@ -184,8 +198,14 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, T = {0, 2, 0}},
       Length[ConformalCorrelatorExpressions[6, {s, s, v}]] == 1 == ConformalCorrelatorCount[6, {s, s, v}]];
    assert["3pt <sVV>: #independent == count == 2",
       Length[ConformalCorrelatorExpressions[6, {s, v, v}]] == 2 == ConformalCorrelatorCount[6, {s, v, v}]];
-   assert["3pt <VVV>: #independent == count == 4",
-      Length[ConformalCorrelatorExpressions[6, {v, v, v}]] == 4 == ConformalCorrelatorCount[6, {v, v, v}]];
+   (* <VVV>'s exact reduction (IndependentSet over 4^6-component structures) peaks
+      ~1.4 GB, above the CI runner's headroom, so on CI we check only the count
+      (cheap, via GroupMath); a full local run verifies #independent == count. *)
+   If[ciLowMem,
+      assert["3pt <VVV>: count == 4 (build skipped, CS_CI_LOWMEM)",
+         ConformalCorrelatorCount[6, {v, v, v}] == 4],
+      assert["3pt <VVV>: #independent == count == 4",
+         Length[ConformalCorrelatorExpressions[6, {v, v, v}]] == 4 == ConformalCorrelatorCount[6, {v, v, v}]]];
    assert["3pt <ssT>: #independent == count == 1",
       Length[ConformalCorrelatorExpressions[6, {s, s, T}]] == 1 == ConformalCorrelatorCount[6, {s, s, T}]]];
 
@@ -214,6 +234,7 @@ Module[{sp = {1, 0, 0}, asp = {0, 0, 1}, s = {0, 0, 0}, ct, comps, pt, res},
 (* P4 four-point functions (alpha-system + single-frame reduction)     *)
 (* ------------------------------------------------------------------ *)
 
+sectionClear[];
 Print["=== P4 four-point functions ==="];
 
 Module[{s = {0, 0, 0}, v = {0, 1, 0}},
@@ -296,6 +317,7 @@ Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel,
    are the cross-ratio symbols in crossRatios[6]/uvpt, and shadowing them at global
    scope corrupts genericPoint (its uvpt coordinate silently becomes a vector).
    Module-local names are safe, but this test uses vv to be unambiguous. *)
+sectionClear[];
 Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, fe, feCOC, gp, scr, corr, dCOC, dNat},
    fe = ConformalStructures`Private`fastEval;
    feCOC = ConformalStructures`Private`fastEvalCOC;
@@ -321,6 +343,7 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, fe, feCOC, gp, scr, corr, dCOC, dNat},
    interleaving reorder -- the built components equal TSD[base] transposed per the
    index convention, and (c) for a derivative on a dotted operator (chirality split)
    the value multiset is preserved. *)
+sectionClear[];
 Module[{vv = {0, 1, 0}, sc = {0, 0, 0}, sp = {1, 0, 0}, asp = {0, 0, 1},
         gp, tsd, spinInds, base, deriv, built, ref, dbase, dderiv, dbuilt, dref, dInt, ms},
    gp = ConformalStructures`Private`genericPoint;
@@ -355,6 +378,7 @@ Module[{vv = {0, 1, 0}, sc = {0, 0, 0}, sp = {1, 0, 0}, asp = {0, 0, 1},
    Components evaluation inside fastEval.  Both must reproduce
    CanonicallyOrderedComponents.  Uses <sssV> (a spinning operator) so the derivative
    structure has >= 4 indices -- the regime fittedRelations routes to fastEval. *)
+sectionClear[];
 Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, feC, gp, scr, du, dd, diffU, diffD},
    feC = ConformalStructures`Private`fastEvalCOC;
    gp = ConformalStructures`Private`genericPoint;
@@ -375,6 +399,7 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, feC, gp, scr, du, dd, diffU, diffD},
    string factors -- regression for the "move derivative indices to front"
    permutation, which was silently correct only for a single factor) and a
    DOTTED operator (<s 4 4bar>, exercising the dsiPerm branch). *)
+sectionClear[];
 Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, sp = {1, 0, 0}, asp = {0, 0, 1}, feC, gp, scr, cases, diffs},
    feC = ConformalStructures`Private`fastEvalCOC;
    gp = ConformalStructures`Private`genericPoint;

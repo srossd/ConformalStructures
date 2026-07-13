@@ -35,4 +35,10 @@ jobs:
           exit 1
 
       - name: Run regression tests
+        # CS_CI_LOWMEM skips the single heaviest d=6 build (<VVV>, whose exact
+        # reduction peaks ~1.4 GB, above the runner's RAM; its count is still
+        # checked) and clears caches between sections. Remaining ~1.1 GB spikes
+        # are absorbed by swap on the runner.
+        env:
+          CS_CI_LOWMEM: "1"
         run: wolframscript -file Tests/RegressionTests.wls
