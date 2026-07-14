@@ -241,15 +241,16 @@ Module[{sp = {1, 0, 0}, asp = {0, 0, 1}, s = {0, 0, 0}, ct, comps, pt, res},
 sectionClear[];
 Print["=== P4 four-point functions ==="];
 
-Module[{s = {0, 0, 0}, v = {0, 1, 0}},
-   (* all-scalar: a single trivial (index-free) structure -- guards the scalar
-      edge case in the reduction *)
-   assert["4pt <ssss>: #independent == count == 1",
-      Length[ConformalCorrelatorExpressions[6, {s, s, s, s}]] == 1 == ConformalCorrelatorCount[6, {s, s, s, s}]];
-   assert["4pt <sssV>: #independent == count == 2",
-      Length[ConformalCorrelatorExpressions[6, {s, s, s, v}]] == 2 == ConformalCorrelatorCount[6, {s, s, s, v}]];
-   assert["4pt <ssVV>: #independent == count == 5",
-      Length[ConformalCorrelatorExpressions[6, {s, s, v, v}]] == 5 == ConformalCorrelatorCount[6, {s, s, v, v}]]];
+Module[{s = {0, 0, 0}, v = {0, 1, 0}, chk},
+   (* On CI (CS_CI_LOWMEM) the 4pt exact reductions have transient RSS spikes that
+      OOM the runner, so check only the group-theory count; a full local run also
+      checks #independent == count via ConformalCorrelatorExpressions (the build). *)
+   chk[label_, reps_, n_] := If[ciLowMem,
+      assert[label <> " -- count only (CS_CI_LOWMEM)", ConformalCorrelatorCount[6, reps] == n],
+      assert[label, Length[ConformalCorrelatorExpressions[6, reps]] == n == ConformalCorrelatorCount[6, reps]]];
+   chk["4pt <ssss>: #independent == count == 1", {s, s, s, s}, 1];
+   chk["4pt <sssV>: #independent == count == 2", {s, s, s, v}, 2];
+   chk["4pt <ssVV>: #independent == count == 5", {s, s, v, v}, 5]];
 
 (* a 4pt structure built by the alpha-system is conformally invariant.  The
    SCT-acted 4pt correlator, materialized symbolically here, peaks ~1 GB, so this
@@ -272,6 +273,7 @@ If[! ciLowMem,
    inflated when frames are stacked -- the artifact the single-frame reduction
    avoids. *)
 sectionClear[];
+If[! ciLowMem,   (* builds the overcomplete <ssVV> basis: 4pt build, OOMs the CI runner *)
 Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, cfgs, m, single, stacked},
    bc = ConformalStructures`Private`buildCorrelator6;
    od = ConformalStructures`Private`opDottedQ6;
@@ -289,7 +291,7 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, c
    m = Table[Flatten@Table[N[Normal[bc[Sequence @@ ex, parts]] /. Thread[Flatten@Array[x, {4, 6}] -> c], 30], {c, cfgs}], {ex, full}];
    stacked = MatrixRank[m];
    assert["4pt <ssVV>: stacking frames inflates overcomplete rank above the count (motivates single-frame reduction)",
-      stacked > 5, {stacked, Length[full]}]];
+      stacked > 5, {stacked, Length[full]}]]];
 
 (* StructureRelations for a 6d 4pt overcomplete set: two point orderings of <sssV>
    span a 2-dimensional space, so there are 2 relations whose coefficients are
@@ -297,6 +299,7 @@ Module[{s = {0, 0, 0}, v = {0, 1, 0}, bc, od, op, reps, parts, red, full, cfg, c
    >=4-index structures take the d=6 fastEval fast path -- see the agreement test
    below.) *)
 sectionClear[];
+If[! ciLowMem,   (* StructureRelations builds two orderings of <sssV>: 4pt build, OOMs CI *)
 Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel, res},
    gp = ConformalStructures`Private`genericPoint;
    crs = ConformalStructures`Private`crossRatios;
@@ -315,7 +318,7 @@ Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel,
       relN = Normal[rel] /. Thread[crs[6, None] -> scr[None][[1]]];
       Max[Abs[N[Flatten[{relN . comps}]]]]];
    assert["4pt <sssV> relations: vanish numerically  [" <> ToString[res, InputForm] <> "]",
-      NumericQ[res] && res < tol6, res]];
+      NumericQ[res] && res < tol6, res]]];
 
 (* The d=6 fastEval fast path (fastEval.m) evaluates each string-structure piece at
    the concrete frame and Young-projects the numeric tensor product; it must
@@ -328,6 +331,7 @@ Module[{sc = {0, 0, 0}, v = {0, 1, 0}, gp, crs, scr, oA, oB, structs, rank, rel,
    scope corrupts genericPoint (its uvpt coordinate silently becomes a vector).
    Module-local names are safe, but this test uses vv to be unambiguous. *)
 sectionClear[];
+If[! ciLowMem,   (* builds the <ssVV> 4pt correlator + its symbolic Components oracle: OOMs CI *)
 Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, fe, feCOC, gp, scr, corr, dCOC, dNat},
    fe = ConformalStructures`Private`fastEval;
    feCOC = ConformalStructures`Private`fastEvalCOC;
@@ -343,7 +347,7 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, fe, feCOC, gp, scr, corr, dCOC, dNat},
    assert["6d fastEvalCOC == CanonicallyOrderedComponents (<ssVV>)  [max|diff|=" <> ToString[dCOC, InputForm] <> "]",
       NumericQ[dCOC] && dCOC < tol6, dCOC];
    assert["6d fastEval == Components (<ssVV>)  [max|diff|=" <> ToString[dNat, InputForm] <> "]",
-      NumericQ[dNat] && dNat < tol6, dNat]];
+      NumericQ[dNat] && dNat < tol6, dNat]]];
 
 (* Derivative correlators (slow path): the D=6 descendant machinery -- spinIndices
    plus the derivative BuildTensor index bookkeeping.  A spinor derivative adds two
@@ -391,6 +395,7 @@ Module[{vv = {0, 1, 0}, sc = {0, 0, 0}, sp = {1, 0, 0}, asp = {0, 0, 1},
    CanonicallyOrderedComponents.  Uses <sssV> (a spinning operator) so the derivative
    structure has >= 4 indices -- the regime fittedRelations routes to fastEval. *)
 sectionClear[];
+If[! ciLowMem,   (* builds <sssV> u/d 4pt derivative correlators + Components oracle: OOMs CI *)
 Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, feC, gp, scr, du, dd, diffU, diffD},
    feC = ConformalStructures`Private`fastEvalCOC;
    gp = ConformalStructures`Private`genericPoint;
@@ -404,7 +409,7 @@ Module[{sc = {0, 0, 0}, vv = {0, 1, 0}, feC, gp, scr, du, dd, diffU, diffD},
    assert["6d u-derivative fastEvalCOC == CanonicallyOrderedComponents (<sssV>)  [" <> ToString[diffU, InputForm] <> "]",
       NumericQ[diffU] && diffU < tol6, diffU];
    assert["6d \[PartialD]-derivative fastEvalCOC == CanonicallyOrderedComponents (<sssV>)  [" <> ToString[diffD, InputForm] <> "]",
-      NumericQ[diffD] && diffD < tol6, diffD]];
+      NumericQ[diffD] && diffD < tol6, diffD]]];
 
 (* Fast 6d \[PartialD] path across the cases that stress its index bookkeeping:
    a MULTI-FACTOR correlator (<ssVV>, where an operator's indices are split across
