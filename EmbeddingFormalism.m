@@ -3,8 +3,11 @@
 $signatureFactor = 1;
 SignatureFactor[] := $signatureFactor;
 
-SetSignature["Lorentzian"] := ($signatureFactor = I;);
-SetSignature["Euclidean"] := ($signatureFactor = 1;);
+(* Changing the signature invalidates every memoized tensor component that was
+   built under the previous signature, so flush the caches when it changes.
+   ClearConformalCache is defined in Relations.m. *)
+SetSignature["Lorentzian"] := (If[$signatureFactor =!= I, ClearConformalCache[]]; $signatureFactor = I;);
+SetSignature["Euclidean"] := (If[$signatureFactor =!= 1, ClearConformalCache[]]; $signatureFactor = 1;);
 
 SetSignature::badsig = "The signature `` is not recognized; use \"Lorentzian\" or \"Euclidean\".";
 SetSignature[sig_] := Message[SetSignature::badsig, sig];
@@ -347,13 +350,19 @@ BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]],
       Contract[
        TensorProduct[GammaTensor[dim], GammaTensor[dim]], {{3, 5}}]);
        
-BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]], Lowered[WeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] := TensorTranspose[Components[
-   Contract[TensorProduct[WeylProjection[dim], RotationGenerators[dim], WeylProjection[dim, "Transpose" -> True], WeylChargeConjugationMatrix[dim, "Raised" -> True]], {{2, 5}, {6, 7}, {8, 10}}]
-], {3, 1, 2, 4}];
+(* Weyl / dotted-Weyl rotation generators, built as endomorphisms of the (dotted)
+   Weyl space: M_Weyl = P . M_Dirac . P^+, where P = WeylProjection and
+   P^+ = Transpose[P] . Inverse[P.Transpose[P]] is a right inverse (P.P^+ = I).
+   This needs no Weyl-Weyl charge conjugation, so it works both in 0 mod 4
+   (reproducing the previous construction) and in 2 mod 4 (d = 2,6,10), where
+   WeylChargeConjugationMatrix vanishes and raising a Weyl index is singular. *)
+BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]], Lowered[WeylSpinor[dim_]], Raised[WeylSpinor[dim_]]}] :=
+  With[{P = Normal@Components[WeylProjection[dim]], MD = Normal@Components[RotationGenerators[dim]]},
+   SparseArray@Table[P . MD[[mu, nu]] . Transpose[P] . Inverse[P . Transpose[P]], {mu, dim}, {nu, dim}]];
 
-BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]], Lowered[DottedWeylSpinor[dim_]], Raised[DottedWeylSpinor[dim_]]}] := TensorTranspose[Components[
-   Contract[TensorProduct[WeylProjection[dim, "Dotted" -> True], RotationGenerators[dim], WeylProjection[dim, "Dotted" -> True, "Transpose" -> True], WeylChargeConjugationMatrix[dim, "Raised" -> True, "Dotted" -> True]], {{2, 5}, {6, 7}, {8, 10}}]
-], {3, 1, 2, 4}];
+BuildTensor[{"M", Lowered[Spacetime[dim_]], Lowered[Spacetime[dim_]], Lowered[DottedWeylSpinor[dim_]], Raised[DottedWeylSpinor[dim_]]}] :=
+  With[{P = Normal@Components[WeylProjection[dim, "Dotted" -> True]], MD = Normal@Components[RotationGenerators[dim]]},
+   SparseArray@Table[P . MD[[mu, nu]] . Transpose[P] . Inverse[P . Transpose[P]], {mu, dim}, {nu, dim}]];
 
 Options[RotationGenerators] = {"Weyl" -> False, "Dotted" -> False};
 RotationGenerators[dim_, OptionsPattern[]] := Which[OddQ[dim] || !OptionValue["Weyl"],

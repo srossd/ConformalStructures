@@ -102,7 +102,9 @@ StyleBox[\"tensors\",\nFontSlant->\"Italic\"]\) that are linearly independent."
 SetSignature::usage = "SetSignature[\!\(\*
 StyleBox[\"sig\",\nFontSlant->\"Italic\"]\)] sets the signature to \!\(\*
 StyleBox[\"sig\",\nFontSlant->\"Italic\"]\), where \!\(\*
-StyleBox[\"sig\",\nFontSlant->\"Italic\"]\) is either \"Lorentzian\" or \"Euclidean\".";
+StyleBox[\"sig\",\nFontSlant->\"Italic\"]\) is either \"Lorentzian\" or \"Euclidean\". Changing the signature clears memoized caches via ClearConformalCache[].";
+
+ClearConformalCache::usage = "ClearConformalCache[] clears the memoized tensor components and derived results (cached correlators, string structures, structure relations, and fast-evaluation data) that depend on the spacetime signature, forcing them to be recomputed. It is called automatically by SetSignature when the signature changes.";
 
 Spacetime::usage = "Spacetime[\!\(\*
 StyleBox[\"dim\",\nFontSlant->\"Italic\"]\)] gives a spacetime index in \!\(\*

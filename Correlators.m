@@ -83,6 +83,35 @@ ConformalCorrelatorCount[4, spins_, OptionsPattern[]] := Switch[{Length[spins], 
   Infinity
 ]
 
+(* d=6 counting uses SU(4) tensor-product decompositions from GroupMath, loaded on
+   demand so that d = 2,3,4 do not depend on it.  The number of n-point structures
+   is the number of little-group singlets in the product of the operators' reps.
+   By the SO(6)->SO(5)->SO(4) branching (Gelfand-Tsetlin interlacing), an SO(6)
+   irrep [a,b,c] contributes:
+     3pt (SO(5) singlets): 1 iff it is symmetric-traceless [0,k,0], else 0;
+     4pt (SO(4) singlets): (b+1) iff a==c, else 0.
+   Verified against the CPPR building-block counts, e.g. <VVV>=4, <TTT>=11. *)
+ConformalCorrelatorCount::nogm = "d=6 correlator counting requires the GroupMath package (https://renatofonseca.net/groupmath), which was not found on $Path.";
+ensureGroupMath[] := ensureGroupMath[] =
+  If[FindFile["GroupMath`"] === $Failed, Message[ConformalCorrelatorCount::nogm]; False, Quiet[Needs["GroupMath`"]]; True];
+
+ConformalCorrelatorCount[6, spins_, OptionsPattern[]] := Switch[{Length[spins], OptionValue["DefectCodimension"]},
+  {2, None},
+  (* In 2 mod 4 the coordinate slash sigma_{AB} lives in 4(x)4 = Lambda^2 4, so the
+     short-string 2pt S1.S2 pairs a chiral rep with ITSELF (same chirality), not with
+     its SU(4) dual [c,b,a]=Reverse[...] (which is the 0 mod 4 rule).  For real reps
+     (a==c, e.g. vector/stress tensor) self and Reverse coincide. *)
+  Boole[spins[[2]] === spins[[1]]],
+  {3, None},
+  If[ensureGroupMath[], Total@Cases[GroupMath`ReduceRepProduct[GroupMath`SU4, spins], {{0, _, 0}, mult_} :> mult], $Failed],
+  {4, None},
+  If[ensureGroupMath[], Total@Cases[GroupMath`ReduceRepProduct[GroupMath`SU4, spins], {{da_, db_, dc_}, mult_} /; da == dc :> (db + 1) mult], $Failed],
+  {x_ /; x >= 5, None},
+  If[ensureGroupMath[], Times @@ (GroupMath`DimR[GroupMath`SU4, #] & /@ spins), $Failed],
+  {_, _},
+  Infinity
+]
+
 Options[ConformalCorrelatorBuildingBlocks] = {"DefectCodimension" -> None, "Overcomplete" -> False};
 ConformalCorrelatorBuildingBlocks[dim_, npts_, {i_, j_}, signs_, opt : OptionsPattern[]] := 
 ConformalCorrelatorBuildingBlocks[dim, npts, {i, j}, signs, opt] = If[OptionValue["Overcomplete"],
@@ -225,12 +254,159 @@ spinIndices[3, spins_, derivs_, perm_] :=
   Table[Lowered[DiracSpinor[3]], 2 (Total[spins] + Length[derivs])];
 spinIndices[4, spins_, derivs_, perm_] := Flatten[Table[{
      Table[{Lowered[WeylSpinor[4]], Lowered[DottedWeylSpinor[4]]}, Count[derivs[[;;, 2]], i]],
-     Table[Lowered[WeylSpinor[4]], 2 spins[[i,1]]], 
+     Table[Lowered[WeylSpinor[4]], 2 spins[[i,1]]],
      Table[Lowered[DottedWeylSpinor[4]], 2 spins[[i, 2]]]
   }, {i, Length[spins]}]];
 
+(* ------------------------------------------------------------------ *)
+(* 6d (SO(6) = SU(4)) representation machinery                         *)
+(* ------------------------------------------------------------------ *)
+
+(* An SO(6) irrep is specified by an SU(4) Dynkin label {a, b, c}.  The
+   corresponding Young diagram over the fundamental (Weyl spinor) 4 has row
+   lengths {a+b+c, b+c, c}, so the operator carries a+2b+3c Weyl-spinor indices,
+   Young-projected onto that diagram.  Pure-fundamental SU(4) tableaux are
+   irreducible, so no trace removal is needed. *)
+
+validDynkinQ[label_] := MatchQ[label, {Repeated[_Integer?NonNegative, {3}]}];
+dynkinToPartition[{a_, b_, c_}] := DeleteCases[{a + b + c, b + c, c}, 0];
+dynkinBoxes[{a_, b_, c_}] := a + 2 b + 3 c;
+
+(* rows and columns (as position blocks) of the row-filled tableau of shape lambda *)
+tableauBlocks[lambda_] := With[{rows = TakeList[Range[Total[lambda]], lambda]},
+   {rows, Table[Select[rows, Length[#] >= j &][[;; , j]], {j, Max[lambda]}]}];
+
+(* all permutations (as image lists) that permute only within the given blocks *)
+blockPerms[blocks_, n_] := Map[
+   Function[choice, Module[{s = Range[n]}, Do[s[[blocks[[k]]]] = choice[[k]], {k, Length[blocks]}]; s]],
+   Tuples[Permutations /@ blocks]];
+
+(* Young symmetrizer c = (row symmetrizer).(column antisymmetrizer), as a list of
+   {index permutation, coefficient} terms suitable for a TensorTranspose average. *)
+youngSymmetrizerTerms[lambda_] := youngSymmetrizerTerms[lambda] = Module[{n = Total[lambda], rows, cols, terms},
+   If[n == 0, Return[{{{}, 1}}]];
+   {rows, cols} = tableauBlocks[lambda];
+   terms = Flatten[Table[{rho[[kappa]], Signature[kappa]},
+       {rho, blockPerms[rows, n]}, {kappa, blockPerms[cols, n]}], 1];
+   {#[[1, 1]], Total[#[[;; , 2]]]} & /@ GatherBy[terms, First]];
+
+(* dimension of the SU(4) irrep = rank of the Young symmetrizer on (C^4)^{tensor n};
+   used to validate the projector against known representation dimensions. *)
+su4IrrepDimension[label_] := Module[{lambda = dynkinToPartition[label], n, tuples, idx, permMat},
+   n = Total[lambda];
+   If[n == 0, Return[1]];
+   tuples = Tuples[Range[4], n];
+   idx = First /@ PositionIndex[tuples];
+   permMat[sigma_] := SparseArray[Table[{idx[t[[sigma]]], idx[t]} -> 1, {t, tuples}], {4^n, 4^n}];
+   MatrixRank[Total[Function[term, term[[2]] permMat[term[[1]]]] /@ youngSymmetrizerTerms[lambda]]]];
+
+(* Chirality convention: an undotted Weyl index is the fundamental 4 = [1,0,0], a
+   dotted Weyl index the antifundamental 4bar = [0,0,1].  A rep [a,b,c] is realized
+   either undotted (Young shape dynkinToPartition[{a,b,c}]) or dotted (shape of the
+   conjugate {c,b,a}); the canonical choice is whichever has fewer boxes (undotted
+   if a >= c, else dotted), so a rep and its conjugate get matching box counts and
+   their connecting strings pair 4 with 4bar. *)
+opDottedQ6[rep_] := rep[[1]] < rep[[3]];
+opPartition6[rep_, dotted_] := dynkinToPartition[If[dotted, Reverse[rep], rep]];
+opBoxes6[rep_, dotted_] := Total[opPartition6[rep, dotted]];
+opIndexHead6[dotted_] := If[dotted, DottedWeylSpinor, WeylSpinor];
+
+(* Index list of a d=6 correlator.  Each operator contributes opBoxes6 indices of a
+   single chirality (Weyl if a>=c, dotted-Weyl otherwise).  A spinor derivative on an
+   operator contributes two undotted Weyl indices (D=6 is 2 mod 4, so the sigma
+   tensor is {Weyl, Weyl}); these lead each operator's block, matching the D=2/D=4
+   convention and the derivative BuildTensor's index placement. *)
+spinIndices[6, spins_, derivs_, perm_] := Flatten[Table[
+   With[{d = opDottedQ6[spins[[i]]]}, {
+      Table[{Lowered[WeylSpinor[6]], Lowered[WeylSpinor[6]]}, Count[derivs[[;; , 2]], i]],
+      Table[Lowered[opIndexHead6[d][6]], opBoxes6[spins[[i]], d]]
+   }], {i, Length[spins]}]];
+
+(* Young-project an already-assembled, index-reordered tensor: symmetrize each
+   operator's index block with the Young symmetrizer for its rep (partition),
+   rather than fully symmetrizing.  Shared by buildCorrelator6 (symbolic assembly)
+   and the d=6 fast path in fastEval.m (numeric assembly at a concrete frame). *)
+youngProject6[unsym_, partitions_] := Module[{boxes = Total /@ partitions, starts},
+   starts = Prepend[Accumulate[Most[boxes]], 0];
+   Total[Function[combo,
+       (Times @@ combo[[;; , 2]]) TensorTranspose[unsym,
+          Join @@ Table[starts[[k]] + combo[[k, 1]], {k, Length[partitions]}]]
+      ] /@ Tuples[youngSymmetrizerTerms /@ partitions]]
+];
+
+(* like buildCorrelator, but projects each operator's index block with the Young
+   symmetrizer for its rep (partition) rather than fully symmetrizing. *)
+buildCorrelator6[expr_, perm_, partitions_] :=
+   youngProject6[TensorTranspose[Components[expr], InversePermutation@perm], partitions];
+
+(* SU(4) alpha-system: distribute each operator's spinor-index boxes among strings
+   S_i X..X S_j between operators (a string deposits one index at each endpoint) and
+   loops S_i X..X S_i (which deposit two indices on one operator, coupling it to
+   coordinates).  For a chirality assignment chi (one per operator) the box counts
+   n_i are fixed and the distribution solves  sum_j alpha[{i,j}] (with a loop {i,i}
+   counting twice) == n_i.  Each solution, fanned over the building blocks' X
+   insertions, gives a candidate structure; the reduction Young-projects and keeps
+   an independent subset (exact arithmetic), capped at ConformalCorrelatorCount. *)
+ConformalCorrelatorExpressions[6, spins_, opt : OptionsPattern[]] :=
+ ConformalCorrelatorExpressions[6, spins, opt] =
+  If[ConformalCorrelatorCount[6, spins, "DefectCodimension" -> OptionValue["DefectCodimension"]] == 0, {},
+   If[OptionValue["Overcomplete"],
+    Module[{npts = Length[spins], q = OptionValue["DefectCodimension"], chi, boxes, pairs, avars, sols},
+     chi = opDottedQ6 /@ spins;
+     boxes = MapThread[opBoxes6, {spins, chi}];
+     pairs = Join[Table[{i, i}, {i, npts}], Subsets[Range[npts], {2}]];
+     avars = \[Alpha] /@ pairs;
+     sols = Solve[Join[
+        Table[Sum[Count[pairs[[p]], k] \[Alpha][pairs[[p]]], {p, Length[pairs]}] == boxes[[k]], {k, npts}],
+        Thread[avars >= 0]], avars, Integers];
+     Join @@ Table[
+       With[{slots = Flatten[Table[
+            ConformalCorrelatorBuildingBlocks[6, npts, pairs[[p]],
+              {If[chi[[pairs[[p, 1]]]], -1, 1], If[chi[[pairs[[p, 2]]]], -1, 1]}, "DefectCodimension" -> q],
+            {p, Length[pairs]}, {ii, \[Alpha][pairs[[p]]] /. sol}], 1]},
+        Table[
+          {TensorProduct @@ tup,
+           Ordering[Join @@ Cases[tup,
+             {stringstruct[_, is_, _], Lowered[h_[6]], Lowered[h2_[6]]} :>
+               Thread[{is[[{1, -1}]], {h, h2} /. {WeylSpinor -> 1, DottedWeylSpinor -> 2}}], All]]},
+          {tup, Tuples[slots]}]],
+       {sol, sols}]
+    ],
+    (* Reduce the overcomplete set to an independent basis at a SINGLE generic
+       configuration.  Independence must be judged at one conformal frame: for
+       n >= 4 points the cross-ratios are fixed there, so two structures related by
+       a cross-ratio function (S_i = f(u,v) S_j) -- genuinely dependent as tensor
+       structures -- stay dependent, whereas stacking several frames would inflate
+       the rank above the true count.  For n <= 3 there are no cross-ratios and
+       every frame gives the same rank.
+
+       The bare structures carry only Sqrt[(X_ij^2)^2]-type factors from the string
+       normalizations; at integer coordinates those radicands are perfect squares,
+       so Sqrt auto-evaluates and the components are exact rationals -- no floating
+       point and none of the algebraic numbers that a non-square configuration
+       would introduce.  The reduction is therefore done in exact arithmetic via
+       IndependentSet[..., Method -> "Fold"], whose indQ samples components when the
+       flattened vector is wide, keeping the exact linear algebra fast. *)
+    Module[{full, partitions, q = OptionValue["DefectCodimension"], npts = Length[spins],
+            tensors, cfg},
+     full = ConformalCorrelatorExpressions[6, spins, "DefectCodimension" -> q, "Overcomplete" -> True];
+     partitions = MapThread[opPartition6, {spins, opDottedQ6 /@ spins}];
+     tensors = Normal[buildCorrelator6[Sequence @@ #, partitions]] & /@ full;
+     cfg = BlockRandom[SeedRandom[1]; Thread[Flatten@Array[x, {npts, 6}] -> RandomInteger[{2, 40}, npts 6]]];
+     full[[IndependentSet[tensors, "TensorFunction" -> (Flatten[{Normal[# /. cfg]}] &),
+        "Indices" -> True, Method -> "Fold"]]]
+    ]
+   ]
+  ];
+
+(* scaling "spin" entering the kinematic prefactor: the leading orthogonal weight
+   l1.  For d=2,3,4 this is the sum of the spin labels; for d=6 (SU(4) Dynkin
+   {a,b,c}) it is b + (a+c)/2. *)
+repScalingSpin[dim_, rep_] := Total[rep];
+repScalingSpin[6, {a_, b_, c_}] := b + (a + c)/2;
+
 Options[KinematicPrefactor] = {"DefectCodimension" -> None};
-KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, opt : OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (Total /@ spins)}, 1/Which[
+KinematicPrefactor[dim_, \[CapitalDelta]s_, spins_, opt : OptionsPattern[]] := Module[{kappas = \[CapitalDelta]s + (repScalingSpin[dim, #] & /@ spins)}, 1/Which[
 	   OptionValue["DefectCodimension"] =!= None && Length[\[CapitalDelta]s] == 2,
 	   CoordinateSquared[dim, 1, "Transverse" -> True, opt]^(kappas[[1]]/2) CoordinateSquared[dim, 2, "Transverse" -> True, opt]^(kappas[[2]]/2),
 	   Length[\[CapitalDelta]s] == 2,
@@ -268,7 +444,27 @@ ConformalCorrelators[dim_, \[CapitalDelta]s_, spins_, derivs_,
         Sequence @@ spinIndices[dim, spins, derivs, perm]}}], {i, 
      Min[ConformalCorrelatorCount[dim, spins, opt], Length[exprs]]}]
    ]
-   
+
+(* d=6 build: same shape as the generic path, but projects each operator's index
+   block with its Young symmetrizer (buildCorrelator6) instead of symmetrizing. *)
+ConformalCorrelators[6, \[CapitalDelta]s_, spins_, derivs_, perm_, opt : OptionsPattern[]] :=
+ ConformalCorrelators[6, \[CapitalDelta]s, spins, derivs, perm, opt] =
+  Module[{exprs, structs, rules, q = OptionValue["DefectCodimension"], partitions},
+   If[Length[\[CapitalDelta]s] == 2 && ! Equal @@ \[CapitalDelta]s, Return[{}]];
+   exprs = ConformalCorrelatorExpressions[6, spins, opt];
+   partitions = MapThread[opPartition6, {spins, opDottedQ6 /@ spins}];
+   If[derivs === {},
+    structs = buildCorrelator6[Sequence @@ #, partitions] & /@ exprs;
+    rules = If[perm === Automatic, {}, x[i_, j_] :> x[perm[[i]], j]];
+    Do[
+     BuildTensor[{correlator[6, \[CapitalDelta]s, spins, derivs, perm, q, i], Sequence @@ spinIndices[6, spins, derivs, perm]}] =
+      If[ArrayQ[structs[[i]]], SparseArray, Identity][Explicit@KinematicPrefactor[6, \[CapitalDelta]s, spins, opt] Normal[structs[[i]]] /. rules],
+     {i, Length[structs]}]
+   ];
+   Table[Tensor[{{correlator[6, \[CapitalDelta]s, spins, derivs, perm, q, i], Sequence @@ spinIndices[6, spins, derivs, perm]}}],
+    {i, Min[ConformalCorrelatorCount[6, spins, opt], Length[exprs]]}]
+  ];
+
 BuildTensor[{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], inds___}] /; {inds} == spinIndices[dim, spins, {}, perm] := (
 	ConformalCorrelators[dim, \[CapitalDelta]s, spins, {}, perm, "DefectCodimension" -> q];
 	BuildTensor[{correlator[dim, \[CapitalDelta]s, spins, {}, perm, q, i], inds}]
@@ -276,10 +472,16 @@ BuildTensor[{correlator[dim_, \[CapitalDelta]s_, spins_, {}, perm_, q_, i_], ind
    
 ConformalTest[dim_, \[CapitalDelta]s_, spins_, perm_, 
    opt : OptionsPattern[]] := Module[{indices, similar, indperm},
-   indices = If[dim == 3,
+   indices = Which[
+     dim == 3,
      Flatten[Table[{perm[[i]], {}}, {i, Length[spins]}, {j, 2 spins[[i]]}], 1],
+     dim == 6,
+     (* canonical per-operator chirality; opBoxes6 indices each *)
+     Flatten[Table[With[{d = opDottedQ6[spins[[i]]]},
+        Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> d}}, opBoxes6[spins[[i]], d]]], {i, Length[spins]}], 1],
+     True,
      Flatten[
-      Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> k == 2}}, {i, 
+      Table[{perm[[i]], {"Weyl" -> True, "Dotted" -> k == 2}}, {i,
         Length[spins]}, {k, 2}, {j, 2 spins[[i, k]]}], 2]
      ];
    Table[
@@ -317,8 +519,12 @@ BuildTensor[
       pd = derivs /. {type_, n_Integer} :> {type, perm[[n]]}, 
      indsPerX, siPerm, dsiPerm, siPos, dsiPos, fullPerm, baseexpr, 
      expr},
-    indsPerX = 
-     Table[2 spins[[j]] + Count[derivs[[;; , 2]], j] Which[dim == 4, {1, 1}, dim == 3, 2, dim == 2, {2, 0}], {j, 
+    indsPerX =
+     Table[If[dim == 6,
+        (* {undotted, dotted}: an operator carries opBoxes6 indices of one chirality,
+           each derivative adds two undotted (D=6 is 2 mod 4) *)
+        With[{dt = opDottedQ6[spins[[j]]]}, {If[dt, 0, opBoxes6[spins[[j]], dt]], If[dt, opBoxes6[spins[[j]], dt], 0]}] + Count[derivs[[;; , 2]], j] {2, 0},
+        2 spins[[j]] + Count[derivs[[;; , 2]], j] Which[dim == 4, {1, 1}, dim == 3, 2, dim == 2, {2, 0}]], {j,
        Length[\[CapitalDelta]s]}];
     siPerm = Which[dim == 4, (* 2D and 3D both have undotted indices on derivatives *)
       Flatten@{
@@ -341,21 +547,40 @@ BuildTensor[
       dim == 2,
       Flatten@{
         Table[
-         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
-          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j, 
-          Length[derivs]}], 
-        Table[Total[indsPerX[[;; k, 1]]] - 2 spins[[k, 1]] + 
+         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] +
+          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j,
+          Length[derivs]}],
+        Table[Total[indsPerX[[;; k, 1]]] - 2 spins[[k, 1]] +
           Range[2 spins[[k, 1]]], {k, Length[\[CapitalDelta]s]}]
+        },
+      dim == 6,  (* like dim==2 (two undotted per derivative); the operator's own
+                    undotted count is indsPerX[[k,1]] minus the derivative indices *)
+      Flatten@{
+        Table[
+         2 Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] +
+          Total[indsPerX[[;; derivs[[j, 2]] - 1, 1]]] + {1, 2}, {j,
+          Length[derivs]}],
+        Table[With[{own = indsPerX[[k, 1]] - 2 Count[derivs[[;; , 2]], k]},
+           Total[indsPerX[[;; k, 1]]] - own + Range[own]], {k, Length[\[CapitalDelta]s]}]
         }
       ];
     dsiPerm = If[EvenQ[dim],
       Flatten@{
-        Table[
-         Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] + 
-          Total[indsPerX[[;; derivs[[j, 2]] - 1, 2]]] + 1, {j, 
-          Length[derivs]}], 
-        Table[Total[indsPerX[[;; k, 2]]] - 2 spins[[k, 2]] + 
-          Range[2 spins[[k, 2]]], {k, Length[\[CapitalDelta]s]}]
+        (* A spinor derivative carries a dotted index only in D = 0 (mod 4), where
+           the sigma tensor is {Weyl, dotted-Weyl}; in D = 2 (mod 4) it is
+           {Weyl, Weyl} (two undotted, cf. siPerm's dim==2 branch), so it deposits
+           no dotted index and this derivative part must be empty -- otherwise it
+           emits a phantom dotted slot per derivative that collides with the
+           operator-dotted slots (harmless in 2D, where Weyl indices are
+           1-dimensional, but corrupting in 6D). *)
+        If[Mod[dim, 4] == 0,
+         Table[
+          Count[derivs[[;; j - 1, 2]], derivs[[j, 2]]] +
+           Total[indsPerX[[;; derivs[[j, 2]] - 1, 2]]] + 1, {j,
+           Length[derivs]}],
+         {}],
+        Table[With[{own = If[dim == 6, indsPerX[[k, 2]], 2 spins[[k, 2]]]},
+           Total[indsPerX[[;; k, 2]]] - own + Range[own]], {k, Length[\[CapitalDelta]s]}]
         },
       {}
       ];

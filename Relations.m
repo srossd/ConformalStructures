@@ -1,6 +1,27 @@
 (* Wolfram Language package *)
 
-zeroVecQ[vec_] := 
+(* Drop the memoized (fully concrete) DownValues of a symbol while keeping its
+   defining rules.  Memoized results have no pattern objects in their argument,
+   whereas the rules that generate them do, so we keep exactly the entries whose
+   left-hand side still contains a Blank/Pattern. *)
+SetAttributes[clearMemoized, HoldFirst];
+clearMemoized[sym_Symbol] := DownValues[sym] = Select[DownValues[sym],
+   ! FreeQ[First[#], Blank | BlankSequence | BlankNullSequence | Pattern] &];
+
+(* Flush every cache that can depend on the spacetime signature.  BuildTensor
+   holds the explicit (signature-dependent) components of correlators and string
+   structures; the others memoize results derived from those components.  Their
+   defining pattern rules are preserved, so everything regenerates on demand. *)
+ClearConformalCache[] := (
+   clearMemoized[BuildTensor];
+   clearMemoized[ConformalCorrelators];
+   clearMemoized[StringStructure];
+   clearMemoized[StructureRelations];
+   clearMemoized[uvz];
+   clearMemoized[fastEvalPiece6];
+);
+
+zeroVecQ[vec_] :=
   MatchQ[vec, {0 ..}] || 
    MatchQ[Simplify[ArrayRules[vec][[;; , 2]]], {0 ..}];
 
@@ -257,33 +278,41 @@ unrollRows[mat_, subset_, numRows_] :=
      mat] /. {a_Integer, b_Integer} :> {subset[[a]], b}, {numRows, 
     Length[mat[[1]]]}];
     
-Options[StructureRelations] = {Method -> "Automatic"};
-StructureRelations[structs_, OptionsPattern[]] := StructureRelations[structs] = Which[OptionValue[Method] == "Fit",
-	fittedRelations[structs],
+Options[StructureRelations] = {Method -> "Automatic", "MaximumZ" -> Automatic};
+StructureRelations[structs_, opt : OptionsPattern[]] := StructureRelations[structs] = Which[OptionValue[Method] == "Fit",
+	fittedRelations[structs, Sequence @@ FilterRules[{opt}, Options[fittedRelations]]],
 	OptionValue[Method] == "Symbolic",
-	symbolicRelations[structs],
+	symbolicRelations[structs, Sequence @@ FilterRules[{opt}, Options[symbolicRelations]]],
 	True,
 	If[
      First@Cases[structs, c_correlator :> c[[-2]], All] =!= None || (Length[structs] >= 4 || First@Cases[structs, c_correlator :> Length[c[[2]]], All] >= 4) && First@Cases[structs, c_correlator :> c[[1]], All] > 2, 
-   	 fittedRelations[structs],
-   	 symbolicRelations[structs]
+   	 fittedRelations[structs, Sequence @@ FilterRules[{opt}, Options[fittedRelations]]],
+   	 symbolicRelations[structs, Sequence @@ FilterRules[{opt}, Options[symbolicRelations]]]
     ]
 ];
   
 crossRatioAssumptions[dim_, q_] := If[q === None, And @@ (1/2 < # < 2 & /@ crossRatios[dim, q]), And @@ (0 < # & /@ crossRatios[dim, q])];
-symbolicRelations[structs_] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
+
+Options[symbolicRelations] = {"MaximumZ" -> Automatic};
+symbolicRelations[structs_, OptionsPattern[]] := With[{q = First@Cases[structs, correlator[___, q_, _] :> q, All], dim = First@Cases[structs, correlator[dim_, ___] :> dim, All]},
    If[# === {}, {}, FullSimplify[RowReduce[#, ZeroTest -> (Function[expr, Simplify[expr, crossRatioAssumptions[dim, q]] === 0])], crossRatioAssumptions[dim, q]]] &@
-   FullSimplify[NullSpace[FullSimplify[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, zz], {zz, If[dim == 2, Range[3, Length[structs] + 5], Range[2, 5]]}], 1], crossRatioAssumptions[dim, q]]], crossRatioAssumptions[dim, q]]
+   FullSimplify[NullSpace[FullSimplify[Flatten[Table[Transpose@ArrayFlatten[Flatten@*List@*CanonicallyOrderedComponents /@ structs] /. genericPoint[dim, q, zz], {zz, If[OptionValue["MaximumZ"] === Automatic, If[dim == 2, Range[3, Length[structs] + 5], Range[2, 5]], Range[2, OptionValue["MaximumZ"]]]}], 1], crossRatioAssumptions[dim, q]]], crossRatioAssumptions[dim, q]]
 ];
-    
-fittedRelations[structs_] := 
-   Block[{zmax = 3, dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
+  
+Options[fittedRelations] = {"MaximumZ" -> Automatic};
+(* fastEval covers d=6 correlators including derivatives (fastEval.m): non-derivative
+   and u/v-derivative structures take the accelerated path, while d=6 spacetime
+   (\[PartialD]) derivatives fall back to a direct Components evaluation inside
+   fastEval (correct, not accelerated).  The dim==6 clause in the guards below routes
+   all d=6 structures through fastEvalCOC accordingly. *)
+fittedRelations[structs_, OptionsPattern[]] :=
+   Block[{zmax = If[OptionValue["MaximumZ"] === Automatic, 5, OptionValue["MaximumZ"]], dim, q, structComps, idxs, other, ans, step, sols, safes, rule, todo, mat1, mat2},
     dim = First@Cases[structs, correlator[dim_, ___] :> dim, All];
     q = First@Cases[structs, correlator[___, q_, _] :> q, All];
     safes = safeCrossRatios[q];
     structComps = Flatten[Table[Transpose[ArrayFlatten[Flatten[{Normal[
        If[
-         Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
+         (dim <= 4 || dim == 6 || Max@Cases[#, c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[#, {_correlator, inds___}, All] == 1 && First@Cases[#,{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[#, c_correlator :> Length[c[[4]]],All] <= 1,
            fastEvalCOC[#,z,safes[[11]]],
            Normal[CanonicallyOrderedComponents[#]] /. genericPoint[dim, q, z, 11]
        ]
@@ -302,7 +331,7 @@ fittedRelations[structs_] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 (dim <= 4 || dim == 6 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
@@ -352,7 +381,7 @@ fittedRelations[structs_] :=
               Which[
                  ! MemberQ[Join[idxs, other[[todo]]], structIdx], 
                    Table[0, Length[structComps]/(zmax - 1)],
-                 Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
+                 (dim <= 4 || dim == 6 || Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]], All] == 0) && Length@Cases[structs[[structIdx]], {_correlator, inds___}, All] == 1 && First@Cases[structs[[structIdx]],{_correlator, inds___} :> Length[{inds}],All] >= 4 && Max@Cases[structs[[structIdx]], c_correlator :> Length[c[[4]]],All] <= 1,
                    fastEvalCOC[structs[[structIdx]],z,safes[[ii]]],
                  True, 
                    Normal[CanonicallyOrderedComponents[structs[[structIdx]]]] /. genericPoint[dim, q, z, ii]
