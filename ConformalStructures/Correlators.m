@@ -52,9 +52,14 @@ su2irrep /: Times[su2irrep[i_], su2irrep[j_]] :=
   Sum[su2irrep[k], {k, Abs[i - j], i + j}];
 su2irrep /: Power[su2irrep[i_], n_] /; n > 1 := 
   Times[su2irrep[i], Power[su2irrep[i], n - 1]];
-countSU2singlets[spins__] := 
-  FirstCase[Fold[Expand[#1 #2] &, su2irrep[0], su2irrep /@ {spins}], 
-    n_. su2irrep[0] :> n] /. _?MissingQ -> 0;
+(* The folded product is a sum of su2irrep[k]; the number of little-group singlets is the
+   coefficient of su2irrep[0].  The match must include level 0: when every operator is a
+   scalar (or the product otherwise collapses to a single term) the result is a BARE
+   su2irrep[0], which lives at level 0 and the default {1} levelspec would miss -- returning
+   0 for e.g. three scalars, whose three-point function is perfectly nonzero. *)
+countSU2singlets[spins__] :=
+  FirstCase[Fold[Expand[#1 #2] &, su2irrep[0], su2irrep /@ {spins}],
+    n_. su2irrep[0] :> n, 0, {0, Infinity}];
 
 Options[ConformalCorrelatorCount] = {"DefectCodimension" -> None};
 ConformalCorrelatorCount[2, spins_, OptionsPattern[]] := Infinity;

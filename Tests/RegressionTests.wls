@@ -96,6 +96,13 @@ testConformal["2D 3pt with a left-moving spin-1", 2, {2, 1, 1}, {{1, 0}, {0, 0},
 testConformal["3D 3pt scalar-scalar-vector",3, {1, 1, 2},   {0, 0, 1},                                    {1, 2, 3},    3];
 testConformal["3D 4pt with one vector",    3, {1, 1, 1, 2}, {0, 0, 0, 1},                                 {1, 2, 3, 4}, 4];
 testConformal["4D 3pt with one vector",    4, {2, 1, 1},    {{1/2, 1/2}, {0, 0}, {0, 0}},                 {1, 2, 3},    3];
+(* Three scalars: the little-group product collapses to a single su2irrep[0].
+   countSU2singlets must still count that as one singlet -- it previously returned 0
+   because FirstCase's default {1} levelspec missed the bare, level-0 singlet, so
+   <s s s> reported no structures at all despite being a perfectly good correlator. *)
+assert["4D <sss> 3pt count == 1", ConformalCorrelatorCount[4, {{0, 0}, {0, 0}, {0, 0}}] === 1,
+   ConformalCorrelatorCount[4, {{0, 0}, {0, 0}, {0, 0}}]];
+testConformal["4D 3pt scalars",            4, {2, 2, 2},    {{0, 0}, {0, 0}, {0, 0}},                     {1, 2, 3},    3];
 testConformal["4D 4pt scalars",            4, {1, 1, 1, 1}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}},             {1, 2, 3, 4}, 4];
 
 (* Changing the signature now flushes the memoized component caches (via
